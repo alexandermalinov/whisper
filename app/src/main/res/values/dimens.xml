@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    // Text Size
+    <dimen name="text_tiny">4sp</dimen>
+    <dimen name="text_small">8sp</dimen>
+    <dimen name="text_x_small">10sp</dimen>
+    <dimen name="text_xx_small">12sp</dimen>
+    <dimen name="text_xxx_small">14sp</dimen>
+    <dimen name="text_medium">16sp</dimen>
+    <dimen name="text_x_medium">20sp</dimen>
+    <dimen name="text_xx_medium">24sp</dimen>
+    <dimen name="text_large">32sp</dimen>
+    <dimen name="text_x_large">42sp</dimen>
+    <dimen name="text_huge">64sp</dimen>
+
+    // Padding
+    <dimen name="padding_micro">2dp</dimen>
+    <dimen name="padding_tiny">4dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_x_medium">20dp</dimen>
+    <dimen name="padding_xx_medium">24dp</dimen>
+    <dimen name="padding_large">32dp</dimen>
+    <dimen name="padding_x_large">36dp</dimen>
+    <dimen name="padding_huge">64dp</dimen>
+
+    // Margin
+    <dimen name="margin_micro">2dp</dimen>
+    <dimen name="margin_tiny">4dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="margin_x_medium">20dp</dimen>
+    <dimen name="margin_xx_medium">24dp</dimen>
+    <dimen name="margin_large">32dp</dimen>
+    <dimen name="margin_x_large">36dp</dimen>
+    <dimen name="margin_huge">64dp</dimen>
+
+    // Radius
+    <dimen name="radius_small">6dp</dimen>
+    <dimen name="radius_medium">12dp</dimen>
+    <dimen name="radius_large">24dp</dimen>
+
+    // Elevation
+    <dimen name="button_elevation">8dp</dimen>
+
+    // Card
+    <dimen name="card_height">224dp</dimen>
+    <dimen name="card_width">180dp</dimen>
+
+    // Button
+    <dimen name="button_small">36dp</dimen>
+
+    // Image
+    <dimen name="profile_small">36dp</dimen>
+    <dimen name="profile_pre_small">48dp</dimen>
+    <dimen name="profile_pre_x_small">54dp</dimen>
+    <dimen name="profile_medium">64dp</dimen>
+    <dimen name="profile_large">100dp</dimen>
+
+    // Online Indicator
+    <dimen name="online_indicator_size">16dp</dimen>
+
+</resources>

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Whisper</string>
+
+    // Common
+    <string name="ok">Okay</string>
+    <string name="cancel">Cancel</string>
+    <string name="recent_chats">Recent Chats</string>
+
+    <!-- Api Response Errors -->
+    <string name="error_something_went_wrong">Something went wrong</string>
+    <string name="error_network">Please check your network connection</string>
+</resources>
