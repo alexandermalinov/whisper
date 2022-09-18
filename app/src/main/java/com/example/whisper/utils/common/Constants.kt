@@ -10,3 +10,8 @@ const val IMAGE_TYPE = "image/*"
 
 // Delays
 const val SPLASH_SCREEN_DELAY = 1500L
+
+// Shared Preferences Keys
+const val USER_SHARED_PREFS_KEY = "user_shared_prefs"
+const val USER_SHARED_PREFS_IS_SIGNED_IN_KEY = "user_shared_prefs"
+const val USER_SHARED_PREFS_IS_FIRST_TIME_KEY = "user_shared_prefs"

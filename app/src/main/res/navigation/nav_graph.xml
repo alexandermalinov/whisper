@@ -26,6 +26,9 @@
             app:destination="@id/recentChatsFragment"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -60,4 +63,15 @@
         android:name="com.example.whisper.ui.recentchats.RecentChatsFragment"
         android:label="fragment_recent_chats"
         tools:layout="@layout/fragment_recent_chats" />
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.example.whisper.ui.welcome.WelcomeFragment"
+        android:label="WelcomeFragment" >
+        <action
+            android:id="@+id/action_welcomeFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+    </fragment>
 </navigation>

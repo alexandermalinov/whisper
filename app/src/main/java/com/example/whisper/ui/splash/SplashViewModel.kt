@@ -7,6 +7,7 @@ import com.example.whisper.navigation.NavigationGraph
 import com.example.whisper.ui.base.BaseViewModel
 import com.example.whisper.utils.common.SPLASH_SCREEN_DELAY
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +18,8 @@ class SplashViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            delay(SPLASH_SCREEN_DELAY)
             navigateUser()
         }
     }
@@ -26,26 +28,27 @@ class SplashViewModel @Inject constructor(
      * Private
     ---------------------------------------------------------------------------------------------*/
     private suspend fun navigateUser() {
-        viewModelScope.launch {
-            delay(SPLASH_SCREEN_DELAY)
-            navigateToSignIn()
-        }
-        /*userRepository.isSignedIn() { either ->
-            viewModelScope.launch {
-                either.foldSuspend({
-                    navigateToSignIn()
-                }, {
-                    navigateToHome()
-                })
+        if (userRepository.isFirstTime()) {
+            navigateToWelcome()
+        } else {
+            if (userRepository.isSignedIn()) {
+                navigateToHome()
+            } else {
+                navigateToSignIn()
             }
-        }*/
+        }
     }
 
     private fun navigateToHome() {
-        _navigationLiveData.value = NavigationGraph(R.id.action_splashFragment_to_recentChatsFragment)
+        _navigationLiveData.value =
+            NavigationGraph(R.id.action_splashFragment_to_recentChatsFragment)
     }
 
     private fun navigateToSignIn() {
         _navigationLiveData.value = NavigationGraph(R.id.action_splashFragment_to_signInFragment)
+    }
+
+    private fun navigateToWelcome() {
+        _navigationLiveData.value = NavigationGraph(R.id.action_splashFragment_to_welcomeFragment)
     }
 }
