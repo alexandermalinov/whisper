@@ -27,7 +27,15 @@ class WelcomeFragment : BaseFragment<FragmentWelcomeBinding>() {
     ---------------------------------------------------------------------------------------------*/
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initUi()
         observeNavigation(viewModel.navigationLiveData)
+    }
+
+    /* --------------------------------------------------------------------------------------------
+     * Private
+    ---------------------------------------------------------------------------------------------*/
+    private fun initUi() {
+        dataBinding.presenter = viewModel
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_welcome

@@ -18,7 +18,7 @@ class SplashViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             delay(SPLASH_SCREEN_DELAY)
             navigateUser()
         }
