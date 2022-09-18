@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    // Bottom Navigation
+    <style name="Widget.MyTheme.BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    // Popup Menu
+    <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+</resources>
