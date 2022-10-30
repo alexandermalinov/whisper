@@ -60,6 +60,7 @@
             android:layout_marginTop="@dimen/margin_medium"
             android:onClick="@{() -> presenter.onGetStartedClick()}"
             android:paddingVertical="@dimen/padding_x_small"
+            android:layout_marginBottom="@dimen/margin_small"
             android:text="@string/sign_in"
             android:textColor="@color/white"
             app:cornerRadius="@dimen/radius_medium"

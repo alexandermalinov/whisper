@@ -5,6 +5,9 @@
     <data>
 
         <variable
+            name="model"
+            type="com.example.whisper.vo."
+
             name="presenter"
             type="com.example.whisper.ui.signup.SignUpPresenter" />
 
@@ -19,7 +22,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:layout_marginTop="@dimen/margin_medium"
+            android:paddingVertical="@dimen/padding_medium"
             android:paddingHorizontal="@dimen/padding_xx_medium">
 
             <ImageView
