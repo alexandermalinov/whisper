@@ -4,14 +4,32 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable-v24/ic_home_filled.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable-v24/ic_home_outlined.xml" value="0.186" />
         <entry key="app/src/main/res/drawable-v24/sl_home.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/ic_bird.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/ic_chat_phone.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/ic_plus.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/ic_search_outlined.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/ic_settings_filled.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/ic_settings_outlined.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/ic_swallow.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/ic_undraw_enter.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/ic_user.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/ic_users.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/ic_users_outlined.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/sl_contacts.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/sl_settings.xml" value="0.186" />
+        <entry key="app/src/main/res/drawable/sp_edittext.xml" value="0.186" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/fragment_recent_chats.xml" value="0.3296875" />
-        <entry key="app/src/main/res/layout/fragment_sign_in.xml" value="0.3296875" />
-        <entry key="app/src/main/res/layout/fragment_sign_up.xml" value="0.25679347826086957" />
-        <entry key="app/src/main/res/layout/fragment_splash.xml" value="0.16033434650455927" />
+        <entry key="app/src/main/res/layout/fragment_recent_chats.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_sign_in.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_sign_up.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_splash.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_welcome.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/item_recent_chat.xml" value="0.67" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.3296875" />
         <entry key="app/src/main/res/menu/menu_profile.xml" value="0.3296875" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.186" />
       </map>
     </option>
   </component>

@@ -22,6 +22,14 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeNavigation(viewModel.navigationLiveData)
+        initUi()
+    }
+
+    /* --------------------------------------------------------------------------------------------
+     * Private
+   ---------------------------------------------------------------------------------------------*/
+    private fun initUi() {
+        dataBinding.presenter = viewModel
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_sign_up

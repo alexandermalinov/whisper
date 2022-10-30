@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/recentChats"
+        android:id="@+id/recentChatsFragment"
         android:icon="@drawable/sl_home"
+        android:title="@string/recent_chats" />
+
+    <item
+        android:id="@+id/signInFragment"
+        android:icon="@drawable/sl_contacts"
+        android:title="@string/recent_chats" />
+
+    <item
+        android:id="@+id/signUpFragment"
+        android:icon="@drawable/sl_settings"
         android:title="@string/recent_chats" />
 </menu>

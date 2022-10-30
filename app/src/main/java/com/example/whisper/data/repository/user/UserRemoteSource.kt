@@ -7,7 +7,8 @@ import javax.inject.Inject
 
 class UserRemoteSource @Inject constructor() : UserRepository.RemoteSource {
 
-    override fun isSignedIn(block: (Either<HttpError, ResponseResultOk>) -> Unit): Boolean {
+    override suspend fun register() {
         TODO("Not yet implemented")
     }
+
 }

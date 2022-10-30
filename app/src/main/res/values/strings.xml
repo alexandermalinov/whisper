@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Whisper</string>
 
-    // Common
+    <!-- Common -->
     <string name="ok">Okay</string>
     <string name="cancel">Cancel</string>
     <string name="recent_chats">Recent Chats</string>
@@ -9,4 +9,33 @@
     <!-- Api Response Errors -->
     <string name="error_something_went_wrong">Something went wrong</string>
     <string name="error_network">Please check your network connection</string>
+
+    <!-- Get Started Screen -->
+    <string name="get_started">Get Started</string>
+    <string name="get_started_description">Free and instantaneous communication anywhere in the world. Send and receive high-fidelity messages. Start sharing the moments that matter with the people who matter to you.</string>
+    <string name="welcome">Welcome</string>
+
+    <!-- Sign In Screen -->
+    <string name="sign_in">Sign In</string>
+    <string name="enter_email">Enter email</string>
+    <string name="enter_password">Enter password</string>
+    <string name="continue_text">Continue</string>
+    <string name="dont_have_account">Don\'t have account yet?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="select_photo">Select photo</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="enter_username">Enter username</string>
+    <string name="hi_user_name">Hi,</string>
+    <string name="search_chats">Search for chats</string>
+    <string name="create_your_account">to your account</string>
+    <string name="login_your_account">Login to your account</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

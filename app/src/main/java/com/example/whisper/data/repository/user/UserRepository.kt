@@ -1,21 +1,40 @@
 package com.example.whisper.data.repository.user
 
-import com.connection.utils.responsehandler.ResponseResultOk
-import com.example.whisper.utils.responsehandler.Either
-import com.example.whisper.utils.responsehandler.HttpError
 import javax.inject.Inject
 
-class UserRepository @Inject constructor(private val remote: UserRemoteSource) {
+class UserRepository @Inject constructor(
+    private val remote: UserRemoteSource,
+    private val local: UserLocalSource
+) {
 
     /* --------------------------------------------------------------------------------------------
      * Sources
      ---------------------------------------------------------------------------------------------*/
     interface RemoteSource {
 
-        fun isSignedIn(block: (Either<HttpError, ResponseResultOk>) -> Unit): Boolean
+        suspend fun register()
     }
 
-    fun isSignedIn(block: (Either<HttpError, ResponseResultOk>) -> Unit) {
-        remote.isSignedIn(block)
+    interface LocalSource {
+
+        suspend fun setIsSignedIn(isSignedIn: Boolean)
+
+        suspend fun isSignedIn(): Boolean
+
+        suspend fun setIsFirstTime(isFirstTime: Boolean)
+
+        suspend fun isFirstTime(): Boolean
     }
+
+    suspend fun setIsSignedIn(isSignedIn: Boolean) {
+        local.setIsSignedIn(isSignedIn)
+    }
+
+    suspend fun isSignedIn() = local.isSignedIn()
+
+    suspend fun setIsFirstTime(isFirstTime: Boolean) {
+        local.setIsFirstTime(isFirstTime)
+    }
+
+    suspend fun isFirstTime() = local.isFirstTime()
 }
