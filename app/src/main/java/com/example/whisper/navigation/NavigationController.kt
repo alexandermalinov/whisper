@@ -1,5 +1,6 @@
 package com.example.whisper.navigation
 
+import android.app.Activity
 import android.content.Intent
 import android.provider.Settings
 import androidx.fragment.app.Fragment
@@ -20,12 +21,23 @@ fun Fragment.navigate(destination: Destination) {
     }
 }
 
+fun Activity.navigate(destination: Destination) {
+    when(destination) {
+        is Internal -> {
+            handleInternalNavigation(destination)
+        }
+        is External -> {
+            handleExternalNavigation(destination)
+        }
+    }
+}
+
 /* --------------------------------------------------------------------------------------------
  * Private
 ---------------------------------------------------------------------------------------------*/
 private fun Fragment.handleInternalNavigation(destination: Internal) {
     when (destination) {
-        is NavigationGraph -> {
+        is NavGraph -> {
             findNavController().navigate(
                 destination.actionId,
                 destination.args,
@@ -52,6 +64,22 @@ private fun Fragment.handleExternalNavigation(destination: External) {
             startActivity(Intent(Settings.ACTION_APPLICATION_SETTINGS))
         }
     }
+}
+
+private fun Activity.handleInternalNavigation(destination: Internal) {
+    when (destination) {
+        is ActivityGraph -> {
+            val action = Intent(this, destination.activityClass).apply {
+                destination.bundle?.let { putExtras(it) }
+            }
+            startActivity(action)
+            finish()
+        }
+    }
+}
+
+private fun Activity.handleExternalNavigation(destination: External) {
+    // When needed, implement me
 }
 
 private fun Fragment.navigateToFragment(destination: NestedFragmentGraph) {

@@ -12,7 +12,7 @@
 
     <!-- Get Started Screen -->
     <string name="get_started">Get Started</string>
-    <string name="get_started_description">A safe way to chat with others. Communicate without worrying about your privacy. Start by signing up or if you already have an account, please sign in.</string>
+    <string name="get_started_description">Free and instantaneous communication anywhere in the world. Send and receive high-fidelity messages. Start sharing the moments that matter with the people who matter to you.</string>
     <string name="welcome">Welcome</string>
 
     <!-- Sign In Screen -->
@@ -26,4 +26,16 @@
     <string name="select_photo">Select photo</string>
     <string name="already_have_account">Already have an account?</string>
     <string name="enter_username">Enter username</string>
+    <string name="hi_user_name">Hi,</string>
+    <string name="search_chats">Search for chats</string>
+    <string name="create_your_account">to your account</string>
+    <string name="login_your_account">Login to your account</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

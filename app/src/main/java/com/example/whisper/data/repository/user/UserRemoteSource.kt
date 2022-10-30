@@ -7,4 +7,8 @@ import javax.inject.Inject
 
 class UserRemoteSource @Inject constructor() : UserRepository.RemoteSource {
 
+    override suspend fun register() {
+        TODO("Not yet implemented")
+    }
+
 }

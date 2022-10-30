@@ -14,36 +14,42 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/dark_gunmetal"
-        android:gravity="center_horizontal"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/padding_xx_medium">
 
         <ImageView
-            android:layout_width="250dp"
-            android:layout_height="350dp"
-            android:src="@drawable/ic_undraw_enter" />
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_secure_illustration" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/text_sign_up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_medium"
+            android:layout_gravity="start"
+            android:layout_marginTop="@dimen/margin_large"
+            android:fontFamily="@font/core_sans_regular"
             android:text="@string/sign_in"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_large"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_xx_medium"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="@string/login_your_account"
+            android:textSize="@dimen/text_xx_medium" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/edittext_email"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/RoundedInputText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/enter_email"
-            app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
-            app:boxCornerRadiusBottomStart="@dimen/radius_medium"
-            app:boxCornerRadiusTopEnd="@dimen/radius_medium"
-            app:boxCornerRadiusTopStart="@dimen/radius_medium">
+            android:layout_marginTop="@dimen/margin_medium"
+            android:hint="@string/enter_email">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -53,15 +59,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/edittext_password"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/RoundedInputText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_medium"
-            android:hint="@string/enter_password"
-            app:boxCornerRadiusBottomEnd="@dimen/radius_medium"
-            app:boxCornerRadiusBottomStart="@dimen/radius_medium"
-            app:boxCornerRadiusTopEnd="@dimen/radius_medium"
-            app:boxCornerRadiusTopStart="@dimen/radius_medium">
+            android:hint="@string/enter_password">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -70,10 +71,11 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_medium"
             android:onClick="@{() -> presenter.onContinueClick()}"
-            android:layout_marginTop="@dimen/margin_large"
+            android:paddingVertical="@dimen/padding_x_small"
             android:text="@string/continue_text"
             app:cornerRadius="@dimen/radius_medium" />
 
@@ -92,10 +94,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/padding_small"
                 android:onClick="@{() -> presenter.onSignUpClick()}"
-                android:textStyle="bold"
-                android:layout_marginStart="@dimen/margin_tiny"
-                android:text="@string/sign_up" />
+                android:text="@string/sign_up"
+                android:textStyle="bold" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

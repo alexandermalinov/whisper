@@ -13,12 +13,17 @@ open class External : Destination()
 /* --------------------------------------------------------------------------------------------
  * Internal
 ---------------------------------------------------------------------------------------------*/
-data class NavigationGraph(
+data class NavGraph(
     val actionId: Int,
     val args: Bundle? = null,
     val navOptions: NavOptions? = null,
     val extras: FragmentNavigator.Extras? = null
 ) : Internal()
+
+data class ActivityGraph(
+    val activityClass: Class<*>,
+    val bundle: Bundle? = null
+): Internal()
 
 object PopBackStack : Internal()
 
@@ -33,4 +38,4 @@ class NestedFragmentGraph(
 ---------------------------------------------------------------------------------------------*/
 object GalleryNavigation : External()
 
-object SettingsNavigation: External()
+object SettingsNavigation : External()

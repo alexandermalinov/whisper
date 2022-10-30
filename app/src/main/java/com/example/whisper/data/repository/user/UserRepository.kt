@@ -12,6 +12,7 @@ class UserRepository @Inject constructor(
      ---------------------------------------------------------------------------------------------*/
     interface RemoteSource {
 
+        suspend fun register()
     }
 
     interface LocalSource {

@@ -19,7 +19,7 @@ class MainActivityViewModel @Inject constructor() : BaseViewModel() {
     ) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.recentChats -> view.makeVisible()
+                R.id.recentChatsFragment -> view.makeVisible()
                 else -> view.visibility = View.GONE
             }
         }
