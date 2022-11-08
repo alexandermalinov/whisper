@@ -14,16 +14,14 @@ class WelcomeViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : BaseViewModel(), WelcomePresenter {
 
-    init {
-        viewModelScope.launch {
-            userRepository.setIsFirstTime(false)
-        }
-    }
-
     /* --------------------------------------------------------------------------------------------
      * Override
     ---------------------------------------------------------------------------------------------*/
-    override fun onGetStartedClick() {
+    override fun onSignUpClick() {
+        _navigationLiveData.value = NavGraph(R.id.action_welcomeFragment_to_signUpFragment)
+    }
+
+    override fun onSignInClick() {
         _navigationLiveData.value = NavGraph(R.id.action_welcomeFragment_to_signInFragment)
     }
 }

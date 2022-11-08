@@ -27,23 +27,15 @@ class SplashViewModel @Inject constructor(
      * Private
     ---------------------------------------------------------------------------------------------*/
     private suspend fun navigateUser() {
-        if (userRepository.isFirstTime()) {
-            navigateToWelcome()
+        if (userRepository.isSignedIn()) {
+            navigateToHome()
         } else {
-            if (userRepository.isSignedIn()) {
-                navigateToHome()
-            } else {
-                navigateToSignIn()
-            }
+            navigateToWelcome()
         }
     }
 
     private fun navigateToHome() {
         _navigationLiveData.value = NavGraph(R.id.action_splashFragment_to_recentChatsFragment)
-    }
-
-    private fun navigateToSignIn() {
-        _navigationLiveData.value = NavGraph(R.id.action_splashFragment_to_signInFragment)
     }
 
     private fun navigateToWelcome() {

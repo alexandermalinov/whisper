@@ -15,4 +15,5 @@
     <!--<color name="cactus_green">#3E7E55</color>-->
     <color name="milky_white">#E0E0E0</color>
     <color name="normal_green">#4CAF50</color>
+    <color name="error_red">#FF1744</color>
 </resources>

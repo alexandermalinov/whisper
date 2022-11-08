@@ -14,34 +14,35 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingHorizontal="@dimen/padding_xx_medium">
+        android:paddingHorizontal="@dimen/padding_xx_medium"
+        android:paddingVertical="@dimen/padding_medium">
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:button="@drawable/ic_arrow_left"
+            android:buttonTint="@color/black"
+            android:onClick="@{() -> presenter.onBackClick()}" />
 
         <ImageView
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_medium"
             android:src="@drawable/ic_secure_illustration" />
 
         <TextView
-            android:id="@+id/text_sign_up"
+            android:id="@+id/text_welcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
             android:layout_marginTop="@dimen/margin_large"
             android:fontFamily="@font/core_sans_regular"
             android:text="@string/sign_in"
             android:textColor="@color/black"
             android:textSize="@dimen/text_xx_medium"
             android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:text="@string/login_your_account"
-            android:textSize="@dimen/text_xx_medium" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/edittext_email"
@@ -53,7 +54,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -62,11 +64,13 @@
             style="@style/RoundedInputText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/enter_password">
+            android:hint="@string/enter_password"
+            app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -77,29 +81,7 @@
             android:onClick="@{() -> presenter.onContinueClick()}"
             android:paddingVertical="@dimen/padding_x_small"
             android:text="@string/continue_text"
-            app:cornerRadius="@dimen/radius_medium" />
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_medium"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/dont_have_account" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/padding_small"
-                android:onClick="@{() -> presenter.onSignUpClick()}"
-                android:text="@string/sign_up"
-                android:textStyle="bold" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
+            app:cornerRadius="@dimen/radius_large" />
 
     </LinearLayout>
 </layout>

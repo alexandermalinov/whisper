@@ -29,6 +29,7 @@
     <dimen name="margin_micro">2dp</dimen>
     <dimen name="margin_tiny">4dp</dimen>
     <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_x_small">12dp</dimen>
     <dimen name="margin_medium">16dp</dimen>
     <dimen name="margin_x_medium">20dp</dimen>
     <dimen name="margin_xx_medium">24dp</dimen>
@@ -56,7 +57,7 @@
     <dimen name="profile_pre_small">48dp</dimen>
     <dimen name="profile_pre_x_small">54dp</dimen>
     <dimen name="profile_medium">64dp</dimen>
-    <dimen name="profile_large">100dp</dimen>
+    <dimen name="profile_large">96dp</dimen>
 
     <!--Online Indicator-->
     <dimen name="online_indicator_size">16dp</dimen>

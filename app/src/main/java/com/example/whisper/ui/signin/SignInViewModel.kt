@@ -3,6 +3,7 @@ package com.example.whisper.ui.signin
 import com.example.whisper.R
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.navigation.NavGraph
+import com.example.whisper.navigation.PopBackStack
 import com.example.whisper.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -15,20 +16,11 @@ class SignInViewModel @Inject constructor(
     /* --------------------------------------------------------------------------------------------
      * Override
     ---------------------------------------------------------------------------------------------*/
-    private fun navigateToHome() {
-        _navigationLiveData.value =
-            NavGraph(R.id.action_signInFragment_to_recentChatsFragment)
-    }
-
-    private fun navigateToSignUp() {
-        _navigationLiveData.value = NavGraph(R.id.action_signInFragment_to_signUpFragment)
-    }
-
     override fun onContinueClick() {
-        navigateToHome()
+        _navigationLiveData.value = NavGraph(R.id.action_signInFragment_to_recentChatsFragment)
     }
 
-    override fun onSignUpClick() {
-        navigateToSignUp()
+    override fun onBackClick() {
+        _navigationLiveData.value = PopBackStack
     }
 }

@@ -4,5 +4,5 @@ interface SignInPresenter {
 
     fun onContinueClick()
 
-    fun onSignUpClick()
+    fun onBackClick()
 }

@@ -5,7 +5,7 @@ import android.content.Intent
 import android.provider.Settings
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.connection.utils.image.ActivityResultHandler
+import com.example.whisper.utils.media.ActivityResultHandler
 
 /* --------------------------------------------------------------------------------------------
  * Exposed
