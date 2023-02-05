@@ -31,9 +31,22 @@
 
     <!-- Input errors -->
     <string name="invalid_email">Invalid email</string>
-    <string name="invalid_username">Username must contain at least 2 symbols</string>
+    <string name="invalid_username">Username must contain at least 4 symbols</string>
     <string name="invalid_password">A password must contain at least 8 symbols</string>
     <string name="invalid_confirm_password">Passwords must match</string>
+
+    <!-- Error Dialogs-->
+    <!-- Tittles-->
+    <string name="error_dialog_title">Error</string>
+    <string name="error_dialog_title_network">Network Error</string>
+    <string name="error_dialog_title_try_again">Try Again</string>
+    <!-- Body Message-->
+    <string name="error_dialog_message_body_no_network">No internet connection found. Check your connection or try again.</string>
+    <string name="error_dialog_message_body_invalid_credentials">Email or password are invalid. Please try again with valid credentials.</string>
+    <string name="error_dialog_body_message_setting_personal_info">There was an error setting your personal information</string>
+
+    <!-- Contacts Screen -->
+    <string name="contacts">Contacts</string>
 
     <!-- Recent Chats Screen -->
 

@@ -7,10 +7,14 @@ import android.text.TextWatcher
 import android.view.WindowManager
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 
 fun Fragment.grantReadUriPermission(uri: Uri) {
     context?.contentResolver?.takePersistableUriPermission(
@@ -43,4 +47,12 @@ fun EditText.textChanges(): Flow<CharSequence> = callbackFlow {
     }
     addTextChangedListener(listener)
     awaitClose { removeTextChangedListener(listener) }
+}
+
+fun Fragment.collectState(state: suspend () -> Unit) {
+    lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            state.invoke()
+        }
+    }
 }

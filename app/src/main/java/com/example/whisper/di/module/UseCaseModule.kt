@@ -1,9 +1,6 @@
-package com.example.whisper.di
+package com.example.whisper.di.module
 
-import android.content.Context
-import com.example.whisper.data.repository.user.UserLocalSource
-import com.example.whisper.data.repository.user.UserRepository
-import com.example.whisper.domain.signing.ValidateEmailUseCase
+import com.example.whisper.domain.signup.ValidateEmailUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

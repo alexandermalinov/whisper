@@ -33,7 +33,7 @@ private fun Context.showTitleMessageDialog(
     @StringRes title: Int = INVALID_RES,
     @StringRes message: Int = INVALID_RES,
     @StringRes positiveButtonText: Int = R.string.ok,
-    @StringRes negativeButtonText: Int = R.string.cancel,
+    @StringRes negativeButtonText: Int? = null,
     positiveButtonClickListener: DialogInterface.OnClickListener? = null,
     negativeButtonClickListener: DialogInterface.OnClickListener? = null,
     cancelable: Boolean = true
@@ -42,7 +42,7 @@ private fun Context.showTitleMessageDialog(
     if (message != INVALID_RES) setMessage(message)
     if (positiveButtonText != INVALID_RES)
         setPositiveButton(positiveButtonText, positiveButtonClickListener)
-    if (negativeButtonText != INVALID_RES)
+    if (negativeButtonText != null && negativeButtonText != INVALID_RES)
         setNegativeButton(negativeButtonText, negativeButtonClickListener)
     setCancelable(cancelable)
     create()

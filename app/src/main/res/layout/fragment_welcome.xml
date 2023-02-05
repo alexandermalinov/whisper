@@ -20,7 +20,7 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="350dp"
+            android:layout_width="0dp"
             android:layout_height="400dp"
             android:layout_marginTop="@dimen/margin_medium"
             android:src="@drawable/ic_welcome"
@@ -34,25 +34,13 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/core_sans_regular"
             android:text="@string/welcome"
-            android:textColor="@color/black"
             android:textSize="@dimen/text_xx_medium"
+            android:textColor="@color/white"
             android:textStyle="bold"
             android:gravity="center_horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
-        <!--<TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_medium"
-            android:text="@string/get_started_description"
-            android:textAlignment="center"
-            android:textSize="@dimen/text_medium"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_sign_up" />-->
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_get_started"
@@ -62,7 +50,7 @@
             android:paddingVertical="@dimen/padding_x_small"
             android:text="@string/sign_in"
             android:textColor="@color/white"
-            app:cornerRadius="@dimen/radius_large"
+            app:cornerRadius="@dimen/radius_medium"
             app:layout_constraintBottom_toTopOf="@+id/button_sign_up"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -77,7 +65,7 @@
             android:onClick="@{() -> presenter.onSignUpClick()}"
             android:paddingVertical="@dimen/padding_x_small"
             android:text="@string/sign_up"
-            app:cornerRadius="@dimen/radius_large"
+            app:cornerRadius="@dimen/radius_medium"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

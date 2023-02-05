@@ -1,92 +1,59 @@
 package com.example.whisper.vo.signup
 
 import android.net.Uri
-import androidx.databinding.BaseObservable
-import androidx.databinding.Bindable
-import com.example.whisper.BR
+import androidx.core.net.toUri
+import com.example.whisper.data.local.entity.User
+import com.example.whisper.data.remote.model.user.UserModel
 import com.example.whisper.utils.common.EMPTY
 import com.example.whisper.utils.common.INVALID_RES
+import java.io.File
 
 data class SignUpUiModel(
-    var email: String = EMPTY,
-    var username: String = EMPTY,
-    var password: String = EMPTY,
-    var confirmPassword: String = EMPTY,
-    val isLoading: Boolean = false
-) : BaseObservable() {
+    val id: String = EMPTY,
+    val email: String = EMPTY,
+    val username: String = EMPTY,
+    val password: String = EMPTY,
+    val confirmPassword: String = EMPTY,
+    val pictureFile: File = File(EMPTY),
+    val profilePicture: Uri? = Uri.EMPTY,
 
-    @get:Bindable
-    var profilePicture: Uri? = Uri.EMPTY
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.profilePicture)
-        }
+    val emailErrorEnabled: Boolean = false,
+    val emailError: Int = INVALID_RES,
+    val emailEndIcon: Int? = INVALID_RES,
 
-    @get:Bindable
-    var emailErrorEnabled: Boolean = false
-        set(value) {
-            field = value
-            setContinueEnabled()
-            notifyPropertyChanged(BR.emailErrorEnabled)
-        }
+    val passwordError: Int = INVALID_RES,
+    val passwordErrorEnabled: Boolean = false,
 
-    @get:Bindable
-    var emailError: Int = INVALID_RES
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.emailError)
-        }
+    val confirmPasswordError: Int = INVALID_RES,
+    val confirmPasswordErrorEnabled: Boolean = false,
 
-    @get:Bindable
-    var emailEndIcon: Int? = INVALID_RES
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.emailEndIcon)
-        }
+    val usernameError: Int = INVALID_RES,
+    val usernameErrorEnabled: Boolean = false,
 
-    @get:Bindable
-    var passwordError: Int = INVALID_RES
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.passwordError)
-        }
-
-    @get:Bindable
-    var passwordErrorEnabled: Boolean = false
-        set(value) {
-            field = value
-            setContinueEnabled()
-            notifyPropertyChanged(BR.passwordErrorEnabled)
-        }
-
-    @get:Bindable
-    var confirmPasswordError: Int = INVALID_RES
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.confirmPasswordError)
-        }
-
-    @get:Bindable
-    var confirmPasswordErrorEnabled: Boolean = false
-        set(value) {
-            field = value
-            setContinueEnabled()
-            notifyPropertyChanged(BR.confirmPasswordErrorEnabled)
-        }
-
-    @get:Bindable
-    var isContinueEnabled: Boolean = false
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.continueEnabled)
-        }
-
-    private fun setContinueEnabled() {
-        isContinueEnabled = emailErrorEnabled.not() &&
-                passwordErrorEnabled.not() &&
-                confirmPasswordErrorEnabled.not() &&
-                email.isNotBlank() &&
-                password.isNotBlank() &&
-                confirmPassword.isNotBlank()
-    }
+    val isContinueEnabled: Boolean = false,
+    val isFinishEnabled: Boolean = false,
+    val isLoading: Boolean = false,
+) {
+    fun enableContinueButton() = emailErrorEnabled.not() &&
+            passwordErrorEnabled.not() &&
+            confirmPasswordErrorEnabled.not() &&
+            email.isNotBlank() &&
+            password.isNotBlank() &&
+            confirmPassword.isNotBlank()
 }
+
+fun SignUpUiModel.toUserModel(id: String) = UserModel(
+    id = id,
+    email = email,
+    password = password,
+    username = username,
+    profilePictureUrl = File(EMPTY)
+)
+
+fun SignUpUiModel.toUser(id: String) = User(
+    id = id,
+    userEmail = email,
+    userPassword = password,
+    username = username,
+    userPicture = pictureFile.toUri().toString()
+)

@@ -14,6 +14,8 @@ interface SignUpPresenter {
 
     fun onConfirmPasswordTextChanged(textFlow: Flow<CharSequence>)
 
+    fun onUsernameTextChanged(textFlow: Flow<CharSequence>)
+
     fun onFinish()
 
     fun onProfileImageClick()

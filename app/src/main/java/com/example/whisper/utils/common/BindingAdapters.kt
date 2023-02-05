@@ -33,7 +33,7 @@ fun TextInputLayout.setError(@StringRes error: Int) {
 @BindingAdapter("glideRes", "defaultGlideRes")
 fun View.setGlideRes(
     glideRes: String?,
-    @DrawableRes defaultGlideRes: Int
+    defaultGlideRes: Int
 ) {
     Glide.with(this)
         .load(glideRes)
@@ -48,7 +48,7 @@ fun ShapeableImageView.setUriRes(uri: Uri?) {
     if (uri != null && uri.toString() != EMPTY)
         setImageURI(uri)
     else
-        setImageResource(R.drawable.ic_user)
+        setImageResource(R.drawable.sp_profile_picture)
 }
 
 @BindingAdapter("safeText")

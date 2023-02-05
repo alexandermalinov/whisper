@@ -1,4 +1,4 @@
-package com.example.whisper.domain.signing
+package com.example.whisper.domain.signup
 
 enum class ValidationStates {
     EMPTY,

@@ -6,12 +6,7 @@
         android:title="@string/recent_chats" />
 
     <item
-        android:id="@+id/signInFragment"
+        android:id="@+id/contactsFragment"
         android:icon="@drawable/sl_contacts"
-        android:title="@string/recent_chats" />
-
-    <item
-        android:id="@+id/signUpFragment"
-        android:icon="@drawable/sl_settings"
-        android:title="@string/recent_chats" />
+        android:title="@string/contacts" />
 </menu>

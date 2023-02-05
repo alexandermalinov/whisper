@@ -38,7 +38,6 @@
 
     <!-- Input Text -->
     <style name="RoundedInputText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
-        <item name="errorEnabled">true</item>
         <item name="boxCornerRadiusBottomEnd">@dimen/radius_medium</item>
         <item name="boxCornerRadiusBottomStart">@dimen/radius_medium</item>
         <item name="boxCornerRadiusTopEnd">@dimen/radius_medium</item>

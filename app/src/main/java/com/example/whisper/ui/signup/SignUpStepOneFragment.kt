@@ -3,10 +3,10 @@ package com.example.whisper.ui.signup
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentSignUpStepOneBinding
 import com.example.whisper.ui.base.BaseFragment
+import com.example.whisper.utils.common.collectState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +25,10 @@ class SignUpStepOneFragment : BaseFragment<FragmentSignUpStepOneBinding>() {
         initUi()
         observeLiveData()
         observeNavigation(viewModel.navigationLiveData)
+        observeDialogLiveData(viewModel.dialogLiveData)
     }
+
+    override fun getLayoutId(): Int = R.layout.fragment_sign_up_step_one
 
     /* --------------------------------------------------------------------------------------------
      * Private
@@ -35,10 +38,10 @@ class SignUpStepOneFragment : BaseFragment<FragmentSignUpStepOneBinding>() {
     }
 
     private fun observeLiveData() {
-        viewModel.uiState.observe(viewLifecycleOwner) { uiModel ->
-            dataBinding.model = uiModel
+        collectState {
+            viewModel.uiState.collect { uiModel ->
+                dataBinding.model = uiModel
+            }
         }
     }
-
-    override fun getLayoutId(): Int = R.layout.fragment_sign_up_step_one
 }

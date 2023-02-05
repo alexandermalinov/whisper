@@ -17,7 +17,9 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_splashFragment_to_welcomeFragment"
-            app:destination="@id/welcomeFragment" />
+            app:destination="@id/welcomeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -25,18 +27,18 @@
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up_step_one" >
         <action
-            android:id="@+id/action_signUpFragment_to_recentChatsFragment"
-            app:destination="@id/recentChatsFragment"
-            app:popUpTo="@id/splashFragment"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_signUpFragment_to_welcomeFragment"
             app:destination="@id/welcomeFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/slide_down"
+            app:popEnterAnim="@anim/slide_up"
+            app:popExitAnim="@anim/slide_down"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_signUpFragment_to_signUpStepTwoFragment"
-            app:destination="@id/signUpStepTwoFragment" />
+            app:destination="@id/signUpStepTwoFragment"
+            app:enterAnim="@anim/slide_up" />
     </fragment>
     <fragment
         android:id="@+id/signInFragment"
@@ -72,10 +74,12 @@
         android:label="WelcomeFragment" >
         <action
             android:id="@+id/action_welcomeFragment_to_signInFragment"
-            app:destination="@id/signInFragment" />
+            app:destination="@id/signInFragment"
+            app:enterAnim="@anim/slide_up" />
         <action
             android:id="@+id/action_welcomeFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment" />
+            app:destination="@id/signUpFragment"
+            app:enterAnim="@anim/slide_up" />
     </fragment>
     <fragment
         android:id="@+id/signUpStepTwoFragment"
@@ -83,6 +87,18 @@
         android:label="SignUpStepTwoFragment" >
         <action
             android:id="@+id/action_signUpStepTwoFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment" />
+            app:destination="@id/signUpFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/slide_down"
+            app:popEnterAnim="@anim/slide_up"
+            app:popExitAnim="@anim/slide_down" />
+        <action
+            android:id="@+id/action_signUpStepTwoFragment_to_recentChatsFragment"
+            app:destination="@id/recentChatsFragment"
+            app:enterAnim="@anim/slide_up" />
     </fragment>
+    <fragment
+        android:id="@+id/contactsFragment"
+        android:name="com.example.whisper.ui.contacts.ContactsFragment"
+        android:label="ContactsFragment" />
 </navigation>

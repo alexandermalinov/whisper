@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -18,34 +19,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
-        android:paddingVertical="@dimen/padding_medium">
-
-        <CheckBox
-            android:id="@+id/btn_back_navigation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_x_small"
-            android:button="@drawable/ic_arrow_left"
-            android:buttonTint="@color/black"
-            android:onClick="@{() -> presenter.onBackClick()}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:paddingVertical="@dimen/padding_huge">
 
         <TextView
             android:id="@+id/text_your_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_xx_medium"
-            android:layout_marginTop="@dimen/margin_medium"
             android:fontFamily="@font/core_sans_regular"
             android:gravity="center_horizontal"
             android:text="@string/your_profile"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_xx_medium"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_large"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_back_navigation" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image_profile_picture"
@@ -53,39 +42,34 @@
             android:layout_height="@dimen/profile_large"
             android:layout_marginHorizontal="@dimen/margin_xx_medium"
             android:layout_marginTop="@dimen/margin_large"
-            android:background="@color/milky_white"
-            android:scaleType="centerCrop"
             android:onClick="@{() -> presenter.onProfileImageClick()}"
-            app:contentPaddingTop="12dp"
+            android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_your_profile"
             app:shapeAppearance="@style/CircleImageView"
-            app:uriRes="@{model.profilePicture}" />
+            app:uriRes="@{model.profilePicture}"
+            tools:src="@drawable/sp_profile_picture" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <TextView
             android:id="@+id/floatingActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="-8dp"
-            android:layout_marginBottom="-8dp"
-            android:src="@drawable/ic_camera"
-            app:backgroundTint="@color/white"
-            app:fabCustomSize="36dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/sp_black_circle_pencil"
+            android:onClick="@{() -> presenter.onProfileImageClick()}"
             app:layout_constraintBottom_toBottomOf="@+id/image_profile_picture"
             app:layout_constraintEnd_toEndOf="@+id/image_profile_picture" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/edittext_username"
+            style="@style/RoundedInputText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_xx_medium"
             android:layout_marginTop="@dimen/margin_xx_medium"
             android:hint="@string/enter_username"
-            app:boxBackgroundColor="@color/white"
             app:counterEnabled="true"
             app:counterMaxLength="40"
-            app:layout_constraintBottom_toTopOf="@+id/btn_create_account"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -96,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
-                android:text="@={model.username}" />
+                app:textChanges="@{(flow) -> presenter.onUsernameTextChanged(flow)}" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -104,15 +88,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_xx_medium"
+            android:enabled="@{model.finishEnabled}"
             android:onClick="@{() -> presenter.onFinish()}"
             android:paddingVertical="@dimen/padding_x_small"
             android:text="@string/create_account"
-            app:cornerRadius="@dimen/radius_large"
+            app:cornerRadius="@dimen/radius_medium"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edittext_username" />
+            app:layout_constraintTop_toBottomOf="@+id/edittext_username"
+            app:layout_constraintVertical_bias="0.16"
+            app:visibleGone="@{!model.loading}" />
+
+        <ProgressBar
+            android:id="@+id/loading_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_xx_medium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edittext_username"
+            app:layout_constraintVertical_bias="0.16"
+            app:visibleGone="@{model.loading}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

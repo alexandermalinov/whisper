@@ -1,4 +1,4 @@
-package com.example.whisper.ui.base.textchange
+package com.example.whisper.ui.base
 
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.ui.base.BaseViewModel
@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-abstract class BaseTextViewModel : BaseViewModel() {
+abstract class BaseInputChangeViewModel : BaseViewModel() {
 
     /* --------------------------------------------------------------------------------------------
      * Protected
@@ -24,5 +24,10 @@ abstract class BaseTextViewModel : BaseViewModel() {
             .debounce(delay)
             .onEach { fetchData(it) }
             .launchIn(viewModelScope)
+    }
+
+    companion object {
+        const val PASSWORD_MIN_LENGTH = 8
+        const val USERNAME_MIN_LENGTH = 4
     }
 }
