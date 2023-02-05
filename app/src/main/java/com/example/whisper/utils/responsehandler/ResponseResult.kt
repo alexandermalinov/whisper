@@ -1,4 +1,4 @@
-package com.connection.utils.responsehandler
+package com.example.whisper.utils.responsehandler
 
 sealed class ResponseResult
 

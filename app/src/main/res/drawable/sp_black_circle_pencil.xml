@@ -1,0 +1,21 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+
+            <solid android:color="@color/cactus_green" />
+            <stroke
+                android:width="2dp"
+                android:color="@color/black" />
+
+            <padding
+                android:bottom="@dimen/padding_pre_small"
+                android:left="@dimen/padding_pre_small"
+                android:right="@dimen/padding_pre_small"
+                android:top="@dimen/padding_pre_small" />
+        </shape>
+
+    </item>
+
+    <item android:drawable="@drawable/ic_pencil" />
+
+</layer-list>

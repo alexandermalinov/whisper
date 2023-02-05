@@ -38,11 +38,19 @@
 
     <!-- Input Text -->
     <style name="RoundedInputText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
-        <item name="errorEnabled">true</item>
         <item name="boxCornerRadiusBottomEnd">@dimen/radius_medium</item>
         <item name="boxCornerRadiusBottomStart">@dimen/radius_medium</item>
         <item name="boxCornerRadiusTopEnd">@dimen/radius_medium</item>
         <item name="boxCornerRadiusTopStart">@dimen/radius_medium</item>
     </style>
+
+    <style name="ChipStepsStyle" parent="ShapeAppearanceOverlay.Material3.Chip">
+        <item name="chipStrokeWidth">2dp</item>
+        <item name="android:padding">2dp</item>
+        <item name="chipBackgroundColor">@color/sl_chip</item>
+        <item name="chipStrokeColor">@color/cactus_green</item>
+
+
+        </style>
 
 </resources>

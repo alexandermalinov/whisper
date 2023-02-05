@@ -2,28 +2,33 @@ package com.example.whisper.ui.signup
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.example.whisper.R
-import com.example.whisper.databinding.FragmentSignUpBinding
+import com.example.whisper.databinding.FragmentSignUpStepOneBinding
 import com.example.whisper.ui.base.BaseFragment
+import com.example.whisper.utils.common.collectState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
+class SignUpStepOneFragment : BaseFragment<FragmentSignUpStepOneBinding>() {
 
     /* --------------------------------------------------------------------------------------------
      * Properties
     ---------------------------------------------------------------------------------------------*/
-    private val viewModel: SignUpViewModel by viewModels()
+    private val viewModel: SignUpViewModel by activityViewModels()
 
     /* --------------------------------------------------------------------------------------------
      * Override
     ---------------------------------------------------------------------------------------------*/
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeNavigation(viewModel.navigationLiveData)
         initUi()
+        observeLiveData()
+        observeNavigation(viewModel.navigationLiveData)
+        observeDialogLiveData(viewModel.dialogLiveData)
     }
+
+    override fun getLayoutId(): Int = R.layout.fragment_sign_up_step_one
 
     /* --------------------------------------------------------------------------------------------
      * Private
@@ -32,5 +37,11 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding>() {
         dataBinding.presenter = viewModel
     }
 
-    override fun getLayoutId(): Int = R.layout.fragment_sign_up
+    private fun observeLiveData() {
+        collectState {
+            viewModel.uiState.collect { uiModel ->
+                dataBinding.model = uiModel
+            }
+        }
+    }
 }
