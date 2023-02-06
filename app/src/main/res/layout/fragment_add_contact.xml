@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="model"
+            type="com.example.whisper.vo.addcontact.AddContactUiModel" />
+
+        <variable
+            name="presenter"
+            type="com.example.whisper.ui.signin.SignInPresenter" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/padding_xx_medium"
+        android:paddingTop="@dimen/padding_xx_medium">
+
+        <TextView
+            android:id="@+id/text_add_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:fontFamily="@font/core_sans_regular"
+            android:text="@string/screen_title_add_contact"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_xx_medium"
+            android:textStyle="bold" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_large"
+            android:background="@drawable/sp_edittext"
+            android:drawableStart="@drawable/search"
+            android:drawablePadding="@dimen/padding_x_small"
+            android:hint="@string/enter_username"
+            android:padding="@dimen/padding_x_small" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_contacts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_medium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_app_name"
+            tools:listitem="@layout/item_add_contact" />
+
+    </LinearLayout>
+
+</layout>

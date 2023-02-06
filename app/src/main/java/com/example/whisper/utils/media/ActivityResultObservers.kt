@@ -1,4 +1,4 @@
-package com.connection.utils.image
+package com.example.whisper.utils.media
 
 import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
@@ -8,7 +8,6 @@ import androidx.lifecycle.LifecycleOwner
 import com.example.whisper.navigation.External
 import com.example.whisper.utils.common.IMAGE_TYPE
 import com.example.whisper.utils.common.SELECT_IMAGE_KEY
-import com.example.whisper.utils.media.GetImage
 
 interface ActivityResultHandler {
 

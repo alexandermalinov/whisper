@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "527197908119",
+    "firebase_url": "https://connection-18947-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "connection-18947",
+    "storage_bucket": "connection-18947.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527197908119:android:4e8d2fd42f5ad4f47b0dd2",
+        "android_client_info": {
+          "package_name": "com.connection"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "527197908119-8hu8fcjrhj2poi4voa0kruopohma9pvj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd2jXDNzRt4IMceOAfa86CVEQs5a0mEmc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "527197908119-8hu8fcjrhj2poi4voa0kruopohma9pvj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527197908119:android:1c213bea67dcf08c7b0dd2",
+        "android_client_info": {
+          "package_name": "com.example.whisper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "527197908119-8hu8fcjrhj2poi4voa0kruopohma9pvj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd2jXDNzRt4IMceOAfa86CVEQs5a0mEmc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "527197908119-8hu8fcjrhj2poi4voa0kruopohma9pvj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527197908119:android:27baf016eca85b547b0dd2",
+        "android_client_info": {
+          "package_name": "com.whisper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "527197908119-8hu8fcjrhj2poi4voa0kruopohma9pvj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd2jXDNzRt4IMceOAfa86CVEQs5a0mEmc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "527197908119-8hu8fcjrhj2poi4voa0kruopohma9pvj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

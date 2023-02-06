@@ -5,53 +5,61 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/splashFragment">
 
-
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.example.whisper.ui.splash.SplashFragment"
         android:label="fragment_splash"
-        tools:layout="@layout/fragment_splash" >
-        <action
-            android:id="@+id/action_splashFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment"
-            app:popUpTo="@id/splashFragment"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_splashFragment_to_signInFragment"
-            app:destination="@id/signInFragment"
-            app:popUpTo="@id/splashFragment"
-            app:popUpToInclusive="true" />
+        tools:layout="@layout/fragment_splash">
         <action
             android:id="@+id/action_splashFragment_to_recentChatsFragment"
             app:destination="@id/recentChatsFragment"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.example.whisper.ui.signup.SignUpFragment"
+        android:name="com.example.whisper.ui.signup.SignUpStepOneFragment"
         android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up" >
+        tools:layout="@layout/fragment_sign_up_step_one">
         <action
-            android:id="@+id/action_signUpFragment_to_signInFragment"
-            app:destination="@id/signInFragment" />
-        <action
-            android:id="@+id/action_signUpFragment_to_recentChatsFragment"
-            app:destination="@id/recentChatsFragment"
+            android:id="@+id/action_signUpFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/slide_down"
+            app:popEnterAnim="@anim/slide_up"
+            app:popExitAnim="@anim/slide_down"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_signUpFragment_to_signUpStepTwoFragment"
+            app:destination="@id/signUpStepTwoFragment"
+            app:enterAnim="@anim/slide_up" />
     </fragment>
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.example.whisper.ui.signin.SignInFragment"
         android:label="fragment_sign_in"
-        tools:layout="@layout/fragment_sign_in" >
+        tools:layout="@layout/fragment_sign_in">
         <action
             android:id="@+id/action_signInFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment" />
+            app:destination="@id/signUpFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right" />
         <action
             android:id="@+id/action_signInFragment_to_recentChatsFragment"
             app:destination="@id/recentChatsFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_signInFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
     </fragment>
@@ -60,4 +68,53 @@
         android:name="com.example.whisper.ui.recentchats.RecentChatsFragment"
         android:label="fragment_recent_chats"
         tools:layout="@layout/fragment_recent_chats" />
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.example.whisper.ui.welcome.WelcomeFragment"
+        android:label="WelcomeFragment">
+        <action
+            android:id="@+id/action_welcomeFragment_to_signInFragment"
+            app:destination="@id/signInFragment"
+            app:enterAnim="@anim/slide_up" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment"
+            app:enterAnim="@anim/slide_up" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpStepTwoFragment"
+        android:name="com.example.whisper.ui.signup.SignUpStepTwoFragment"
+        android:label="SignUpStepTwoFragment">
+        <action
+            android:id="@+id/action_signUpStepTwoFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/slide_down"
+            app:popEnterAnim="@anim/slide_up"
+            app:popExitAnim="@anim/slide_down" />
+        <action
+            android:id="@+id/action_signUpStepTwoFragment_to_recentChatsFragment"
+            app:destination="@id/recentChatsFragment"
+            app:enterAnim="@anim/slide_up" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactsFragment"
+        android:name="com.example.whisper.ui.contacts.ContactsFragment"
+        android:label="ContactsFragment">
+        <action
+            android:id="@+id/action_contactsFragment_to_addContactFragment"
+            app:destination="@id/addContactFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addContactFragment"
+        android:name="com.example.whisper.ui.addcontact.AddContactFragment"
+        android:label="AddContactFragment">
+        <action
+            android:id="@+id/action_addContactFragment_to_peerToPeerChatFragment"
+            app:destination="@id/peerToPeerChatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/peerToPeerChatFragment"
+        android:name="com.example.whisper.ui.chat.peertopeer.PeerToPeerChatFragment"
+        android:label="PeerToPeerChatFragment" />
 </navigation>

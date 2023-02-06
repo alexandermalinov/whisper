@@ -5,7 +5,7 @@ import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.ui.base.BaseViewModel
 import javax.inject.Inject
 
-class RecentChatsViewModel : BaseViewModel() {
+class RecentChatsViewModel @Inject constructor() : BaseViewModel() {
 
 
 }

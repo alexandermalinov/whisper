@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="model"
+            type="com.example.whisper.vo.contacts.ContactUiModel" />
+
+        <variable
+            name="presenter"
+            type="com.example.whisper.ui.addcontact.AddContactPresenter" />
+
+        <import type="com.example.whisper.R" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/padding_medium">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image_user_photo"
+            android:layout_width="@dimen/profile_pre_small"
+            android:layout_height="@dimen/profile_pre_small"
+            app:defaultGlideRes="@{R.drawable.ic_avatar}"
+            app:glideRes="@{model.pictureUrl}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            tools:src="@drawable/ic_avatar" />
+
+        <TextView
+            android:id="@+id/text_user_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_medium"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{model.username}"
+            android:textSize="@dimen/text_medium"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
+            app:layout_constraintEnd_toStartOf="@+id/checkBox_add"
+            app:layout_constraintStart_toEndOf="@+id/image_user_photo"
+            app:layout_constraintTop_toTopOf="@+id/image_user_photo"
+            tools:text="John Smith" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/checkBox_add"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> presenter.addContact(model.contactId)}"
+            android:text="@string/add"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteY="16dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

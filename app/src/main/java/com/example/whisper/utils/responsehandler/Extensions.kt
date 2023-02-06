@@ -1,6 +1,5 @@
-package com.connection.utils.responsehandler
+package com.example.whisper.utils.responsehandler
 
-import com.example.whisper.utils.responsehandler.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString

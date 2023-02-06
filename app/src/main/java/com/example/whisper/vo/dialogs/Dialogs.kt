@@ -16,7 +16,7 @@ open class TitleMessageDialog(
     @StringRes val title: Int = INVALID_RES,
     @StringRes val message: Int = INVALID_RES,
     @StringRes val positiveButtonText: Int = R.string.ok,
-    @StringRes val negativeButtonText: Int = R.string.cancel,
+    @StringRes val negativeButtonText: Int? = null,
     val positiveButtonClickListener: (() -> Unit)? = null,
     val negativeButtonClickListener: (() -> Unit)? = null,
     val cancelable: Boolean = true

@@ -1,17 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    // Bottom Navigation
+    <!--Bottom Navigation-->
     <style name="Widget.MyTheme.BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
         <item name="elevationOverlayEnabled">false</item>
         <item name="elevation">0dp</item>
     </style>
 
-    // Popup Menu
+    <!--Popup Menu-->
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
+
+    <!-- Floating Button-->
+    <style name="FloatingActionButtonStyle" parent="Widget.Design.FloatingActionButton">
+        <item name="shapeAppearanceOverlay">@style/FabButtonCircle</item>
+        <item name="android:drawableTint">@color/white</item>
+    </style>
+
+    <style name="FabButtonCircle" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Rectangle Image -->
+    <style name="RectangleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">25%</item>
+    </style>
+
+    <!-- Circle Image -->
+    <style name="CircleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Input Text -->
+    <style name="RoundedInputText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_medium</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_medium</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_medium</item>
+        <item name="boxCornerRadiusTopStart">@dimen/radius_medium</item>
+    </style>
+
+    <style name="ChipStepsStyle" parent="ShapeAppearanceOverlay.Material3.Chip">
+        <item name="chipStrokeWidth">2dp</item>
+        <item name="android:padding">2dp</item>
+        <item name="chipBackgroundColor">@color/sl_chip</item>
+        <item name="chipStrokeColor">@color/cactus_green</item>
+
+
+        </style>
 
 </resources>
