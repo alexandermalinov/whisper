@@ -36,10 +36,7 @@ data class SignUpUiModel(
 ) {
     fun enableContinueButton() = emailErrorEnabled.not() &&
             passwordErrorEnabled.not() &&
-            confirmPasswordErrorEnabled.not() &&
-            email.isNotBlank() &&
-            password.isNotBlank() &&
-            confirmPassword.isNotBlank()
+            confirmPasswordErrorEnabled.not()
 }
 
 fun SignUpUiModel.toUserModel(id: String) = UserModel(

@@ -8,6 +8,7 @@ import com.example.whisper.data.repository.user.UserLocalSource
 import com.example.whisper.data.repository.user.UserRemoteSource
 import com.example.whisper.data.repository.user.UserRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,8 +26,10 @@ class RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideUserRemoteSource(firebaseAuth: FirebaseAuth): UserRepository.RemoteSource =
-        UserRemoteSource(firebaseAuth)
+    fun provideUserRemoteSource(
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore
+    ): UserRepository.RemoteSource = UserRemoteSource(firebaseAuth, firestore)
 
     @Singleton
     @Provides

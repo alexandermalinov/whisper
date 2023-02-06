@@ -2,6 +2,7 @@ package com.example.whisper.vo.contacts
 
 import com.example.whisper.utils.common.EMPTY
 import com.sendbird.android.GroupChannel
+import com.sendbird.android.User
 
 data class ContactUiModel(
     val contactId: String = EMPTY,
@@ -25,6 +26,14 @@ fun GroupChannel.toContactUiModel(loggedUserId: String): ContactUiModel {
 
 fun List<GroupChannel>.toContactsUiModel(loggedUserId: String) =
     map { it.toContactUiModel(loggedUserId) }
+
+fun List<User>.toContactsUiModel() = map { user ->
+    ContactUiModel(
+        contactId = user.userId,
+        pictureUrl = user.profileUrl,
+        username = user.nickname
+    )
+}
 
 /* -------------------------------------------------------------------------------------------------
  * Private

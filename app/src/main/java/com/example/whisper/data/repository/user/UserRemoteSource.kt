@@ -3,18 +3,22 @@ package com.example.whisper.data.repository.user
 import com.example.whisper.data.remote.model.user.UserModel
 import com.example.whisper.data.remote.model.user.toMap
 import com.example.whisper.utils.common.EMPTY
+import com.example.whisper.utils.common.USER_EMAIL
+import com.example.whisper.utils.common.USER_PASSWORD
+import com.example.whisper.utils.common.USER_USERNAME
 import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
 import com.example.whisper.utils.responsehandler.ResponseResultOk
 import com.google.firebase.auth.FirebaseAuth
-import com.google.rpc.context.AttributeContext.Auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.sendbird.android.SendBird
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
 class UserRemoteSource @Inject constructor(
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
 ) : UserRepository.RemoteSource {
 
     override suspend fun registerFirebaseAuth(
@@ -22,10 +26,23 @@ class UserRemoteSource @Inject constructor(
         password: String,
         block: (Either<HttpError, String>) -> Unit
     ) {
+        // register user in firebase authentication
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    block.invoke(Either.right(task.result?.user?.uid ?: EMPTY))
+                    val id = task.result?.user?.uid ?: return@addOnCompleteListener
+                    val user = hashMapOf(USER_EMAIL to email, USER_PASSWORD to password)
+                    // register user in firebase firestore
+                   /* firestore.collection(USER_COLLECTION).document(id)
+                        .set(user)
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                block.invoke(Either.right(id))
+                            } else {
+                                block.invoke(Either.left(HttpError(serverMessage = task.exception?.message)))
+                            }
+                        }*/
+                    block.invoke(Either.right(id))
                 } else {
                     block.invoke(Either.left(HttpError(serverMessage = task.exception?.message)))
                 }
@@ -98,5 +115,9 @@ class UserRemoteSource @Inject constructor(
                 block.invoke(Either.right(ResponseResultOk))
             }
         }
+    }
+
+    companion object {
+        private const val USER_COLLECTION = "user"
     }
 }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.example.whisper.utils.common.USER_SHARED_PREFS_KEY
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
@@ -35,4 +36,8 @@ object AppModule {
     @Singleton
     @Provides
     fun provideFirebaseAuth() = Firebase.auth
+
+    @Singleton
+    @Provides
+    fun provideFirebaseFirestore() = Firebase.firestore
 }
