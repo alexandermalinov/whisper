@@ -1,4 +1,4 @@
-package com.example.whisper.ui.dialogs
+package com.example.whisper.ui.utils.dialogs
 
 import android.app.AlertDialog
 import android.content.Context

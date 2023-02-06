@@ -5,21 +5,26 @@ import android.net.Uri
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.TextView
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.example.whisper.R
 import com.google.android.material.imageview.ShapeableImageView
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.util.concurrent.TimeUnit
+import kotlin.math.absoluteValue
 
 @BindingAdapter("visibleGone")
 fun View.setVisibility(show: Boolean) {
     visibility = if (show) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter("visibleInvisible")
+fun View.setVisibleInvisible(show: Boolean) {
+    visibility = if (show) View.VISIBLE else View.INVISIBLE
 }
 
 @BindingAdapter("inputError")
@@ -81,4 +86,26 @@ fun TextView.setTextBold(shouldBoldText: Boolean) {
 @BindingAdapter("textChanges")
 fun EditText.setTextChange(callback: TextChangesCallback) {
     callback.textChanges(textChanges())
+}
+
+@BindingAdapter("audioTime")
+fun TextView.setAudioTime(time: Long) {
+    val hms = String.format(
+        "%02d:%02d:%02d.%03d",
+        TimeUnit.MILLISECONDS.toHours(time),
+        TimeUnit.MILLISECONDS.toMinutes(time) % TimeUnit.HOURS.toMinutes(1),
+        TimeUnit.MILLISECONDS.toSeconds(time) % TimeUnit.MINUTES.toSeconds(1),
+        time % 1000
+    )
+    text = hms
+}
+
+@BindingAdapter("audioProgress", "audioDuration")
+fun SeekBar.setAudioTime(time: Long, audioDuration: Long) {
+    progress = (time - audioDuration).absoluteValue.toInt()
+}
+
+@BindingAdapter("audioMaxValue")
+fun SeekBar.setAudioMaxValue(maxValue: Int) {
+    max = maxValue
 }

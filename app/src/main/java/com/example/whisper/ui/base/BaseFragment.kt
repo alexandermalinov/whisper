@@ -12,7 +12,7 @@ import com.connection.menu.MenuUiModel
 import com.connection.menu.showMenu
 import com.example.whisper.navigation.Destination
 import com.example.whisper.navigation.navigate
-import com.example.whisper.ui.dialogs.showDialog
+import com.example.whisper.ui.utils.dialogs.showDialog
 import com.example.whisper.vo.dialogs.Dialog
 
 abstract class BaseFragment<T : ViewDataBinding> : Fragment() {

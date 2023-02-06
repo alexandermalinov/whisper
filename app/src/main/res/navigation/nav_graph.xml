@@ -9,7 +9,7 @@
         android:id="@+id/splashFragment"
         android:name="com.example.whisper.ui.splash.SplashFragment"
         android:label="fragment_splash"
-        tools:layout="@layout/fragment_splash" >
+        tools:layout="@layout/fragment_splash">
         <action
             android:id="@+id/action_splashFragment_to_recentChatsFragment"
             app:destination="@id/recentChatsFragment"
@@ -25,7 +25,7 @@
         android:id="@+id/signUpFragment"
         android:name="com.example.whisper.ui.signup.SignUpStepOneFragment"
         android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up_step_one" >
+        tools:layout="@layout/fragment_sign_up_step_one">
         <action
             android:id="@+id/action_signUpFragment_to_welcomeFragment"
             app:destination="@id/welcomeFragment"
@@ -44,14 +44,14 @@
         android:id="@+id/signInFragment"
         android:name="com.example.whisper.ui.signin.SignInFragment"
         android:label="fragment_sign_in"
-        tools:layout="@layout/fragment_sign_in" >
+        tools:layout="@layout/fragment_sign_in">
         <action
             android:id="@+id/action_signInFragment_to_signUpFragment"
             app:destination="@id/signUpFragment"
             app:enterAnim="@anim/from_right"
             app:exitAnim="@anim/to_left"
             app:popEnterAnim="@anim/from_left"
-            app:popExitAnim="@anim/to_right"/>
+            app:popExitAnim="@anim/to_right" />
         <action
             android:id="@+id/action_signInFragment_to_recentChatsFragment"
             app:destination="@id/recentChatsFragment"
@@ -71,7 +71,7 @@
     <fragment
         android:id="@+id/welcomeFragment"
         android:name="com.example.whisper.ui.welcome.WelcomeFragment"
-        android:label="WelcomeFragment" >
+        android:label="WelcomeFragment">
         <action
             android:id="@+id/action_welcomeFragment_to_signInFragment"
             app:destination="@id/signInFragment"
@@ -84,7 +84,7 @@
     <fragment
         android:id="@+id/signUpStepTwoFragment"
         android:name="com.example.whisper.ui.signup.SignUpStepTwoFragment"
-        android:label="SignUpStepTwoFragment" >
+        android:label="SignUpStepTwoFragment">
         <action
             android:id="@+id/action_signUpStepTwoFragment_to_signUpFragment"
             app:destination="@id/signUpFragment"
@@ -100,5 +100,21 @@
     <fragment
         android:id="@+id/contactsFragment"
         android:name="com.example.whisper.ui.contacts.ContactsFragment"
-        android:label="ContactsFragment" />
+        android:label="ContactsFragment">
+        <action
+            android:id="@+id/action_contactsFragment_to_addContactFragment"
+            app:destination="@id/addContactFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addContactFragment"
+        android:name="com.example.whisper.ui.addcontact.AddContactFragment"
+        android:label="AddContactFragment">
+        <action
+            android:id="@+id/action_addContactFragment_to_peerToPeerChatFragment"
+            app:destination="@id/peerToPeerChatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/peerToPeerChatFragment"
+        android:name="com.example.whisper.ui.chat.peertopeer.PeerToPeerChatFragment"
+        android:label="PeerToPeerChatFragment" />
 </navigation>

@@ -5,7 +5,6 @@ import com.example.whisper.data.repository.contacts.ConnectionStatus
 import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.vo.contacts.ContactUiModel
-import com.example.whisper.vo.contacts.ContactsUiState
 import com.example.whisper.vo.contacts.toContactsUiModel
 import com.sendbird.android.SendBird
 import com.sendbird.android.User

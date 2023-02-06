@@ -50,5 +50,9 @@
 
     <!-- Recent Chats Screen -->
 
+    <!-- Add Contact Screen -->
+    <string name="screen_title_add_contact">Add Contact</string>
+    <string name="add">Add</string>
+
 
 </resources>

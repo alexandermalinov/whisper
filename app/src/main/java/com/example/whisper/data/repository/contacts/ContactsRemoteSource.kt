@@ -4,7 +4,8 @@ import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
 import com.sendbird.android.GroupChannel
 import com.sendbird.android.GroupChannelListQuery
-import javax.inject.Inject
+import com.sendbird.android.SendBird
+import com.sendbird.android.User
 
 
 class ContactsRemoteSource : ContactsRepository.RemoteSource {
@@ -21,7 +22,7 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
     private fun getConnectionStatus(filter: ConnectionStatus) = when (filter) {
         ConnectionStatus.CONNECTED -> GroupChannelListQuery.MemberStateFilter.ALL
         ConnectionStatus.INVITE_RECEIVED -> GroupChannelListQuery.MemberStateFilter.INVITED
-        else -> GroupChannelListQuery.MemberStateFilter.INVITED
+        else -> GroupChannelListQuery.MemberStateFilter.ALL
     }
 
     /* --------------------------------------------------------------------------------------------
@@ -36,6 +37,33 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
                 block.invoke(Either.right(channels))
             } else {
                 block.invoke(Either.left(HttpError(serverMessage = error.message)))
+            }
+        }
+    }
+
+    override suspend fun getNotConnectedUsers(block: (Either<HttpError, List<User>>) -> Unit) {
+        // SendBird.createFriendListQuery().next()
+        // SendBird.addFriends()
+
+        listQuery(ConnectionStatus.ALL).next { channels, sendBirdException ->
+            if (sendBirdException != null) {
+                block.invoke(Either.left(HttpError(serverMessage = sendBirdException.message)))
+                return@next
+            }
+            val connectedUsersIds = channels.map { channel ->
+                channel.members
+                    .first { member -> member.userId != SendBird.getCurrentUser().userId }
+                    .userId
+            }
+
+            SendBird.createApplicationUserListQuery().next { allUsers, sendBirdException ->
+                if (sendBirdException == null) {
+                    allUsers.filter { user -> connectedUsersIds.none { it == user.userId } }.let {
+                        block.invoke(Either.right(it))
+                    }
+                } else {
+                    block.invoke(Either.left(HttpError(serverMessage = sendBirdException.message)))
+                }
             }
         }
     }

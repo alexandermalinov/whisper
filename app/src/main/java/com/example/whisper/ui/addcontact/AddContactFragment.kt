@@ -1,22 +1,22 @@
-package com.example.whisper.ui.contacts
+package com.example.whisper.ui.addcontact
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.whisper.R
-import com.example.whisper.databinding.FragmentContactsBinding
+import com.example.whisper.databinding.FragmentAddContactBinding
 import com.example.whisper.ui.base.BaseFragment
 import com.example.whisper.utils.common.collectState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
+class AddContactFragment : BaseFragment<FragmentAddContactBinding>() {
 
     /* --------------------------------------------------------------------------------------------
      * Properties
     ---------------------------------------------------------------------------------------------*/
-    private val viewModel: ContactsViewModel by viewModels()
+    private val viewModel: AddContactViewModel by viewModels()
 
     /* --------------------------------------------------------------------------------------------
      * Override
@@ -24,31 +24,31 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUiData()
-        collectUiStates()
         observeNavigation(viewModel.navigationLiveData)
+        observeDialogLiveData(viewModel.dialogLiveData)
     }
 
-    override fun getLayoutId(): Int = R.layout.fragment_contacts
+    override fun getLayoutId(): Int = R.layout.fragment_add_contact
 
     /* --------------------------------------------------------------------------------------------
      * Private
     ---------------------------------------------------------------------------------------------*/
     private fun initUiData() {
-        dataBinding.presenter = viewModel
         initConnectionsRecyclerView()
+        collectUiStates()
     }
 
     private fun initConnectionsRecyclerView() {
         dataBinding.recyclerContacts.apply {
-            adapter = ContactsAdapter(viewModel)
+            adapter = AddContactAdapter(viewModel)
             layoutManager = LinearLayoutManager(context)
         }
     }
 
     private fun collectUiStates() {
         collectState {
-            viewModel.contacts.collect { contacts ->
-                (dataBinding.recyclerContacts.adapter as ContactsAdapter).submitList(contacts)
+            viewModel.uiState.collect { uiState ->
+                (dataBinding.recyclerContacts.adapter as AddContactAdapter).submitList(uiState.contacts)
             }
         }
     }
