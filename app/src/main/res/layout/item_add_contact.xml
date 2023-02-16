@@ -20,14 +20,17 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/padding_medium">
+        android:animateLayoutChanges="true"
+        android:paddingTop="@dimen/padding_medium">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image_user_photo"
             android:layout_width="@dimen/profile_pre_small"
             android:layout_height="@dimen/profile_pre_small"
+            android:layout_marginBottom="@dimen/margin_medium"
             app:defaultGlideRes="@{R.drawable.ic_avatar}"
             app:glideRes="@{model.pictureUrl}"
+            app:layout_constraintBottom_toTopOf="@+id/view"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/CircleImageView"
@@ -44,23 +47,47 @@
             android:textSize="@dimen/text_medium"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
-            app:layout_constraintEnd_toStartOf="@+id/checkBox_add"
+            app:layout_constraintEnd_toStartOf="@+id/button_add"
             app:layout_constraintStart_toEndOf="@+id/image_user_photo"
             app:layout_constraintTop_toTopOf="@+id/image_user_photo"
             tools:text="John Smith" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/checkBox_add"
+            android:id="@+id/button_add"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{() -> presenter.addContact(model.contactId)}"
+            android:onClick="@{() -> presenter.onAddContactClicked(model.contactId)}"
             android:text="@string/add"
             android:textAllCaps="false"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/image_user_photo"
+            app:visibleInvisible="@{!model.invited}" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_added"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/added"
+            android:textAllCaps="false"
+            app:icon="@drawable/check"
+            app:iconPadding="@dimen/padding_small"
+            app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/image_user_photo"
+            app:visibleInvisible="@{model.invited}" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/eerie_black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteY="16dp" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

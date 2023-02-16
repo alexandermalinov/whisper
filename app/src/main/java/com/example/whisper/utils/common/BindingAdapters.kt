@@ -1,8 +1,10 @@
 package com.example.whisper.utils.common
 
+import android.content.Context
 import android.graphics.Typeface
 import android.net.Uri
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.SeekBar
@@ -11,11 +13,13 @@ import androidx.annotation.StringRes
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.example.whisper.R
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
+
 
 @BindingAdapter("visibleGone")
 fun View.setVisibility(show: Boolean) {
@@ -108,4 +112,21 @@ fun SeekBar.setAudioTime(time: Long, audioDuration: Long) {
 @BindingAdapter("audioMaxValue")
 fun SeekBar.setAudioMaxValue(maxValue: Int) {
     max = maxValue
+}
+
+@BindingAdapter("startShimmerAnimation")
+fun ShimmerFrameLayout.setStartShimmerAnimation(startShimmer: Boolean) {
+    if (startShimmer) startShimmer() else stopShimmer()
+}
+
+@BindingAdapter("hideKeyboard")
+fun EditText.setHideKeyboard(hideKeyboard: Boolean) {
+    val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(this.windowToken, 0)
+}
+
+@BindingAdapter("showKeyboard")
+fun EditText.setShowKeyboard(showKeyboard: Boolean) {
+    val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }

@@ -24,6 +24,7 @@
     <dimen name="padding_xx_medium">24dp</dimen>
     <dimen name="padding_large">32dp</dimen>
     <dimen name="padding_x_large">36dp</dimen>
+    <dimen name="padding_xx_large">48dp</dimen>
     <dimen name="padding_huge">64dp</dimen>
 
     // Margin
@@ -41,6 +42,7 @@
     <!--Radius-->
     <dimen name="radius_small">6dp</dimen>
     <dimen name="radius_medium">12dp</dimen>
+    <dimen name="radius_x_medium">16dp</dimen>
     <dimen name="radius_large">24dp</dimen>
 
     <!--Elevation-->

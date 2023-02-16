@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentAddContactBinding
 import com.example.whisper.ui.base.BaseFragment
 import com.example.whisper.utils.common.collectState
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class AddContactFragment : BaseFragment<FragmentAddContactBinding>() {
@@ -17,6 +19,7 @@ class AddContactFragment : BaseFragment<FragmentAddContactBinding>() {
      * Properties
     ---------------------------------------------------------------------------------------------*/
     private val viewModel: AddContactViewModel by viewModels()
+    private val linearLayoutManager: LinearLayoutManager = LinearLayoutManager(context)
 
     /* --------------------------------------------------------------------------------------------
      * Override
@@ -34,6 +37,7 @@ class AddContactFragment : BaseFragment<FragmentAddContactBinding>() {
      * Private
     ---------------------------------------------------------------------------------------------*/
     private fun initUiData() {
+        dataBinding.presenter = viewModel
         initConnectionsRecyclerView()
         collectUiStates()
     }
@@ -41,14 +45,26 @@ class AddContactFragment : BaseFragment<FragmentAddContactBinding>() {
     private fun initConnectionsRecyclerView() {
         dataBinding.recyclerContacts.apply {
             adapter = AddContactAdapter(viewModel)
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = linearLayoutManager
         }
     }
 
     private fun collectUiStates() {
         collectState {
             viewModel.uiState.collect { uiState ->
-                (dataBinding.recyclerContacts.adapter as AddContactAdapter).submitList(uiState.contacts)
+                dataBinding.model = uiState
+            }
+        }
+
+        collectState {
+            viewModel.users.collect { users ->
+                (dataBinding.recyclerContacts.adapter as AddContactAdapter).submitList(users)
+            }
+        }
+
+        collectState {
+            viewModel.addContactEvents.collect { event ->
+                dataBinding.event = event
             }
         }
     }

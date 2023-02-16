@@ -3,6 +3,12 @@ package com.example.whisper.vo.addcontact
 import com.example.whisper.vo.contacts.ContactUiModel
 
 data class AddContactUiModel(
-    val contacts: List<ContactUiModel> = emptyList(),
-    val isLoading: Boolean = false,
+    val state: AddContactUiState = AddContactUiState.SEARCH_FOUND
 )
+
+enum class AddContactUiState {
+    LOADING,
+    SEARCH_EMPTY,
+    SEARCH_FOUND,
+    ERROR
+}

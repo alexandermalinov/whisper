@@ -18,4 +18,7 @@
     <color name="milky_white">#E0E0E0</color>
     <color name="normal_green">#4CAF50</color>
     <color name="error_red">#FF1744</color>
+
+    <!-- Placeholders -->
+    <color name="placeholder_main">#dddddd</color>
 </resources>

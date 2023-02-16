@@ -121,6 +121,7 @@ dependencies {
 
     // Sendbird SDK
     implementation 'com.sendbird.sdk:sendbird-android-sdk:3.1.22'
+    // implementation 'com.sendbird.sdk:sendbird-chat:4.3.0'
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:29.1.0')
@@ -128,4 +129,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
     implementation 'com.google.firebase:firebase-iid'
+
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
 }

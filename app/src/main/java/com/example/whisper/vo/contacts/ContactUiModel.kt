@@ -1,6 +1,7 @@
 package com.example.whisper.vo.contacts
 
 import com.example.whisper.utils.common.EMPTY
+import com.example.whisper.utils.common.USER_EMAIL
 import com.sendbird.android.GroupChannel
 import com.sendbird.android.User
 
@@ -8,7 +9,9 @@ data class ContactUiModel(
     val contactId: String = EMPTY,
     val pictureUrl: String = EMPTY,
     val username: String = EMPTY,
-    val channelUrl: String = EMPTY
+    val email: String = EMPTY,
+    val channelUrl: String = EMPTY,
+    val isInvited: Boolean = false,
 )
 
 /* -------------------------------------------------------------------------------------------------
@@ -31,7 +34,8 @@ fun List<User>.toContactsUiModel() = map { user ->
     ContactUiModel(
         contactId = user.userId,
         pictureUrl = user.profileUrl,
-        username = user.nickname
+        username = user.nickname,
+        email = user.metaData[USER_EMAIL] ?: EMPTY
     )
 }
 
