@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
 import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.user.UserRepository
-import com.example.whisper.navigation.NavGraph
 import com.example.whisper.navigation.PopBackStack
 import com.example.whisper.ui.base.BaseChatViewModel
 import com.example.whisper.utils.common.EMPTY
@@ -13,6 +12,7 @@ import com.example.whisper.vo.addcontact.AddContactUiModel
 import com.example.whisper.vo.addcontact.AddContactUiState
 import com.example.whisper.vo.contacts.ContactUiModel
 import com.example.whisper.vo.contacts.toContactsUiModel
+import com.example.whisper.vo.dialogs.TitleMessageDialog
 import com.sendbird.android.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -63,22 +63,20 @@ class AddContactViewModel @Inject constructor(
 
     override fun onAddContactClicked(contactId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val contact = _users.value.first { it.contactId == contactId }
-            val contactUiModel = ContactUiModel(
-                contact.contactId,
-                contact.pictureUrl,
-                contact.username,
-                contact.email,
-                contact.channelUrl,
-                true
-            )
-            val contacts = _users.value.filter { it.contactId != contactId }.plus(contactUiModel)
-
+            updateLoadingUser(contactId, true)
             contactsRepository.addContact(contactId) { either ->
                 viewModelScope.launch {
                     either.foldSuspend(
-                        { failure -> },
-                        { success -> _users.emit(contacts) }
+                        { failure ->
+                            updateLoadingUser(contactId, false)
+                            _dialogLiveData.value = TitleMessageDialog(
+                                R.string.error_dialog_title_network,
+                                R.string.error_dialog_message_body_no_network
+                            )
+                        },
+                        { success ->
+                            updateInvitedUser(contactId)
+                        }
                     )
                 }
             }
@@ -109,14 +107,52 @@ class AddContactViewModel @Inject constructor(
     private suspend fun onSearchSuccessful(users: List<User>) {
         _users.emit(users.toContactsUiModel())
 
-        val newUiState = when {
+        when {
             users.isEmpty() -> AddContactUiState.SEARCH_EMPTY
             else -> AddContactUiState.SEARCH_FOUND
+        }.let { newUiState ->
+            changeState(newUiState)
         }
-        changeState(newUiState)
     }
 
     private suspend fun changeState(uiState: AddContactUiState) {
         _uiState.emit(_uiState.value.copy(state = uiState))
+    }
+
+    private suspend fun updateInvitedUser(contactId: String) {
+        val updatedContacts = _users.value.toMutableList()
+        updatedContacts.mapIndexed { index, uiModel ->
+            if (uiModel.contactId == contactId) {
+                val contact = ContactUiModel(
+                    contactId = uiModel.contactId,
+                    pictureUrl = uiModel.pictureUrl,
+                    username = uiModel.username,
+                    email = uiModel.email,
+                    channelUrl = uiModel.channelUrl,
+                    isInvited = true,
+                    isLoading = false
+                )
+                updatedContacts[index] = contact
+            }
+        }
+        _users.emit(updatedContacts)
+    }
+
+    private suspend fun updateLoadingUser(contactId: String, isLoading: Boolean) {
+        val updatedContacts = _users.value.toMutableList()
+        updatedContacts.mapIndexed { index, uiModel ->
+            if (uiModel.contactId == contactId) {
+                val contact = ContactUiModel(
+                    contactId = uiModel.contactId,
+                    pictureUrl = uiModel.pictureUrl,
+                    username = uiModel.username,
+                    email = uiModel.email,
+                    channelUrl = uiModel.channelUrl,
+                    isLoading = isLoading
+                )
+                updatedContacts[index] = contact
+            }
+        }
+        _users.emit(updatedContacts)
     }
 }

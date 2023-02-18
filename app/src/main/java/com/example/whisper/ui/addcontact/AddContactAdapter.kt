@@ -21,7 +21,7 @@ class AddContactAdapter(private val presenter: AddContactPresenter) :
             override fun areContentsTheSame(
                 oldItem: ContactUiModel,
                 newItem: ContactUiModel
-            ) = oldItem.contactId == newItem.contactId
+            ) = oldItem.isInvited == newItem.isInvited && oldItem.isLoading == newItem.isLoading
         }
     ) {
 

@@ -40,8 +40,8 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
             }
             val connectedUsersIds = channels.map { channel ->
                 channel.members
-                    .first { member -> member.userId != SendBird.getCurrentUser().userId }
-                    .userId
+                    .firstOrNull { member -> member.userId != SendBird.getCurrentUser().userId }
+                    ?.userId
             }
 
             searchQuery(username).next { allUsers, exception ->

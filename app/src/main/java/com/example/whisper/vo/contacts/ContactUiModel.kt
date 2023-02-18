@@ -11,7 +11,8 @@ data class ContactUiModel(
     val username: String = EMPTY,
     val email: String = EMPTY,
     val channelUrl: String = EMPTY,
-    val isInvited: Boolean = false,
+    var isInvited: Boolean = false,
+    var isLoading: Boolean = false
 )
 
 /* -------------------------------------------------------------------------------------------------
