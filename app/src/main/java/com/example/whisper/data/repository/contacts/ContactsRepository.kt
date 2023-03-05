@@ -15,7 +15,7 @@ class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
     interface RemoteSource {
 
         suspend fun getContacts(
-            filter: ConnectionStatus,
+            filter: ContactConnectionStatus,
             block: (Either<HttpError, List<GroupChannel>>) -> Unit
         )
 
@@ -34,7 +34,7 @@ class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
      * Exposed
      ---------------------------------------------------------------------------------------------*/
     suspend fun getContacts(
-        filter: ConnectionStatus,
+        filter: ContactConnectionStatus,
         block: (Either<HttpError, List<GroupChannel>>) -> Unit
     ) {
         remote.getContacts(filter, block)

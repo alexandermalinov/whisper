@@ -135,4 +135,7 @@ dependencies {
 
     // Lottie animations
     implementation "com.airbnb.android:lottie:4.2.2"
+
+    // Blur effect
+    // implementation 'io.alterac.blurkit:blurkit:1.1.0'
 }

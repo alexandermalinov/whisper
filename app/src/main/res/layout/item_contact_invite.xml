@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="model"
+            type="com.example.whisper.vo.contacts.ContactUiModel" />
+
+        <variable
+            name="presenter"
+            type="com.example.whisper.ui.contacts.ContactPresenter" />
+
+        <import type="com.example.whisper.R" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/padding_medium">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image_user_photo"
+            android:layout_width="@dimen/profile_pre_small"
+            android:layout_height="@dimen/profile_pre_small"
+            app:defaultGlideRes="@{R.drawable.ic_avatar}"
+            app:glideRes="@{model.pictureUrl}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            tools:src="@drawable/ic_avatar" />
+
+        <TextView
+            android:id="@+id/text_user_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_medium"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{model.username}"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_medium"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/button_accept"
+            app:layout_constraintStart_toEndOf="@+id/image_user_photo"
+            app:layout_constraintTop_toTopOf="@+id/image_user_photo"
+            tools:text="John Smith" />
+
+        <TextView
+            android:id="@+id/text_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_medium"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{model.email}"
+            app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
+            app:layout_constraintEnd_toStartOf="@+id/button_accept"
+            app:layout_constraintStart_toEndOf="@+id/image_user_photo"
+            app:layout_constraintTop_toBottomOf="@+id/text_user_name"
+            tools:text="john_smith@gmail.com" />
+
+        <CheckBox
+            android:id="@+id/button_accept"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:button="@drawable/ic_circle_accept"
+            android:buttonTint="@color/normal_green"
+            app:layout_constraintEnd_toEndOf="@+id/text_accept"
+            app:layout_constraintStart_toStartOf="@+id/text_accept"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text_accept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_tiny"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:text="@string/accept"
+            android:textSize="@dimen/text_x_small"
+            app:layout_constraintEnd_toStartOf="@+id/text_decline"
+            app:layout_constraintTop_toBottomOf="@+id/button_accept" />
+
+        <CheckBox
+            android:id="@+id/button_decline"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:button="@drawable/ic_circle_decline"
+            android:buttonTint="@color/auro_metal_saurus"
+            app:layout_constraintEnd_toEndOf="@+id/text_decline"
+            app:layout_constraintStart_toStartOf="@+id/text_decline"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text_decline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_tiny"
+            android:text="@string/decline"
+            android:textSize="@dimen/text_x_small"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_decline" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

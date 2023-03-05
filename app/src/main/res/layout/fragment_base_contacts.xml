@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="presenter"
+            type="com.example.whisper.ui.basecontacts.BaseContactsPresenter" />
+
+        <variable
+            name="bottomNavigationCallback"
+            type="com.example.whisper.utils.common.BottomNavigationChangesCallback" />
+
+        <variable
+            name="model"
+            type="com.example.whisper.vo.basecontacts.BaseContactsUiModel" />
+
+        <import type="com.example.whisper.R" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:paddingTop="@dimen/padding_medium"
+        tools:context=".ui.basecontacts.BaseContactsFragment">
+
+
+        <TextView
+            android:id="@+id/text_chats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/core_sans_regular"
+            android:text="@{model.pageTitle}"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_xx_medium"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/chats" />
+
+        <CheckBox
+            android:id="@+id/button_add_contact_or_create_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:buttonTint="@color/cactus_green"
+            android:onClick="@{() -> presenter.addContactOrCreateGroup()}"
+            app:buttonIconId="@{model.addContactOrCreateGroupButtonIconId}"
+            app:layout_constraintBottom_toBottomOf="@+id/text_chats"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/text_chats" />
+
+        <CheckBox
+            android:id="@+id/button_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:button="@drawable/search"
+            android:buttonTint="@color/cactus_green"
+            app:layout_constraintBottom_toBottomOf="@+id/text_chats"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/text_chats" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/margin_medium"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_menu"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_search"
+            app:selectViewPagerPage="@{model.viewPagerPosition}" />
+
+       <!-- <View
+            android:id="@+id/view3"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/gradient_fade_black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />-->
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation_menu"
+            style="@style/Widget.MyTheme.BottomNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:DefaultIconId="@{R.drawable.sl_profile}"
+            app:checkBottomNavigationItem="@{model.bottomNavigationItemId}"
+            app:labelVisibilityMode="unlabeled"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/bottom_navigation_menu"
+            app:menuItemId="@{R.id.profileFragment}"
+            app:navigationIconId="@{model.profilePictureUrl}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

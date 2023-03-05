@@ -271,7 +271,7 @@ class SignUpViewModel @Inject constructor(
 
     private fun navigateToRecentChats() {
         _navigationLiveData.value =
-            NavGraph(R.id.action_signUpStepTwoFragment_to_recentChatsFragment)
+            NavGraph(R.id.action_signUpStepTwoFragment_to_baseContactsFragment)
     }
 
     private fun navigateToStepTwo() {

@@ -1,11 +1,12 @@
 package com.example.whisper.ui.addcontact
 
+import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
 import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.navigation.PopBackStack
-import com.example.whisper.ui.base.BaseChatViewModel
+import com.example.whisper.ui.basecontacts.BaseContactsViewModel
 import com.example.whisper.utils.common.EMPTY
 import com.example.whisper.vo.addcontact.AddContactEvents
 import com.example.whisper.vo.addcontact.AddContactUiModel
@@ -23,9 +24,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddContactViewModel @Inject constructor(
+    application: Application,
     userRepository: UserRepository,
-    private val contactsRepository: ContactsRepository
-) : BaseChatViewModel(userRepository, contactsRepository), AddContactPresenter {
+    private val contactsRepository: ContactsRepository,
+) : BaseContactsViewModel(application, userRepository), AddContactPresenter {
 
     val uiState
         get() = _uiState.asStateFlow()

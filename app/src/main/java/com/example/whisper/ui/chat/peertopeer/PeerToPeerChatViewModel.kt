@@ -9,7 +9,7 @@ import com.example.whisper.data.AudioPlayer
 import com.example.whisper.data.AudioRecorder
 import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.user.UserRepository
-import com.example.whisper.ui.base.BaseChatViewModel
+import com.example.whisper.ui.base.BaseViewModel
 import com.example.whisper.utils.SingleLiveEvent
 import com.example.whisper.utils.common.ZERO
 import com.example.whisper.utils.permissions.*
@@ -19,14 +19,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.absoluteValue
 
 @HiltViewModel
 class PeerToPeerChatViewModel @Inject constructor(
     private val application: Application,
     private val userRepository: UserRepository,
     private val contactsRepository: ContactsRepository
-) : BaseChatViewModel(userRepository, contactsRepository), PeerToPeerChatPresenter,
+) : BaseViewModel(), PeerToPeerChatPresenter,
     PermissionStateHandler {
 
     val uiState

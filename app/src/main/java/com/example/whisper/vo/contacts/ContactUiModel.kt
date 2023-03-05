@@ -18,16 +18,6 @@ data class ContactUiModel(
 /* -------------------------------------------------------------------------------------------------
  * Exposed
 --------------------------------------------------------------------------------------------------*/
-fun GroupChannel.toContactUiModel(loggedUserId: String): ContactUiModel {
-    val contact = getContact(loggedUserId)
-    return ContactUiModel(
-        contactId = contact?.userId ?: EMPTY,
-        pictureUrl = contact?.profileUrl ?: EMPTY,
-        username = contact?.nickname ?: EMPTY,
-        channelUrl = url
-    )
-}
-
 fun List<GroupChannel>.toContactsUiModel(loggedUserId: String) =
     map { it.toContactUiModel(loggedUserId) }
 
@@ -43,5 +33,16 @@ fun List<User>.toContactsUiModel() = map { user ->
 /* -------------------------------------------------------------------------------------------------
  * Private
 --------------------------------------------------------------------------------------------------*/
+private fun GroupChannel.toContactUiModel(loggedUserId: String): ContactUiModel {
+    val contact = getContact(loggedUserId)
+    return ContactUiModel(
+        contactId = contact?.userId ?: EMPTY,
+        pictureUrl = contact?.profileUrl ?: EMPTY,
+        username = contact?.nickname ?: EMPTY,
+        email = contact?.metaData?.get(USER_EMAIL) ?: EMPTY,
+        channelUrl = url
+    )
+}
+
 private fun GroupChannel.getContact(currentUserId: String) =
     members.find { it.userId != currentUserId }

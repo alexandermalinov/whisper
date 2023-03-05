@@ -16,6 +16,7 @@
     // Padding
     <dimen name="padding_micro">2dp</dimen>
     <dimen name="padding_tiny">4dp</dimen>
+    <dimen name="padding_x_tiny">6dp</dimen>
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_pre_small">10dp</dimen>
     <dimen name="padding_x_small">12dp</dimen>
@@ -26,6 +27,7 @@
     <dimen name="padding_x_large">36dp</dimen>
     <dimen name="padding_xx_large">48dp</dimen>
     <dimen name="padding_huge">64dp</dimen>
+    <dimen name="padding_extra_huge">148dp</dimen>
 
     // Margin
     <dimen name="margin_micro">2dp</dimen>
@@ -38,9 +40,11 @@
     <dimen name="margin_large">32dp</dimen>
     <dimen name="margin_x_large">36dp</dimen>
     <dimen name="margin_huge">64dp</dimen>
+    <dimen name="margin_x_huge">112dp</dimen>
 
     <!--Radius-->
     <dimen name="radius_small">6dp</dimen>
+    <dimen name="radius_x_small">10dp</dimen>
     <dimen name="radius_medium">12dp</dimen>
     <dimen name="radius_x_medium">16dp</dimen>
     <dimen name="radius_large">24dp</dimen>

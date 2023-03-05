@@ -2,11 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/recentChatsFragment"
-        android:icon="@drawable/sl_home"
+        android:icon="@drawable/sl_chats"
         android:title="@string/recent_chats" />
 
     <item
         android:id="@+id/contactsFragment"
         android:icon="@drawable/sl_contacts"
         android:title="@string/contacts" />
+
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/sl_profile"
+        android:title="@string/profile" />
 </menu>

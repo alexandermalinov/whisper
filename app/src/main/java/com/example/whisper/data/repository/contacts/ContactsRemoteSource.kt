@@ -7,9 +7,9 @@ import com.sendbird.android.*
 
 
 class ContactsRemoteSource : ContactsRepository.RemoteSource {
-    private fun getConnectionStatus(filter: ConnectionStatus) = when (filter) {
-        ConnectionStatus.CONNECTED -> GroupChannelListQuery.MemberStateFilter.ALL
-        ConnectionStatus.INVITE_RECEIVED -> GroupChannelListQuery.MemberStateFilter.INVITED
+    private fun getConnectionStatus(filter: ContactConnectionStatus) = when (filter) {
+        ContactConnectionStatus.CONNECTED -> GroupChannelListQuery.MemberStateFilter.ALL
+        ContactConnectionStatus.INVITE_RECEIVED -> GroupChannelListQuery.MemberStateFilter.INVITED
         else -> GroupChannelListQuery.MemberStateFilter.ALL
     }
 
@@ -17,7 +17,7 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
      * Override
      ---------------------------------------------------------------------------------------------*/
     override suspend fun getContacts(
-        filter: ConnectionStatus,
+        filter: ContactConnectionStatus,
         block: (Either<HttpError, List<GroupChannel>>) -> Unit
     ) {
         listQuery(filter).next { channels, error ->
@@ -33,7 +33,7 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
         username: String,
         block: (Either<HttpError, List<User>>) -> Unit
     ) {
-        listQuery(ConnectionStatus.ALL).next { channels, sendBirdException ->
+        listQuery(ContactConnectionStatus.ALL).next { channels, sendBirdException ->
             if (sendBirdException != null) {
                 block.invoke(Either.left(HttpError(serverMessage = sendBirdException.message)))
                 return@next
@@ -98,7 +98,7 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
         addUserIds(users)
     }
 
-    private fun listQuery(filter: ConnectionStatus) = GroupChannel.createMyGroupChannelListQuery()
+    private fun listQuery(filter: ContactConnectionStatus) = GroupChannel.createMyGroupChannelListQuery()
         .apply {
             isIncludeEmpty = true
             isIncludeMetadata = true

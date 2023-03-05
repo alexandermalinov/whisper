@@ -43,12 +43,23 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
             adapter = ContactsAdapter(viewModel)
             layoutManager = LinearLayoutManager(context)
         }
+        dataBinding.recyclerInvitations.apply {
+            adapter = ContactsInviteAdapter(viewModel)
+            layoutManager = LinearLayoutManager(context)
+        }
     }
 
     private fun collectUiStates() {
         collectState {
+            viewModel.uiState.collect { uiState ->
+                dataBinding.model = uiState
+            }
+        }
+
+        collectState {
             viewModel.contacts.collect { contacts ->
                 (dataBinding.recyclerContacts.adapter as ContactsAdapter).submitList(contacts)
+                (dataBinding.recyclerInvitations.adapter as ContactsInviteAdapter).submitList(contacts)
             }
         }
     }

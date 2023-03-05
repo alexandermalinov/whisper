@@ -35,7 +35,7 @@ class SplashViewModel @Inject constructor(
     }
 
     private fun navigateToHome() {
-        _navigationLiveData.value = NavGraph(R.id.action_splashFragment_to_recentChatsFragment)
+        _navigationLiveData.value = NavGraph(R.id.action_splashFragment_to_baseContactsFragment)
     }
 
     private fun navigateToWelcome() {

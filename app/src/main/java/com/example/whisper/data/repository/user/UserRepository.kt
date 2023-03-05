@@ -53,7 +53,7 @@ class UserRepository @Inject constructor(
 
         suspend fun registerUser(user: User)
 
-        suspend fun getLoggedUser(): User
+        suspend fun getLoggedUser(id: String): User
 
         suspend fun setIsSignedIn(isSignedIn: Boolean)
 
@@ -110,5 +110,5 @@ class UserRepository @Inject constructor(
 
     suspend fun isSignedIn() = local.isSignedIn()
 
-    suspend fun getLoggedUser(): User = local.getLoggedUser()
+    suspend fun getLoggedUser(id: String): User = local.getLoggedUser(id)
 }

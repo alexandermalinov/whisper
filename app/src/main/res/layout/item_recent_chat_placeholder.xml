@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:paddingTop="@dimen/padding_medium">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image_user_photo"
+            android:layout_width="@dimen/profile_pre_small"
+            android:layout_height="@dimen/profile_pre_small"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:src="@color/eerie_black"
+            app:layout_constraintBottom_toTopOf="@+id/text_last_message_timestamp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/CircleImageView" />
+
+        <View
+            android:id="@+id/text_user_name"
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginEnd="@dimen/margin_x_huge"
+            android:background="@color/eerie_black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/image_user_photo"
+            app:layout_constraintTop_toTopOf="@+id/image_user_photo" />
+
+        <View
+            android:id="@+id/text_last_message"
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_xx_medium"
+            android:background="@color/eerie_black"
+            app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/image_user_photo"
+            app:layout_constraintTop_toBottomOf="@+id/text_user_name" />
+
+        <View
+            android:id="@+id/text_last_message_timestamp"
+            android:layout_width="0dp"
+            android:layout_height="0.5dp"
+            android:background="@color/eerie_black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/text_user_name" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

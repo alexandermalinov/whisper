@@ -1,6 +1,6 @@
 package com.example.whisper.data.repository.contacts
 
-enum class ConnectionStatus {
+enum class ContactConnectionStatus {
     ALL,
     CONNECTED,
     NOT_CONNECTED,

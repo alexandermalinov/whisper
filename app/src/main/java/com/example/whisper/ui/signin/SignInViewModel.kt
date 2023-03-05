@@ -139,7 +139,7 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun navigateToRecentChats() {
-        _navigationLiveData.value = NavGraph(R.id.action_signInFragment_to_recentChatsFragment)
+        _navigationLiveData.value = NavGraph(R.id.action_signInFragment_to_baseContactsFragment)
     }
 
     private suspend fun showValidationErrorDialog() {
