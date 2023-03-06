@@ -17,7 +17,9 @@ import com.example.whisper.vo.contacts.ContactsUiState
 import com.example.whisper.vo.contacts.toContactsUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,8 +37,12 @@ class ContactsViewModel @Inject constructor(
     val contacts
         get() = _contacts.asStateFlow()
 
+    val invitationsExpandEvent
+        get() = _invitationsExpandEvent.asStateFlow()
+
     private val _uiState = MutableStateFlow(ContactsUiState())
     private val _contacts = MutableStateFlow(emptyList<ContactUiModel>())
+    private val _invitationsExpandEvent = MutableStateFlow<Boolean>(false)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -62,6 +68,12 @@ class ContactsViewModel @Inject constructor(
     ---------------------------------------------------------------------------------------------*/
     override fun navigateToAddContact() {
         _navigationLiveData.value = NavGraph(R.id.action_baseContactsFragment_to_addContactFragment)
+    }
+
+    override fun expandInvitations() {
+        viewModelScope.launch {
+            _invitationsExpandEvent.emit(_invitationsExpandEvent.value.not())
+        }
     }
 
     /* --------------------------------------------------------------------------------------------
