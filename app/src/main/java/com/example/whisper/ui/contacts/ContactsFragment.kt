@@ -55,6 +55,15 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
             adapter = ContactsInviteAdapter(viewModel)
             layoutManager = LinearLayoutManager(context)
         }
+
+        dataBinding.recyclerPending.apply {
+            adapter = ContactsInviteAdapter(viewModel)
+            layoutManager = LinearLayoutManager(context)
+        }
+        dataBinding.recyclerPending2.apply {
+            adapter = ContactsInviteAdapter(viewModel)
+            layoutManager = LinearLayoutManager(context)
+        }
     }
 
     private fun collectUiStates() {
@@ -74,12 +83,25 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
                 (dataBinding.recyclerInvitations2.adapter as ContactsInviteAdapter).submitList(
                     contacts
                 )
+
+                (dataBinding.recyclerPending.adapter as ContactsInviteAdapter).submitList(
+                    invi
+                )
+                (dataBinding.recyclerPending2.adapter as ContactsInviteAdapter).submitList(
+                    contacts
+                )
             }
         }
 
         collectState {
             viewModel.invitationsExpandEvent.collect { shouldExpand ->
                 expandInvitations(shouldExpand)
+            }
+        }
+
+        collectState {
+            viewModel.pendingExpandEvent.collect { shouldExpand ->
+                expandPending(shouldExpand)
             }
         }
     }
@@ -90,10 +112,15 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
             recyclerInvitations2.visibility = if (shouldExpand) View.VISIBLE else View.GONE
             buttonExpand.visibility = if (shouldExpand) View.GONE else View.VISIBLE
             buttonShrink.visibility = if (shouldExpand) View.VISIBLE else View.GONE
-            //val params = recyclerInvitations.layoutParams
-            //params.width = ViewGroup.LayoutParams.MATCH_PARENT
-            //params.height = if (shouldExpand) ViewGroup.LayoutParams.WRAP_CONTENT else 240
-            //recyclerInvitations.layoutParams = params
+        }
+    }
+
+    private fun expandPending(shouldExpand: Boolean) {
+        dataBinding.apply {
+            TransitionManager.beginDelayedTransition(recyclerInvitations, AutoTransition())
+            recyclerPending2.visibility = if (shouldExpand) View.VISIBLE else View.GONE
+            buttonPendingExpand.visibility = if (shouldExpand) View.GONE else View.VISIBLE
+            buttonPendingCollapse.visibility = if (shouldExpand) View.VISIBLE else View.GONE
         }
     }
 }

@@ -183,15 +183,106 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_invitations"
                 tools:listitem="@layout/item_contact_invite" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginVertical="@dimen/margin_medium"
+                android:background="@color/dark_grey"/>
+
+            <LinearLayout
+                android:id="@+id/linear_layout_pending"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_pending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pending"
+                    android:onClick="@{() -> presenter.expandInvitations()}"
+                    android:textSize="@dimen/text_medium"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/text_pending_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_medium"
+                    android:text="3"
+                    android:paddingVertical="@dimen/padding_small"
+                    android:paddingStart="@dimen/padding_small"
+                    android:onClick="@{() -> presenter.expandInvitations()}"
+                    android:textColor="@color/cactus_green"
+                    android:textSize="@dimen/text_medium"
+                    app:layout_constraintStart_toEndOf="@+id/text_invitations"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/button_pending_expand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_tiny"
+                    android:src="@drawable/ic_arrow_down"
+                    android:paddingVertical="@dimen/padding_small"
+                    android:paddingEnd="@dimen/padding_small"
+                    android:layout_gravity="center_vertical"
+                    android:onClick="@{() -> presenter.expandPending()}"
+                    app:layout_constraintBottom_toBottomOf="@+id/text_invitations_count"
+                    app:layout_constraintStart_toEndOf="@+id/text_invitations_count"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/button_pending_collapse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_tiny"
+                    android:src="@drawable/ic_arrow_up"
+                    android:paddingVertical="@dimen/padding_small"
+                    android:paddingEnd="@dimen/padding_small"
+                    android:layout_gravity="center_vertical"
+                    android:onClick="@{() -> presenter.expandPending()}"
+                    app:layout_constraintBottom_toBottomOf="@+id/text_invitations_count"
+                    app:layout_constraintStart_toEndOf="@+id/text_invitations_count"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_pending"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_invitations"
+                tools:listitem="@layout/item_contact_invite" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_pending_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:onClick="@{() -> presenter.expandInvitations()}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_invitations"
+                tools:listitem="@layout/item_contact_invite" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginVertical="@dimen/margin_medium"
+                android:background="@color/dark_grey"/>
+
             <TextView
                 android:id="@+id/text_contacts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_medium"
                 android:text="@string/contacts"
                 android:textSize="@dimen/text_medium"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/recycler_invitations"
+                app:layout_constraintTop_toBottomOf="@+id/recycler_pending"
                 tools:layout_editor_absoluteX="16dp" />
 
             <androidx.recyclerview.widget.RecyclerView

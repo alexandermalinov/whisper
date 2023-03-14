@@ -5,4 +5,6 @@ interface ContactPresenter {
     fun navigateToAddContact()
 
     fun expandInvitations()
+
+    fun expandPending()
 }

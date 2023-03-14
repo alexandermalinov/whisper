@@ -40,9 +40,13 @@ class ContactsViewModel @Inject constructor(
     val invitationsExpandEvent
         get() = _invitationsExpandEvent.asStateFlow()
 
+    val pendingExpandEvent
+        get() = _pendingExpandEvent.asStateFlow()
+
     private val _uiState = MutableStateFlow(ContactsUiState())
     private val _contacts = MutableStateFlow(emptyList<ContactUiModel>())
     private val _invitationsExpandEvent = MutableStateFlow<Boolean>(false)
+    private val _pendingExpandEvent = MutableStateFlow<Boolean>(false)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -73,6 +77,12 @@ class ContactsViewModel @Inject constructor(
     override fun expandInvitations() {
         viewModelScope.launch {
             _invitationsExpandEvent.emit(_invitationsExpandEvent.value.not())
+        }
+    }
+
+    override fun expandPending() {
+        viewModelScope.launch {
+            _pendingExpandEvent.emit(_pendingExpandEvent.value.not())
         }
     }
 

@@ -49,8 +49,10 @@
         <item name="android:padding">2dp</item>
         <item name="chipBackgroundColor">@color/sl_chip</item>
         <item name="chipStrokeColor">@color/cactus_green</item>
+    </style>
 
-
-        </style>
+    <style name="TabBarLayoutChipStyle" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+    </style>
 
 </resources>
