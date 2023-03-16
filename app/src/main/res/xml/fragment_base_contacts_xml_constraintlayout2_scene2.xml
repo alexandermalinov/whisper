@@ -8,14 +8,14 @@
         motion:constraintSetStart="@id/start"
         motion:duration="1000">
         <KeyFrameSet>
-            <KeyAttribute
+           <!-- <KeyAttribute
                 app:motionTarget="@+id/edit_text_search"
                 app:framePosition="20"
                 android:alpha="0" />
             <KeyAttribute
                 app:motionTarget="@+id/edit_text_search"
                 app:framePosition="100"
-                android:alpha="0" />
+                android:alpha="0" />-->
             <KeyAttribute
                 app:motionTarget="@+id/text_chats_collapsed"
                 app:framePosition="80"
@@ -32,14 +32,14 @@
                 app:motionTarget="@+id/text_chats_collapsed"
                 app:framePosition="100"
                 android:alpha="1" />
-            <KeyAttribute
+            <!--<KeyAttribute
                 app:motionTarget="@+id/button_search"
                 app:framePosition="20"
                 android:alpha="0" />
             <KeyAttribute
                 app:motionTarget="@+id/button_search"
                 app:framePosition="80"
-                android:alpha="0" />
+                android:alpha="0" />-->
         </KeyFrameSet>
         <OnSwipe
             app:dragDirection="dragUp"
@@ -56,7 +56,7 @@
             motion:layout_constraintBottom_toTopOf="@+id/bottom_navigation_menu"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@+id/edit_text_search" />
+            motion:layout_constraintTop_toBottomOf="@+id/text_chats_expanded" />
         <Constraint
             android:id="@+id/text_chats_expanded"
             android:layout_width="wrap_content"
@@ -64,7 +64,7 @@
             android:layout_marginStart="@dimen/margin_medium"
             android:layout_marginTop="@dimen/margin_medium"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@+id/button_search" />
+            motion:layout_constraintTop_toBottomOf="@+id/button_add_contact_or_create_group" />
         <Constraint
             android:id="@+id/text_chats_collapsed"
             android:layout_width="wrap_content"
@@ -73,7 +73,7 @@
             app:layout_constraintTop_toTopOf="@+id/button_add_contact_or_create_group"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent" />
-        <Constraint
+        <!--<Constraint
             android:id="@+id/edit_text_search"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
             android:layout_marginStart="@dimen/margin_medium"
             app:layout_constraintTop_toTopOf="@id/button_add_contact_or_create_group"
             app:layout_constraintStart_toStartOf="parent"
-            android:alpha="0" />
+            android:alpha="0" />-->
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
@@ -111,7 +111,7 @@
             android:layout_marginStart="@dimen/margin_medium"
             android:layout_marginTop="@dimen/margin_medium"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@+id/button_search" />
+            motion:layout_constraintTop_toBottomOf="@+id/button_add_contact_or_create_group" />
         <Constraint
             android:id="@+id/text_chats_collapsed"
             android:layout_width="wrap_content"
@@ -121,7 +121,7 @@
             app:layout_constraintTop_toTopOf="@+id/button_add_contact_or_create_group"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent" />
-        <Constraint
+       <!-- <Constraint
             android:id="@+id/edit_text_search"
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -137,6 +137,6 @@
             android:layout_marginStart="@dimen/margin_medium"
             app:layout_constraintTop_toTopOf="@id/button_add_contact_or_create_group"
             app:layout_constraintStart_toStartOf="parent"
-            android:alpha="1" />
+            android:alpha="1" />-->
     </ConstraintSet>
 </MotionScene>

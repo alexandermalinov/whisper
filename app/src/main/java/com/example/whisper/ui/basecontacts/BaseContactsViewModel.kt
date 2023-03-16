@@ -102,6 +102,7 @@ open class BaseContactsViewModel @Inject constructor(
             _uiModel.emit(
                 _uiModel.value.copy(
                     pageTitle = getTitleByPagePosition(position),
+                    searchVisible = position == RECENT_CHATS_PAGER_POSITION,
                     addContactOrCreateGroupButtonIconId = getAddContactOrCreateGroupIconId(position),
                     viewPagerPosition = position,
                     bottomNavigationItemId = itemId
@@ -120,6 +121,7 @@ open class BaseContactsViewModel @Inject constructor(
             _uiModel.emit(
                 _uiModel.value.copy(
                     pageTitle = getTitleByPagePosition(position),
+                    searchVisible = position == RECENT_CHATS_PAGER_POSITION,
                     addContactOrCreateGroupButtonIconId = getAddContactOrCreateGroupIconId(position),
                     viewPagerPosition = position,
                     bottomNavigationItemId = itemId
