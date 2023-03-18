@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_x_small"
             android:button="@drawable/ic_arrow_left"
-            android:buttonTint="@color/white"
+            android:buttonTint="@color/cactus_green"
             android:onClick="@{() -> presenter.onBackClicked()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -46,11 +46,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginStart="@dimen/margin_medium"
             android:fontFamily="@font/core_sans_regular"
             android:text="@string/screen_title_add_contact"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_xx_medium"
+            android:textSize="@dimen/text_x_medium"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/checkbox_back"
             app:layout_constraintStart_toEndOf="@+id/checkbox_back"
@@ -64,9 +63,10 @@
             android:layout_marginTop="@dimen/margin_large"
             android:background="@drawable/sp_edittext"
             android:drawableStart="@drawable/search"
-            android:drawablePadding="@dimen/padding_x_small"
+            android:drawablePadding="@dimen/padding_small"
             android:hint="@string/enter_username"
-            android:padding="@dimen/padding_small"
+            android:paddingHorizontal="@dimen/padding_medium"
+            android:paddingVertical="@dimen/padding_small"
             app:hideKeyboard="@{event == AddContactEvents.HIDE_KEYBOARD}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -79,6 +79,7 @@
             android:layout_height="200dp"
             android:layout_marginTop="@dimen/margin_huge"
             android:background="@drawable/ic_empty_search"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editText"
@@ -91,6 +92,7 @@
             android:layout_marginTop="@dimen/margin_medium"
             android:text="@string/no_results_found"
             android:textSize="@dimen/text_xx_medium"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/image_empty_search"
@@ -102,6 +104,7 @@
             android:layout_height="250dp"
             android:layout_marginTop="@dimen/margin_huge"
             android:background="@drawable/ic_404"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editText"
@@ -115,6 +118,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/text_large"
             android:textStyle="bold"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/image_search_error"
@@ -128,6 +132,7 @@
             android:layout_marginTop="@dimen/margin_small"
             android:text="@string/error_message_user_search"
             android:textAlignment="center"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_search_error_title"
@@ -141,6 +146,7 @@
             android:layout_marginTop="@dimen/margin_large"
             android:layout_marginBottom="@dimen/margin_medium"
             android:orientation="vertical"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -186,13 +192,13 @@
             app:layout_constraintTop_toBottomOf="@+id/editText"
             tools:listitem="@layout/item_add_contact" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="@drawable/gradient_fade"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+        <!-- <View
+             android:layout_width="match_parent"
+             android:layout_height="100dp"
+             android:background="@drawable/gradient_fade"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toStartOf="parent" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

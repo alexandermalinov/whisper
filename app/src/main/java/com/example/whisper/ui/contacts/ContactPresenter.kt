@@ -7,4 +7,8 @@ interface ContactPresenter {
     fun expandInvitations()
 
     fun expandPending()
+
+    fun acceptInvite(contactId: String)
+
+    fun declineInvite(contactId: String)
 }

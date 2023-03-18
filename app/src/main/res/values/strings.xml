@@ -41,6 +41,9 @@
     <string name="invitations">Invitations</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
+    <string name="contact_requests">Contact Requests</string>
+    <string name="pending_requests">Pending Requests</string>
+    <string name="pending">pending</string>
 
     <!-- Profile Screen -->
     <string name="profile">Profile</string>
@@ -71,5 +74,4 @@
     <string name="error_dialog_message_body_no_network">No internet connection found. Check your connection or try again.</string>
     <string name="error_dialog_message_body_invalid_credentials">Email or password are invalid. Please try again with valid credentials.</string>
     <string name="error_dialog_body_message_setting_personal_info">There was an error setting your personal information</string>
-    <string name="pending">pending</string>
 </resources>

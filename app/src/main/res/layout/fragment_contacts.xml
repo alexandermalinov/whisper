@@ -29,13 +29,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:animateLayoutChanges="true"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/padding_medium">
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/image_not_found"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_xx_medium"
                 android:src="@drawable/ic_no_results_found"
                 android:visibility="gone"
@@ -48,6 +49,7 @@
                 android:id="@+id/text_not_found"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_xx_medium"
                 android:fontFamily="@font/core_sans_regular"
                 android:text="@string/no_results_found"
@@ -62,6 +64,7 @@
                 android:id="@+id/text_not_found_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_small"
                 android:text="@string/contacts_not_found_explanation"
                 android:textSize="@dimen/text_medium"
@@ -74,6 +77,7 @@
                 android:id="@+id/divider_top_start_chat"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
+                android:layout_marginHorizontal="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_xx_medium"
                 android:background="@color/eerie_black"
                 android:visibility="gone"
@@ -84,10 +88,12 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_start_chat"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
                 android:onClick="@{() -> presenter.navigateToAddContact()}"
                 android:text="@string/invite_a_user"
+                android:textAlignment="textStart"
                 android:textAllCaps="false"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
@@ -98,6 +104,7 @@
                 android:id="@+id/divider_bottom_start_chat"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
+                android:layout_marginHorizontal="@dimen/margin_medium"
                 android:background="@color/eerie_black"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
@@ -107,42 +114,44 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/sp_edittext"
+                android:layout_marginHorizontal="@dimen/margin_medium"
                 android:onClick="@{() -> presenter.expandInvitations()}"
-                android:paddingHorizontal="@dimen/padding_medium"
-                android:paddingVertical="@dimen/padding_small">
+                android:paddingVertical="@dimen/padding_small"
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}">
 
-                <ImageView
+                <!--<ImageView
                     android:id="@+id/image_view_invitations"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_contact_add"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/cactus_green" />
+                    app:tint="@color/cactus_green" />-->
 
                 <TextView
                     android:id="@+id/text_invitations"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_medium"
-                    android:text="@string/invitations"
+                    android:text="@string/contact_requests"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/text_medium"
-                    app:layout_constraintBottom_toBottomOf="@+id/image_view_invitations"
-                    app:layout_constraintStart_toEndOf="@+id/image_view_invitations"
-                    app:layout_constraintTop_toTopOf="@+id/image_view_invitations" />
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/text_invitations_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_medium"
-                    android:text="12"
-                    android:textColor="@color/cactus_green"
-                    android:textSize="@dimen/text_medium"
-                    app:layout_constraintBottom_toBottomOf="@+id/text_invitations"
-                    app:layout_constraintStart_toEndOf="@+id/text_invitations"
-                    app:layout_constraintTop_toTopOf="@+id/text_invitations" />
+                <!-- <TextView
+                     android:id="@+id/text_invitations_count"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginStart="@dimen/margin_medium"
+                     android:text="@{model.invitationsCount}"
+                     android:textColor="@color/cactus_green"
+                     android:textSize="@dimen/text_medium"
+                     app:layout_constraintBottom_toBottomOf="@+id/text_invitations"
+                     app:layout_constraintStart_toEndOf="@+id/text_invitations"
+                     app:layout_constraintTop_toTopOf="@+id/text_invitations"
+                     tools:text="3"/>-->
 
                 <ImageView
                     android:id="@+id/button_expand"
@@ -173,31 +182,34 @@
                 android:id="@+id/recycler_invitations"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
                 android:onClick="@{() -> presenter.expandInvitations()}"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_invitations"
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}"
                 tools:listitem="@layout/item_contact_invite" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_marginVertical="@dimen/margin_medium"
-                android:background="@color/dark_grey"
-                android:visibility="gone" />
+                android:layout_marginTop="@dimen/margin_medium"
+                android:background="@color/auro_metal_saurus"
+                android:visibility="visible"
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/linear_layout_pending"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_medium"
-                android:background="@drawable/sp_edittext"
                 android:onClick="@{() -> presenter.expandPending()}"
-                android:paddingHorizontal="@dimen/padding_medium"
-                android:paddingVertical="@dimen/padding_small">
+                android:paddingVertical="@dimen/padding_small"
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}">
 
-                <ImageView
+                <!--<ImageView
                     android:id="@+id/image_view_pending"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -205,30 +217,32 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/cactus_green" />
+                    app:tint="@color/cactus_green" />-->
 
                 <TextView
                     android:id="@+id/text_pending"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_medium"
-                    android:text="@string/pending"
+                    android:text="@string/pending_requests"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/text_medium"
-                    app:layout_constraintBottom_toBottomOf="@+id/image_view_pending"
-                    app:layout_constraintStart_toEndOf="@+id/image_view_pending"
-                    app:layout_constraintTop_toTopOf="@+id/image_view_pending" />
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/text_pending_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_medium"
-                    android:text="3"
-                    android:textColor="@color/cactus_green"
-                    android:textSize="@dimen/text_medium"
-                    app:layout_constraintBottom_toBottomOf="@+id/text_pending"
-                    app:layout_constraintStart_toEndOf="@+id/text_pending"
-                    app:layout_constraintTop_toTopOf="@+id/text_pending" />
+                <!-- <TextView
+                     android:id="@+id/text_pending_count"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginStart="@dimen/margin_medium"
+                     android:text="@{model.invitationsCount}"
+                     android:textColor="@color/cactus_green"
+                     android:textSize="@dimen/text_medium"
+                     app:layout_constraintBottom_toBottomOf="@+id/text_pending"
+                     app:layout_constraintStart_toEndOf="@+id/text_pending"
+                     app:layout_constraintTop_toTopOf="@+id/text_pending"
+                     tools:text="2"/>-->
 
                 <ImageView
                     android:id="@+id/button_pending_expand"
@@ -258,35 +272,43 @@
                 android:id="@+id/recycler_pending"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
                 android:onClick="@{() -> presenter.expandInvitations()}"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_invitations"
-                tools:listitem="@layout/item_contact_invite" />
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}"
+                tools:listitem="@layout/item_contact_pending" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginVertical="@dimen/margin_medium"
-                android:background="@color/dark_grey"
-                android:visibility="gone" />
+                android:background="@color/auro_metal_saurus"
+                android:visibility="visible"
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}" />
 
             <TextView
                 android:id="@+id/text_contacts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_medium"
                 android:text="@string/contacts"
+                android:textColor="@color/white"
                 android:textSize="@dimen/text_medium"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recycler_pending"
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}"
                 tools:layout_editor_absoluteX="16dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_contacts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -297,6 +319,7 @@
                 android:id="@+id/shimmer_view_container"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginHorizontal="@dimen/margin_medium"
                 android:orientation="vertical"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"

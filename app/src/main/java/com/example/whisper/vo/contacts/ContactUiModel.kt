@@ -2,6 +2,7 @@ package com.example.whisper.vo.contacts
 
 import com.example.whisper.utils.common.EMPTY
 import com.example.whisper.utils.common.USER_EMAIL
+import com.example.whisper.utils.common.ZERO
 import com.sendbird.android.GroupChannel
 import com.sendbird.android.User
 
@@ -11,6 +12,7 @@ data class ContactUiModel(
     val username: String = EMPTY,
     val email: String = EMPTY,
     val channelUrl: String = EMPTY,
+    val createdAt: Long = ZERO.toLong(),
     var isInvited: Boolean = false,
     var isLoading: Boolean = false
 )
@@ -30,19 +32,20 @@ fun List<User>.toContactsUiModel() = map { user ->
     )
 }
 
-/* -------------------------------------------------------------------------------------------------
- * Private
---------------------------------------------------------------------------------------------------*/
-private fun GroupChannel.toContactUiModel(loggedUserId: String): ContactUiModel {
+fun GroupChannel.toContactUiModel(loggedUserId: String): ContactUiModel {
     val contact = getContact(loggedUserId)
     return ContactUiModel(
         contactId = contact?.userId ?: EMPTY,
         pictureUrl = contact?.profileUrl ?: EMPTY,
         username = contact?.nickname ?: EMPTY,
         email = contact?.metaData?.get(USER_EMAIL) ?: EMPTY,
-        channelUrl = url
+        channelUrl = url,
+        createdAt = createdAt
     )
 }
 
+/* -------------------------------------------------------------------------------------------------
+ * Private
+--------------------------------------------------------------------------------------------------*/
 private fun GroupChannel.getContact(currentUserId: String) =
     members.find { it.userId != currentUserId }

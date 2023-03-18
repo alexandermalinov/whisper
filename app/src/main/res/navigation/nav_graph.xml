@@ -140,8 +140,6 @@
         android:label="BaseContactsFragment" >
         <action
             android:id="@+id/action_baseContactsFragment_to_addContactFragment"
-            app:destination="@id/addContactFragment"
-            app:enterAnim="@anim/slide_up"
-            app:popExitAnim="@anim/slide_down" />
+            app:destination="@id/addContactFragment" />
     </fragment>
 </navigation>

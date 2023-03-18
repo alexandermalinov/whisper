@@ -1,11 +1,9 @@
 package com.example.whisper.ui.contacts
 
-import android.animation.LayoutTransition
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.whisper.R
@@ -39,6 +37,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
     ---------------------------------------------------------------------------------------------*/
     private fun initUiData() {
         dataBinding.presenter = viewModel
+        lifecycle.addObserver(viewModel)
         initConnectionsRecyclerView()
     }
 
@@ -54,7 +53,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
         }
 
         dataBinding.recyclerPending.apply {
-            adapter = ContactsInviteAdapter(viewModel)
+            adapter = ContactsPendingAdapter(viewModel)
             layoutManager = LinearLayoutManager(context)
         }
     }
@@ -68,9 +67,22 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
 
         collectState {
             viewModel.contacts.collect { contacts ->
-                (dataBinding.recyclerContacts.adapter as ContactsAdapter).submitList(contacts)
-                (dataBinding.recyclerInvitations.adapter as ContactsInviteAdapter).submitList(contacts)
-                (dataBinding.recyclerPending.adapter as ContactsInviteAdapter).submitList(contacts)
+                (dataBinding.recyclerContacts.adapter as ContactsAdapter)
+                    .submitList(contacts)
+            }
+        }
+
+        collectState {
+            viewModel.invitations.collect { invitations ->
+                (dataBinding.recyclerInvitations.adapter as ContactsInviteAdapter)
+                    .submitList(invitations)
+            }
+        }
+
+        collectState {
+            viewModel.pending.collect { pendingContacts ->
+                (dataBinding.recyclerPending.adapter as ContactsPendingAdapter)
+                    .submitList(pendingContacts)
             }
         }
 

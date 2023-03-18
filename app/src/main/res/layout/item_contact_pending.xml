@@ -44,7 +44,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/text_medium"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/button_accept"
+            app:layout_constraintEnd_toStartOf="@+id/button_clock"
             app:layout_constraintStart_toEndOf="@+id/image_user_photo"
             app:layout_constraintTop_toTopOf="@+id/image_user_photo"
             tools:text="John Smith" />
@@ -58,55 +58,30 @@
             android:maxLines="1"
             android:text="@{model.email}"
             app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
-            app:layout_constraintEnd_toStartOf="@+id/button_accept"
+            app:layout_constraintEnd_toStartOf="@+id/button_clock"
             app:layout_constraintStart_toEndOf="@+id/image_user_photo"
             app:layout_constraintTop_toBottomOf="@+id/text_user_name"
             tools:text="john_smith@gmail.com" />
 
         <CheckBox
-            android:id="@+id/button_accept"
+            android:id="@+id/button_clock"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:button="@drawable/ic_circle_accept"
-            android:buttonTint="@color/normal_green"
-            android:onClick="@{() -> presenter.acceptInvite(model.contactId)}"
-            app:layout_constraintEnd_toEndOf="@+id/text_accept"
-            app:layout_constraintStart_toStartOf="@+id/text_accept"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/text_accept"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_tiny"
-            android:layout_marginEnd="@dimen/margin_medium"
-            android:onClick="@{() -> presenter.acceptInvite(model.contactId)}"
-            android:text="@string/accept"
-            android:textSize="@dimen/text_x_small"
-            app:layout_constraintEnd_toStartOf="@+id/text_decline"
-            app:layout_constraintTop_toBottomOf="@+id/button_accept" />
-
-        <CheckBox
-            android:id="@+id/button_decline"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:button="@drawable/ic_circle_decline"
+            android:button="@drawable/clock"
             android:buttonTint="@color/auro_metal_saurus"
-            android:onClick="@{() -> presenter.declineInvite(model.contactId)}"
-            app:layout_constraintEnd_toEndOf="@+id/text_decline"
-            app:layout_constraintStart_toStartOf="@+id/text_decline"
+            app:layout_constraintEnd_toEndOf="@+id/text_clock"
+            app:layout_constraintStart_toStartOf="@+id/text_clock"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/text_decline"
+            android:id="@+id/text_clock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_tiny"
-            android:onClick="@{() -> presenter.declineInvite(model.contactId)}"
-            android:text="@string/decline"
+            android:text="@string/pending"
             android:textSize="@dimen/text_x_small"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_decline" />
+            app:layout_constraintTop_toBottomOf="@+id/button_clock" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
