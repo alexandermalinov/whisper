@@ -20,14 +20,16 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/padding_medium">
+        android:paddingTop="@dimen/padding_medium">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image_user_photo"
             android:layout_width="@dimen/profile_pre_small"
             android:layout_height="@dimen/profile_pre_small"
+            android:layout_marginBottom="@dimen/margin_medium"
             app:defaultGlideRes="@{R.drawable.ic_avatar}"
             app:glideRes="@{model.pictureUrl}"
+            app:layout_constraintBottom_toTopOf="@+id/view"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/CircleImageView"
@@ -62,6 +64,15 @@
             app:layout_constraintStart_toEndOf="@+id/image_user_photo"
             app:layout_constraintTop_toBottomOf="@+id/text_user_name"
             tools:text="john_smith@gmail.com" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/arsenic_grey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/text_email" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
