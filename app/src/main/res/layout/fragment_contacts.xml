@@ -115,43 +115,46 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_medium"
+                android:background="@{model.invitationsCount > 0 ? @drawable/sp_rectangle_top_radius_medium : @drawable/sp_rectangle_all_radius_medium}"
                 android:onClick="@{() -> presenter.expandInvitations()}"
-                android:paddingVertical="@dimen/padding_small"
+                android:padding="@dimen/padding_medium"
                 app:visibleGone="@{model.uiState != ContactsState.EMPTY}">
 
-                <!--<ImageView
+                <ImageView
                     android:id="@+id/image_view_invitations"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/sp_rectangle_orange"
                     android:src="@drawable/ic_contact_add"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/cactus_green" />-->
+                    app:tint="@color/white" />
 
                 <TextView
                     android:id="@+id/text_invitations"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_small"
                     android:text="@string/contact_requests"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_medium"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="@+id/image_view_invitations"
+                    app:layout_constraintStart_toEndOf="@+id/image_view_invitations"
+                    app:layout_constraintTop_toTopOf="@+id/image_view_invitations" />
 
-                <!-- <TextView
-                     android:id="@+id/text_invitations_count"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:layout_marginStart="@dimen/margin_medium"
-                     android:text="@{model.invitationsCount}"
-                     android:textColor="@color/cactus_green"
-                     android:textSize="@dimen/text_medium"
-                     app:layout_constraintBottom_toBottomOf="@+id/text_invitations"
-                     app:layout_constraintStart_toEndOf="@+id/text_invitations"
-                     app:layout_constraintTop_toTopOf="@+id/text_invitations"
-                     tools:text="3"/>-->
+                <TextView
+                    android:id="@+id/text_invitations_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_medium"
+                    android:textSize="@dimen/text_medium"
+                    app:layout_constraintBottom_toBottomOf="@+id/text_invitations"
+                    app:layout_constraintEnd_toStartOf="@+id/button_expand"
+                    app:layout_constraintTop_toTopOf="@+id/text_invitations"
+                    app:safeText="@{model.invitationsCount}"
+                    tools:text="3" />
 
                 <ImageView
                     android:id="@+id/button_expand"
@@ -161,7 +164,7 @@
                     android:layout_marginStart="@dimen/margin_tiny"
                     android:onClick="@{() -> presenter.expandInvitations()}"
                     android:src="@drawable/ic_arrow_down"
-                    app:layout_constraintBottom_toBottomOf="@+id/text_invitations_count"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -172,7 +175,7 @@
                     android:layout_gravity="center_vertical"
                     android:onClick="@{() -> presenter.expandInvitations()}"
                     android:src="@drawable/ic_arrow_up"
-                    app:layout_constraintBottom_toBottomOf="@+id/text_invitations_count"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -183,7 +186,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_medium"
+                android:background="@drawable/sp_rectangle_bottom_radius_medium"
                 android:onClick="@{() -> presenter.expandInvitations()}"
+                android:paddingHorizontal="@dimen/padding_small"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -191,13 +196,13 @@
                 app:visibleGone="@{model.uiState != ContactsState.EMPTY}"
                 tools:listitem="@layout/item_contact_invite" />
 
-            <View
+            <!--<View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginTop="@dimen/margin_medium"
                 android:background="@color/auro_metal_saurus"
                 android:visibility="visible"
-                app:visibleGone="@{model.uiState != ContactsState.EMPTY}" />
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}" />-->
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/linear_layout_pending"
@@ -205,44 +210,46 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_medium"
+                android:background="@{model.pendingCount > 0 ? @drawable/sp_rectangle_top_radius_medium : @drawable/sp_rectangle_all_radius_medium}"
                 android:onClick="@{() -> presenter.expandPending()}"
-                android:paddingVertical="@dimen/padding_small"
+                android:padding="@dimen/padding_medium"
                 app:visibleGone="@{model.uiState != ContactsState.EMPTY}">
 
-                <!--<ImageView
+                <ImageView
                     android:id="@+id/image_view_pending"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/sp_rectangle_blue"
                     android:src="@drawable/clock"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/cactus_green" />-->
+                    app:tint="@color/white" />
 
                 <TextView
                     android:id="@+id/text_pending"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_small"
                     android:text="@string/pending_requests"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_medium"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="@+id/image_view_pending"
+                    app:layout_constraintStart_toEndOf="@+id/image_view_pending"
+                    app:layout_constraintTop_toTopOf="@+id/image_view_pending" />
 
-                <!-- <TextView
-                     android:id="@+id/text_pending_count"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:layout_marginStart="@dimen/margin_medium"
-                     android:text="@{model.invitationsCount}"
-                     android:textColor="@color/cactus_green"
-                     android:textSize="@dimen/text_medium"
-                     app:layout_constraintBottom_toBottomOf="@+id/text_pending"
-                     app:layout_constraintStart_toEndOf="@+id/text_pending"
-                     app:layout_constraintTop_toTopOf="@+id/text_pending"
-                     tools:text="2"/>-->
+                <TextView
+                    android:id="@+id/text_pending_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_medium"
+                    android:textSize="@dimen/text_medium"
+                    app:layout_constraintBottom_toBottomOf="@+id/text_pending"
+                    app:layout_constraintEnd_toStartOf="@+id/button_pending_expand"
+                    app:layout_constraintTop_toTopOf="@+id/text_pending"
+                    app:safeText="@{model.pendingCount}"
+                    tools:text="2" />
 
                 <ImageView
                     android:id="@+id/button_pending_expand"
@@ -273,7 +280,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_medium"
+                android:background="@drawable/sp_rectangle_bottom_radius_medium"
                 android:onClick="@{() -> presenter.expandInvitations()}"
+                android:paddingHorizontal="@dimen/padding_small"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -281,38 +290,57 @@
                 app:visibleGone="@{model.uiState != ContactsState.EMPTY}"
                 tools:listitem="@layout/item_contact_pending" />
 
-            <View
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout_contacts"
                 android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginVertical="@dimen/margin_medium"
-                android:background="@color/auro_metal_saurus"
-                android:visibility="visible"
-                app:visibleGone="@{model.uiState != ContactsState.EMPTY}" />
-
-            <TextView
-                android:id="@+id/text_contacts"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_medium"
-                android:text="@string/contacts"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_medium"
-                android:textStyle="bold"
+                android:background="@{model.contactsCount > 0 ? @drawable/sp_rectangle_top_radius_medium : @drawable/sp_rectangle_all_radius_medium}"
+                android:paddingHorizontal="@dimen/padding_medium"
+                android:paddingTop="@dimen/padding_medium"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recycler_pending"
-                app:visibleGone="@{model.uiState != ContactsState.EMPTY}"
-                tools:layout_editor_absoluteX="16dp" />
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}">
+
+                <ImageView
+                    android:id="@+id/image_view_contacts"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/sp_rectangle_green"
+                    android:src="@drawable/ic_users"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:id="@+id/text_contacts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:text="@string/contacts"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_medium"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/image_view_contacts"
+                    app:layout_constraintStart_toEndOf="@+id/image_view_contacts"
+                    app:layout_constraintTop_toTopOf="@+id/image_view_contacts"
+                    app:visibleGone="@{model.uiState != ContactsState.EMPTY}" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_contacts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_medium"
+                android:background="@drawable/sp_rectangle_bottom_radius_medium"
+                android:paddingHorizontal="@dimen/padding_small"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_contacts"
+                app:layout_constraintTop_toBottomOf="@+id/constraint_layout_contacts"
                 tools:listitem="@layout/item_contact" />
 
             <com.facebook.shimmer.ShimmerFrameLayout

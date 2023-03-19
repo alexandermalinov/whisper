@@ -44,7 +44,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/text_medium"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/button_clock"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/image_user_photo"
             app:layout_constraintTop_toTopOf="@+id/image_user_photo"
             tools:text="John Smith" />
@@ -58,30 +58,10 @@
             android:maxLines="1"
             android:text="@{model.email}"
             app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
-            app:layout_constraintEnd_toStartOf="@+id/button_clock"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/image_user_photo"
             app:layout_constraintTop_toBottomOf="@+id/text_user_name"
             tools:text="john_smith@gmail.com" />
-
-        <CheckBox
-            android:id="@+id/button_clock"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:button="@drawable/clock"
-            android:buttonTint="@color/auro_metal_saurus"
-            app:layout_constraintEnd_toEndOf="@+id/text_clock"
-            app:layout_constraintStart_toStartOf="@+id/text_clock"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/text_clock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_tiny"
-            android:text="@string/pending"
-            android:textSize="@dimen/text_x_small"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_clock" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

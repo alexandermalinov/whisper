@@ -103,8 +103,8 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
         dataBinding.apply {
             TransitionManager.beginDelayedTransition(recyclerInvitations, AutoTransition())
             recyclerInvitations.visibility = if (shouldExpand) View.VISIBLE else View.GONE
-            buttonExpand.visibility = if (shouldExpand) View.GONE else View.VISIBLE
-            buttonShrink.visibility = if (shouldExpand) View.VISIBLE else View.GONE
+            buttonExpand.visibility = if (shouldExpand) View.INVISIBLE else View.VISIBLE
+            buttonShrink.visibility = if (shouldExpand) View.VISIBLE else View.INVISIBLE
         }
     }
 
@@ -112,8 +112,8 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
         dataBinding.apply {
             TransitionManager.beginDelayedTransition(recyclerInvitations, AutoTransition())
             recyclerPending.visibility = if (shouldExpand) View.VISIBLE else View.GONE
-            buttonPendingExpand.visibility = if (shouldExpand) View.GONE else View.VISIBLE
-            buttonPendingCollapse.visibility = if (shouldExpand) View.VISIBLE else View.GONE
+            buttonPendingExpand.visibility = if (shouldExpand) View.INVISIBLE else View.VISIBLE
+            buttonPendingCollapse.visibility = if (shouldExpand) View.VISIBLE else View.INVISIBLE
         }
     }
 }

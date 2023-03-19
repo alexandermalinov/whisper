@@ -13,10 +13,7 @@ import com.example.whisper.ui.base.ConnectionStatus
 import com.example.whisper.ui.basecontacts.BaseContactsViewModel
 import com.example.whisper.utils.common.EMPTY
 import com.example.whisper.utils.common.RECENT_CHAT_HANDLER_ID
-import com.example.whisper.vo.contacts.ContactUiModel
-import com.example.whisper.vo.contacts.ContactsState
-import com.example.whisper.vo.contacts.ContactsUiState
-import com.example.whisper.vo.contacts.toContactUiModel
+import com.example.whisper.vo.contacts.*
 import com.sendbird.android.*
 import com.sendbird.android.Member.MemberState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -131,11 +128,10 @@ class ContactsViewModel @Inject constructor(
 
             contactsRepository.acceptContactRequest(contact.channelUrl) { either ->
                 either.fold({ error ->
-
+                    // TODO - Implement me
                 }, {
                     viewModelScope.launch {
                         _invitations.emit(_invitations.value.minus(contact))
-                        _contacts.emit(_contacts.value.plus(contact))
                     }
                 })
             }
@@ -166,7 +162,7 @@ class ContactsViewModel @Inject constructor(
 
             contactsRepository.declineContactRequest(contact.channelUrl) { either ->
                 either.fold({ error ->
-
+                    // TODO - Implement me
                 }, {
                     viewModelScope.launch {
                         _invitations.emit(_invitations.value.minus(contact))
@@ -187,6 +183,49 @@ class ContactsViewModel @Inject constructor(
                     // do nothing
                 }
 
+                override fun onChannelDeleted(
+                    channelUrl: String?,
+                    channelType: BaseChannel.ChannelType?
+                ) {
+                    super.onChannelDeleted(channelUrl, channelType)
+
+                    viewModelScope.launch {
+                        loggedUserId?.let { id ->
+
+                            _contacts.value.firstOrNull { it.channelUrl == channelUrl }
+                                ?.let {
+                                    _contacts.emit(_contacts.value.minus(it))
+                                }
+                                ?: _invitations.value.firstOrNull { it.channelUrl == channelUrl }
+                                    ?.let {
+                                        _invitations.emit(_invitations.value.minus(it))
+                                    }
+                                ?: _pending.value.firstOrNull { it.channelUrl == channelUrl }
+                                    ?.let {
+                                        _pending.emit(_pending.value.minus(it))
+                                    }
+
+                            setState()
+                        }
+                    }
+                }
+
+                override fun onUserReceivedInvitation(
+                    channel: GroupChannel?,
+                    inviter: User?,
+                    invitees: MutableList<User>?
+                ) {
+                    super.onUserReceivedInvitation(channel, inviter, invitees)
+
+                    viewModelScope.launch {
+                        loggedUserId?.let { id ->
+                            val contact = channel?.toContactUiModel(id) ?: return@launch
+                            _invitations.emit(_invitations.value.plus(contact))
+                            setState()
+                        }
+                    }
+                }
+
                 override fun onUserJoined(channel: GroupChannel?, user: User?) {
                     super.onUserJoined(channel, user)
 
@@ -195,6 +234,7 @@ class ContactsViewModel @Inject constructor(
                             val contact = channel?.toContactUiModel(id) ?: return@launch
                             _pending.emit(_pending.value.minus(contact))
                             _contacts.emit(_contacts.value.plus(contact))
+                            setState()
                         }
                     }
                 }
@@ -210,6 +250,7 @@ class ContactsViewModel @Inject constructor(
                         loggedUserId?.let { id ->
                             val contact = channel?.toContactUiModel(id) ?: return@launch
                             _pending.emit(_pending.value.minus(contact))
+                            setState()
                         }
                     }
                 }
@@ -219,7 +260,7 @@ class ContactsViewModel @Inject constructor(
     private suspend fun fetchContacts() {
         contactsRepository.getContacts(ContactConnectionStatus.CONNECTED) { either ->
             either.fold({ error ->
-
+                // TODO - Implement me
             }, { allContacts ->
                 viewModelScope.launch(Dispatchers.Default) {
                     setState(allContacts)
@@ -242,8 +283,9 @@ class ContactsViewModel @Inject constructor(
 
                     _uiState.emit(
                         _uiState.value.copy(
-                            invitationsCount = _invitations.value.size.toString(),
-                            pendingCount = _pending.value.size.toString()
+                            contactsCount = sortedContacts.size,
+                            invitationsCount = sortedInvitations.size,
+                            pendingCount = sortedPendingContacts.size
                         )
                     )
                 }
@@ -251,8 +293,12 @@ class ContactsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun setState(contacts: List<GroupChannel>) {
-        if (contacts.isEmpty())
+    private suspend fun setState(contacts: List<GroupChannel> = emptyList()) {
+        val allContacts = _pending.value
+            .plus(_invitations.value)
+            .plus(_contacts.value)
+
+        if (contacts.isEmpty() && allContacts.isEmpty())
             _uiState.emit(_uiState.value.copy(uiState = ContactsState.EMPTY))
         else
             _uiState.emit(_uiState.value.copy(uiState = ContactsState.IDLE))

@@ -73,7 +73,8 @@
             android:onClick="@{() -> presenter.acceptInvite(model.contactId)}"
             app:layout_constraintEnd_toEndOf="@+id/text_accept"
             app:layout_constraintStart_toStartOf="@+id/text_accept"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:visibleInvisible="@{!model.loading}" />
 
         <TextView
             android:id="@+id/text_accept"
@@ -85,7 +86,8 @@
             android:text="@string/accept"
             android:textSize="@dimen/text_x_small"
             app:layout_constraintEnd_toStartOf="@+id/text_decline"
-            app:layout_constraintTop_toBottomOf="@+id/button_accept" />
+            app:layout_constraintTop_toBottomOf="@+id/button_accept"
+            app:visibleInvisible="@{!model.loading}" />
 
         <CheckBox
             android:id="@+id/button_decline"
@@ -96,7 +98,8 @@
             android:onClick="@{() -> presenter.declineInvite(model.contactId)}"
             app:layout_constraintEnd_toEndOf="@+id/text_decline"
             app:layout_constraintStart_toStartOf="@+id/text_decline"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:visibleInvisible="@{!model.loading}" />
 
         <TextView
             android:id="@+id/text_decline"
@@ -107,7 +110,8 @@
             android:text="@string/decline"
             android:textSize="@dimen/text_x_small"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_decline" />
+            app:layout_constraintTop_toBottomOf="@+id/button_decline"
+            app:visibleInvisible="@{!model.loading}" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animation_view_loading"
