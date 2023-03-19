@@ -82,7 +82,7 @@ open class BaseContactsViewModel @Inject constructor(
         }
     }
 
-    // TODO: Couldn't make it work with binding adapter. Implement solutions with binding adapter
+    // TODO: Couldn't make it work with binding adapter. Implement solution with binding adapter
     override fun onItemChange(itemId: Int) {
         viewModelScope.launch {
             _uiModel.emit(_uiModel.value.copy(viewPagerPosition = itemId))

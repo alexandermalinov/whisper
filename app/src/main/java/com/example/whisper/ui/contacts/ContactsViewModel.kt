@@ -12,11 +12,12 @@ import com.example.whisper.navigation.NavGraph
 import com.example.whisper.ui.base.ConnectionStatus
 import com.example.whisper.ui.basecontacts.BaseContactsViewModel
 import com.example.whisper.utils.common.EMPTY
+import com.example.whisper.utils.common.RECENT_CHAT_HANDLER_ID
 import com.example.whisper.vo.contacts.ContactUiModel
 import com.example.whisper.vo.contacts.ContactsState
 import com.example.whisper.vo.contacts.ContactsUiState
 import com.example.whisper.vo.contacts.toContactUiModel
-import com.sendbird.android.GroupChannel
+import com.sendbird.android.*
 import com.sendbird.android.Member.MemberState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -54,12 +55,15 @@ class ContactsViewModel @Inject constructor(
     private val _contacts = MutableStateFlow(emptyList<ContactUiModel>())
     private val _invitations = MutableStateFlow(emptyList<ContactUiModel>())
     private val _pending = MutableStateFlow(emptyList<ContactUiModel>())
-    private val _invitationsExpandEvent = MutableStateFlow<Boolean>(false)
-    private val _pendingExpandEvent = MutableStateFlow<Boolean>(false)
+    private val _invitationsExpandEvent = MutableStateFlow(false)
+    private val _pendingExpandEvent = MutableStateFlow(false)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.emit(_uiState.value.copy(uiState = ContactsState.LOADING))
+
+            initContactListener()
+
             connectionStatus.collect { connectionStatus ->
                 when (connectionStatus) {
                     ConnectionStatus.CONNECTED -> {
@@ -104,25 +108,120 @@ class ContactsViewModel @Inject constructor(
     }
 
     override fun acceptInvite(contactId: String) {
-        _invitations.value.firstOrNull { it.contactId == contactId }
-            ?.let { contact ->
-
+        viewModelScope.launch(Dispatchers.IO) {
+            val updatedContacts = _invitations.value.toMutableList()
+            updatedContacts.mapIndexed { index, uiModel ->
+                if (uiModel.contactId == contactId) {
+                    updatedContacts[index] = ContactUiModel(
+                        contactId = uiModel.contactId,
+                        pictureUrl = uiModel.pictureUrl,
+                        username = uiModel.username,
+                        email = uiModel.email,
+                        channelUrl = uiModel.channelUrl,
+                        isInvited = uiModel.isInvited,
+                        isLoading = true
+                    )
+                }
             }
+            _invitations.emit(updatedContacts)
+
+            val contact = _invitations.value
+                .firstOrNull { it.contactId == contactId }
+                ?: return@launch
+
+            contactsRepository.acceptContactRequest(contact.channelUrl) { either ->
+                either.fold({ error ->
+
+                }, {
+                    viewModelScope.launch {
+                        _invitations.emit(_invitations.value.minus(contact))
+                        _contacts.emit(_contacts.value.plus(contact))
+                    }
+                })
+            }
+        }
     }
 
     override fun declineInvite(contactId: String) {
-        TODO("Not yet implemented")
+        viewModelScope.launch(Dispatchers.IO) {
+            val contact = _invitations.value
+                .firstOrNull { it.contactId == contactId }
+                ?: return@launch
+
+            val updatedContacts = _invitations.value.toMutableList()
+            updatedContacts.mapIndexed { index, uiModel ->
+                if (uiModel.contactId == contactId) {
+                    updatedContacts[index] = ContactUiModel(
+                        contactId = uiModel.contactId,
+                        pictureUrl = uiModel.pictureUrl,
+                        username = uiModel.username,
+                        email = uiModel.email,
+                        channelUrl = uiModel.channelUrl,
+                        isInvited = uiModel.isInvited,
+                        isLoading = true
+                    )
+                }
+            }
+            _invitations.emit(updatedContacts)
+
+            contactsRepository.declineContactRequest(contact.channelUrl) { either ->
+                either.fold({ error ->
+
+                }, {
+                    viewModelScope.launch {
+                        _invitations.emit(_invitations.value.minus(contact))
+                    }
+                })
+            }
+        }
     }
 
     /* --------------------------------------------------------------------------------------------
      * Private
     ---------------------------------------------------------------------------------------------*/
+    private suspend fun initContactListener() {
+        SendBird.addChannelHandler(
+            RECENT_CHAT_HANDLER_ID,
+            object : SendBird.ChannelHandler() {
+                override fun onMessageReceived(p0: BaseChannel?, p1: BaseMessage?) {
+                    // do nothing
+                }
+
+                override fun onUserJoined(channel: GroupChannel?, user: User?) {
+                    super.onUserJoined(channel, user)
+
+                    viewModelScope.launch {
+                        loggedUserId?.let { id ->
+                            val contact = channel?.toContactUiModel(id) ?: return@launch
+                            _pending.emit(_pending.value.minus(contact))
+                            _contacts.emit(_contacts.value.plus(contact))
+                        }
+                    }
+                }
+
+                override fun onUserDeclinedInvitation(
+                    channel: GroupChannel?,
+                    inviter: User?,
+                    invitee: User?
+                ) {
+                    super.onUserDeclinedInvitation(channel, inviter, invitee)
+
+                    viewModelScope.launch {
+                        loggedUserId?.let { id ->
+                            val contact = channel?.toContactUiModel(id) ?: return@launch
+                            _pending.emit(_pending.value.minus(contact))
+                        }
+                    }
+                }
+            })
+    }
+
     private suspend fun fetchContacts() {
         contactsRepository.getContacts(ContactConnectionStatus.CONNECTED) { either ->
             either.fold({ error ->
 
             }, { allContacts ->
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.Default) {
                     setState(allContacts)
 
                     val invitedContacts = mutableListOf<ContactUiModel>()

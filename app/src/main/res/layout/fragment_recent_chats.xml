@@ -24,6 +24,64 @@
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/padding_medium">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_recent_chats"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/padding_extra_huge"
+            android:visibility="gone"
+            app:visibleGone="@{model.uiState != RecentChatState.LOADING &amp; model.uiState != RecentChatState.ERROR}"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/item_recent_chat" />
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer_view_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:startShimmerAnimation="@{model.uiState == RecentChatState.LOADING}"
+            app:visibleGone="@{model.uiState == RecentChatState.LOADING}"
+            shimmer:duration="1000">
+
+            <!-- Adding 7 rows of placeholders -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
         <ImageView
             android:id="@+id/image_not_found"
             android:layout_width="wrap_content"
@@ -96,63 +154,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button_start_chat"
             app:visibleGone="@{model.uiState == RecentChatState.EMPTY}" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_recent_chats"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:clipToPadding="false"
-            android:paddingBottom="@dimen/padding_extra_huge"
-            android:visibility="gone"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/item_recent_chat" />
-
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/shimmer_view_container"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:startShimmerAnimation="@{model.uiState == RecentChatState.LOADING}"
-            app:visibleGone="@{model.uiState == RecentChatState.LOADING}"
-            shimmer:duration="1000">
-
-            <!-- Adding 7 rows of placeholders -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <include layout="@layout/item_recent_chat_placeholder" />
-
-                <include layout="@layout/item_recent_chat_placeholder" />
-
-                <include layout="@layout/item_recent_chat_placeholder" />
-
-                <include layout="@layout/item_recent_chat_placeholder" />
-
-                <include layout="@layout/item_recent_chat_placeholder" />
-
-                <include layout="@layout/item_recent_chat_placeholder" />
-
-                <include layout="@layout/item_recent_chat_placeholder" />
-
-                <include layout="@layout/item_recent_chat_placeholder" />
-
-                <include layout="@layout/item_recent_chat_placeholder" />
-
-                <include layout="@layout/item_recent_chat_placeholder" />
-            </LinearLayout>
-
-        </com.facebook.shimmer.ShimmerFrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -128,7 +128,9 @@ class RecentChatsViewModel @Inject constructor(
 
                 override fun onMessageReceived(channel: BaseChannel?, message: BaseMessage?) {
                     viewModelScope.launch {
-                        val chat = _recentChats.value.first { chat -> chat.id == channel?.url }
+                        val chat = _recentChats.value
+                                .firstOrNull { chat -> chat.id == channel?.url }
+                                ?: return@launch
                         val newChat = RecentChatUiModel(
                             id = chat.id,
                             username = chat.username,

@@ -28,11 +28,33 @@ class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
             id: String,
             block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
+
+        suspend fun getContact(
+            id: String,
+            block: (Either<HttpError, GroupChannel>) -> Unit
+        )
+
+        suspend fun acceptContactRequest(
+            id: String,
+            block: (Either<HttpError, ResponseResultOk>) -> Unit
+        )
+
+        suspend fun declineContactRequest(
+            id: String,
+            block: (Either<HttpError, ResponseResultOk>) -> Unit
+        )
     }
 
     /* --------------------------------------------------------------------------------------------
      * Exposed
      ---------------------------------------------------------------------------------------------*/
+    suspend fun getContact(
+        id: String,
+        block: (Either<HttpError, GroupChannel>) -> Unit
+    ) {
+        remote.getContact(id, block)
+    }
+
     suspend fun getContacts(
         filter: ContactConnectionStatus,
         block: (Either<HttpError, List<GroupChannel>>) -> Unit
@@ -52,5 +74,19 @@ class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
         remote.addContact(id, block)
+    }
+
+    suspend fun acceptContactRequest(
+        id: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        remote.acceptContactRequest(id, block)
+    }
+
+    suspend fun declineContactRequest(
+        id: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        remote.declineContactRequest(id, block)
     }
 }
