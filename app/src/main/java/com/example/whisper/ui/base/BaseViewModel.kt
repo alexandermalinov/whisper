@@ -2,13 +2,10 @@ package com.example.whisper.ui.base
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.connection.menu.MenuUiModel
+import com.example.whisper.ui.utils.menu.MenuUiModel
 import com.example.whisper.navigation.Destination
 import com.example.whisper.utils.SingleLiveEvent
 import com.example.whisper.vo.dialogs.Dialog
-import com.sendbird.android.SendBird
-import com.sendbird.android.User
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 open class BaseViewModel : ViewModel() {
 

@@ -1,4 +1,4 @@
-package com.connection.menu
+package com.example.whisper.ui.utils.menu
 
 import androidx.annotation.MenuRes
 import com.example.whisper.utils.common.INVALID_RES

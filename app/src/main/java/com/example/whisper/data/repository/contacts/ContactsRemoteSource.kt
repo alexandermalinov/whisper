@@ -25,6 +25,25 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
         }
     }
 
+    override suspend fun deleteContact(
+        id: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        getContact(id) { either ->
+            either.fold({ httpError ->
+                block.invoke(Either.left(httpError))
+            }, { contact ->
+                contact.delete { e ->
+                    if (e != null) {
+                        block.invoke(Either.left(HttpError(serverMessage = e.message)))
+                    } else {
+                        block.invoke(Either.right(ResponseResultOk))
+                    }
+                }
+            })
+        }
+    }
+
     override suspend fun getContacts(
         filter: ContactConnectionStatus,
         block: (Either<HttpError, List<GroupChannel>>) -> Unit
@@ -68,16 +87,18 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
     }
 
     override suspend fun addContact(
-        id: String,
+        contactId: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        GroupChannel.createChannel(createChannelParams(listOf(id))) { channel, exception ->
+        val usersIds = listOf(SendBird.getCurrentUser().userId, contactId)
+
+        GroupChannel.createChannel(createChannelParams(usersIds)) { channel, exception ->
             if (exception != null) {
                 block.invoke(Either.left(HttpError(serverMessage = exception.message)))
                 return@createChannel
             }
             SendBird.setChannelInvitationPreference(false) {
-                channel.inviteWithUserIds(listOf(id)) { sendBirdException ->
+                channel.inviteWithUserIds(listOf(contactId)) { sendBirdException ->
                     if (sendBirdException != null) {
                         block.invoke(Either.left(HttpError(serverMessage = sendBirdException.message)))
                     } else {
@@ -143,6 +164,7 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
         setDistinct(true)
         setSuper(false)
         addUserIds(users)
+        setOperatorUserIds(users)
     }
 
     private fun listQuery(filter: ContactConnectionStatus) =

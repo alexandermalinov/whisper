@@ -8,8 +8,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
-import com.connection.menu.MenuUiModel
-import com.connection.menu.showMenu
+import com.example.whisper.ui.utils.menu.MenuUiModel
+import com.example.whisper.ui.utils.menu.showMenu
 import com.example.whisper.navigation.Destination
 import com.example.whisper.navigation.navigate
 import com.example.whisper.ui.utils.dialogs.showDialog

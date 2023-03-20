@@ -131,7 +131,7 @@
         android:label="PeerToPeerChatFragment" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.whisper.ProfileFragment"
+        android:name="com.example.whisper.ui.profile.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
     <fragment

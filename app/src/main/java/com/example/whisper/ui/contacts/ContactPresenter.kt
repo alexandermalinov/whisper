@@ -11,4 +11,6 @@ interface ContactPresenter {
     fun acceptInvite(contactId: String)
 
     fun declineInvite(contactId: String)
+
+    fun deleteContact(contactId: String)
 }

@@ -25,13 +25,18 @@ class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
         )
 
         suspend fun addContact(
-            id: String,
+            contactId: String,
             block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
 
         suspend fun getContact(
             id: String,
             block: (Either<HttpError, GroupChannel>) -> Unit
+        )
+
+        suspend fun deleteContact(
+            id: String,
+            block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
 
         suspend fun acceptContactRequest(
@@ -70,10 +75,17 @@ class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
     }
 
     suspend fun addContact(
+        contactId: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        remote.addContact(contactId, block)
+    }
+
+    suspend fun deleteContact(
         id: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        remote.addContact(id, block)
+        remote.deleteContact(id, block)
     }
 
     suspend fun acceptContactRequest(

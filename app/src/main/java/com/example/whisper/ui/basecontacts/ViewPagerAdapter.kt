@@ -2,7 +2,7 @@ package com.example.whisper.ui.basecontacts
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.whisper.ProfileFragment
+import com.example.whisper.ui.profile.ProfileFragment
 import com.example.whisper.ui.contacts.ContactsFragment
 import com.example.whisper.ui.recentchats.RecentChatsFragment
 
