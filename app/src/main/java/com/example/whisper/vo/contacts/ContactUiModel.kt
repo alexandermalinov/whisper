@@ -20,17 +20,17 @@ data class ContactUiModel(
 /* -------------------------------------------------------------------------------------------------
  * Exposed
 --------------------------------------------------------------------------------------------------*/
-fun List<GroupChannel>.toContactsUiModel(loggedUserId: String) =
-    map { it.toContactUiModel(loggedUserId) }
-
-fun List<User>.toContactsUiModel() = map { user ->
-    ContactUiModel(
-        contactId = user.userId,
-        pictureUrl = user.profileUrl,
-        username = user.nickname,
-        email = user.metaData[USER_EMAIL] ?: EMPTY
-    )
-}
+fun List<User>.toContactsUiModel(loggedUserId: String) =
+    filter { user ->
+        user.userId != loggedUserId
+    }.map { user ->
+        ContactUiModel(
+            contactId = user.userId,
+            pictureUrl = user.profileUrl,
+            username = user.nickname,
+            email = user.metaData[USER_EMAIL] ?: EMPTY
+        )
+    }
 
 fun GroupChannel.toContactUiModel(loggedUserId: String): ContactUiModel {
     val contact = getContact(loggedUserId)

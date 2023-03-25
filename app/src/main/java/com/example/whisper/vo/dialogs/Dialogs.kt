@@ -1,5 +1,6 @@
 package com.example.whisper.vo.dialogs
 
+import android.os.Bundle
 import androidx.annotation.StringRes
 import com.example.whisper.R
 import com.example.whisper.utils.common.INVALID_RES
@@ -21,3 +22,5 @@ open class TitleMessageDialog(
     val negativeButtonClickListener: (() -> Unit)? = null,
     val cancelable: Boolean = true
 ) : Dialog()
+
+open class ContactBottomDialog(val bundle: Bundle) : Dialog()

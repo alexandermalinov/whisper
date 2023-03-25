@@ -18,17 +18,20 @@
     <!-- Grey shades -->
     <color name="milky_white">#E0E0E0</color>
     <color name="auro_metal_saurus">#687684</color>
-    <color name="arsenic_grey">#41434e</color>
-    <color name="raisin_black">#202022</color>
+    <color name="arsenic_grey">#8e8e92</color>
+    <color name="raisin_black">#1c1c1e</color>
+    <color name="divider_grey">#39393c</color>
 
     <!-- Red shades -->
     <color name="error_red">#FF1744</color>
+    <color name="light_red">#fe2c55</color>
+    <color name="notifications_red">#fe3c30</color>
 
     <!-- Blue shades -->
     <color name="brilliant_azure">#2d8fff</color>
 
     <!-- Green shades -->
-    <color name="ufo_green">#40d663</color>
+    <color name="ufo_green">#34c759</color>
     <color name="normal_green">#4CAF50</color>
     <color name="japanese_laurel">#39763B</color>
 

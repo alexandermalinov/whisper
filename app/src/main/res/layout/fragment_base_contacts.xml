@@ -53,6 +53,7 @@
             android:buttonTint="@color/cactus_green"
             android:onClick="@{() -> presenter.addContactOrCreateGroup()}"
             app:buttonIconId="@{model.addContactOrCreateGroupButtonIconId}"
+            app:buttonTintColor="@{model.searchDrawableRes}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -63,6 +64,7 @@
             android:layout_marginStart="@dimen/margin_medium"
             android:button="@drawable/search"
             android:buttonTint="@color/cactus_green"
+            app:buttonTintColor="@{model.searchDrawableRes}"
             app:layout_constraintBottom_toBottomOf="@id/button_add_contact_or_create_group"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/button_add_contact_or_create_group" />
@@ -82,22 +84,22 @@
             app:layout_constraintTop_toBottomOf="@+id/button_search"
             tools:text="@string/chats" />
 
-       <!-- <EditText
-            android:id="@+id/edit_text_search"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_medium"
-            android:layout_marginTop="@dimen/margin_medium"
-            android:drawableStart="@drawable/search"
-            android:drawablePadding="@dimen/padding_small"
-            app:visibleGone="@{model.searchVisible}"
-            android:background="@drawable/sp_edittext_radius_medium"
-            android:hint="@string/search"
-            android:paddingHorizontal="@dimen/padding_medium"
-            android:paddingVertical="@dimen/padding_small"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_chats_expanded" />-->
+        <!-- <EditText
+             android:id="@+id/edit_text_search"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:layout_marginHorizontal="@dimen/margin_medium"
+             android:layout_marginTop="@dimen/margin_medium"
+             android:drawableStart="@drawable/search"
+             android:drawablePadding="@dimen/padding_small"
+             app:visibleGone="@{model.searchVisible}"
+             android:background="@drawable/sp_edittext_radius_medium"
+             android:hint="@string/search"
+             android:paddingHorizontal="@dimen/padding_medium"
+             android:paddingVertical="@dimen/padding_small"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/text_chats_expanded" />-->
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"

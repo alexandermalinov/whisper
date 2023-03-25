@@ -48,6 +48,28 @@ class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
             id: String,
             block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
+
+        suspend fun blockContact(
+            id: String,
+            block: (Either<HttpError, ResponseResultOk>) -> Unit
+        )
+
+        suspend fun unBlockContact(
+            id: String,
+            block: (Either<HttpError, ResponseResultOk>) -> Unit
+        )
+
+        suspend fun muteContact(
+            channelId: String,
+            contactId: String,
+            block: (Either<HttpError, ResponseResultOk>) -> Unit
+        )
+
+        suspend fun unmuteContact(
+            channelId: String,
+            contactId: String,
+            block: (Either<HttpError, ResponseResultOk>) -> Unit
+        )
     }
 
     /* --------------------------------------------------------------------------------------------
@@ -100,5 +122,35 @@ class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
         remote.declineContactRequest(id, block)
+    }
+
+    suspend fun blockContact(
+        id: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        remote.blockContact(id, block)
+    }
+
+    suspend fun unBlockContact(
+        id: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        remote.unBlockContact(id, block)
+    }
+
+    suspend fun muteContact(
+        channelId: String,
+        contactId: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        remote.muteContact(channelId, contactId, block)
+    }
+
+    suspend fun unmuteContact(
+        channelId: String,
+        contactId: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        remote.unmuteContact(channelId, contactId, block)
     }
 }

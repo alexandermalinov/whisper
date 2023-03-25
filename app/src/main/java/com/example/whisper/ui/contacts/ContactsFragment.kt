@@ -29,6 +29,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
         initUiData()
         collectUiStates()
         observeNavigation(viewModel.navigationLiveData)
+        observeDialogLiveData(viewModel.dialogLiveData)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_contacts

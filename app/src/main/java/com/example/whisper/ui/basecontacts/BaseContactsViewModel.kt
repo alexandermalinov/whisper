@@ -102,7 +102,7 @@ open class BaseContactsViewModel @Inject constructor(
             _uiModel.emit(
                 _uiModel.value.copy(
                     pageTitle = getTitleByPagePosition(position),
-                    searchVisible = position == RECENT_CHATS_PAGER_POSITION,
+                    searchDrawableRes = getSearchDrawableRes(position),
                     addContactOrCreateGroupButtonIconId = getAddContactOrCreateGroupIconId(position),
                     viewPagerPosition = position,
                     bottomNavigationItemId = itemId
@@ -121,7 +121,7 @@ open class BaseContactsViewModel @Inject constructor(
             _uiModel.emit(
                 _uiModel.value.copy(
                     pageTitle = getTitleByPagePosition(position),
-                    searchVisible = position == RECENT_CHATS_PAGER_POSITION,
+                    searchDrawableRes = getSearchDrawableRes(position),
                     addContactOrCreateGroupButtonIconId = getAddContactOrCreateGroupIconId(position),
                     viewPagerPosition = position,
                     bottomNavigationItemId = itemId
@@ -165,8 +165,15 @@ open class BaseContactsViewModel @Inject constructor(
     private fun getAddContactOrCreateGroupIconId(position: Int) =
         when (position) {
             RECENT_CHATS_PAGER_POSITION -> R.drawable.ic_feather
-            CONTACTS_CHATS_PAGER_POSITION -> R.drawable.ic_contact_add
-            else -> R.drawable.ic_feather
+            CONTACTS_CHATS_PAGER_POSITION -> R.drawable.ic_add_contact
+            else -> INVALID_RES
+        }
+
+    private fun getSearchDrawableRes(position: Int) =
+        when (position) {
+            RECENT_CHATS_PAGER_POSITION -> R.drawable.search
+            CONTACTS_CHATS_PAGER_POSITION -> R.drawable.search
+            else -> INVALID_RES
         }
 
     private fun navigateToAddContacts() {

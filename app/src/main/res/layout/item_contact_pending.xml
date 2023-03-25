@@ -20,20 +20,23 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/padding_medium">
+        android:background="?attr/selectableItemBackground"
+        android:onLongClick="@{() -> presenter.showBottomDialog(model)}"
+        android:paddingTop="@dimen/padding_x_small"
+        android:paddingHorizontal="@dimen/padding_medium">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image_user_photo"
             android:layout_width="@dimen/profile_pre_small"
             android:layout_height="@dimen/profile_pre_small"
-            android:layout_marginBottom="@dimen/margin_medium"
-            app:defaultGlideRes="@{R.drawable.ic_avatar}"
+            android:layout_marginBottom="@dimen/margin_x_small"
+            app:defaultGlideRes="@{R.drawable.sp_profile_picture}"
             app:glideRes="@{model.pictureUrl}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/CircleImageView"
-            tools:src="@drawable/ic_avatar" />
+            tools:src="@drawable/sp_profile_picture" />
 
         <TextView
             android:id="@+id/text_user_name"

@@ -1,6 +1,7 @@
 package com.example.whisper.ui.contacts
 
 import android.app.Application
+import androidx.core.os.bundleOf
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
@@ -11,18 +12,16 @@ import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.navigation.NavGraph
 import com.example.whisper.ui.base.ConnectionStatus
 import com.example.whisper.ui.basecontacts.BaseContactsViewModel
-import com.example.whisper.ui.utils.menu.PopupMenuUiModel
-import com.example.whisper.utils.common.EMPTY
-import com.example.whisper.utils.common.RECENT_CHAT_HANDLER_ID
+import com.example.whisper.utils.common.*
 import com.example.whisper.vo.contacts.ContactUiModel
 import com.example.whisper.vo.contacts.ContactsState
 import com.example.whisper.vo.contacts.ContactsUiState
 import com.example.whisper.vo.contacts.toContactUiModel
+import com.example.whisper.vo.dialogs.ContactBottomDialog
 import com.sendbird.android.*
 import com.sendbird.android.Member.MemberState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -109,62 +108,80 @@ class ContactsViewModel @Inject constructor(
         }
     }
 
-    override fun deleteContact(contactId: String) {
+    override fun showBottomDialog(contact: ContactUiModel): Boolean {
+        val bundle = bundleOf(
+            CHANNEL_URL to contact.channelUrl,
+            CONTACT_ID to contact.contactId,
+            CONTACT_PROFILE_IMAGE to contact.pictureUrl,
+            CONTACT_USERNAME to contact.username,
+            CONTACT_EMAIL to contact.email
+        )
+
+        _dialogLiveData.value = ContactBottomDialog(bundle)
+        return true
+    }
+
+    override fun deleteContact(channelUrl: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            startLoading(contactId)
+            setLoadingState(channelUrl, true)
 
-            contactsRepository.deleteContact(contactId) { either ->
-                either.fold({ error ->
-
-                }, {
-                    viewModelScope.launch(Dispatchers.IO) {
+            contactsRepository.deleteContact(channelUrl) { either ->
+                viewModelScope.launch {
+                    either.foldSuspend({ error ->
+                        setLoadingState(channelUrl, false)
+                    }, {
                         _contacts.value
-                            .firstOrNull { contact -> contact.channelUrl == contactId }
+                            .firstOrNull { contact -> contact.channelUrl == channelUrl }
                             ?.let { contactModel ->
                                 _contacts.emit(_contacts.value.minus(contactModel))
                             }
-                    }
-                })
+                        updateContactsCount()
+                    })
+                }
             }
         }
     }
 
     override fun acceptInvite(contactId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            startLoading(contactId)
+            setLoadingState(contactId, true)
 
             val contact = _invitations.value
                 .firstOrNull { it.contactId == contactId }
                 ?: return@launch
 
             contactsRepository.acceptContactRequest(contact.channelUrl) { either ->
-                either.fold({ error ->
-                    // TODO - Implement me
-                }, {
-                    viewModelScope.launch {
+                viewModelScope.launch {
+                    either.foldSuspend({ error ->
+                        setLoadingState(contactId, false)
+                    }, {
                         _invitations.emit(_invitations.value.minus(contact))
-                    }
-                })
+                        updateContactsCount()
+                    })
+                }
             }
         }
     }
 
     override fun declineInvite(contactId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            startLoading(contactId)
+            setLoadingState(contactId, true)
 
             val contact = _invitations.value
                 .firstOrNull { it.contactId == contactId }
                 ?: return@launch
 
             contactsRepository.declineContactRequest(contact.channelUrl) { either ->
-                either.fold({ error ->
-                    // TODO - Implement me
-                }, {
-                    viewModelScope.launch {
-                        _invitations.emit(_invitations.value.minus(contact))
-                    }
-                })
+                viewModelScope.launch {
+                    either.foldSuspend({ error ->
+                        setLoadingState(contactId, false)
+                    }, {
+                        viewModelScope.launch {
+                            _invitations.emit(_invitations.value.minus(contact))
+                            updateContactsCount()
+                        }
+                    })
+                }
             }
         }
     }
@@ -176,6 +193,7 @@ class ContactsViewModel @Inject constructor(
         SendBird.addChannelHandler(
             RECENT_CHAT_HANDLER_ID,
             object : SendBird.ChannelHandler() {
+
                 override fun onMessageReceived(p0: BaseChannel?, p1: BaseMessage?) {
                     // do nothing
                 }
@@ -282,7 +300,7 @@ class ContactsViewModel @Inject constructor(
                         .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.username })
                     _contacts.emit(sortedContacts)
 
-                   updateContactsCount()
+                    updateContactsCount()
                 }
             })
         }
@@ -321,7 +339,7 @@ class ContactsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun startLoading(contactId: String) {
+    private suspend fun setLoadingState(contactId: String, isLoading: Boolean) {
         val updatedContacts = _invitations.value.toMutableList()
         updatedContacts.mapIndexed { index, uiModel ->
             if (uiModel.contactId == contactId) {
@@ -332,7 +350,7 @@ class ContactsViewModel @Inject constructor(
                     email = uiModel.email,
                     channelUrl = uiModel.channelUrl,
                     isInvited = uiModel.isInvited,
-                    isLoading = true
+                    isLoading = isLoading
                 )
             }
         }

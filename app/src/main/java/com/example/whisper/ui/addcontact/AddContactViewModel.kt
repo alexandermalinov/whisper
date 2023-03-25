@@ -107,7 +107,9 @@ class AddContactViewModel @Inject constructor(
     }
 
     private suspend fun onSearchSuccessful(users: List<User>) {
-        _users.emit(users.toContactsUiModel())
+        loggedUserId?.let { id ->
+            _users.emit(users.toContactsUiModel(id))
+        }
 
         when {
             users.isEmpty() -> AddContactUiState.SEARCH_EMPTY

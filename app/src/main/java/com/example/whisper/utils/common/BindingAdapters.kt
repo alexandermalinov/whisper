@@ -1,7 +1,9 @@
 package com.example.whisper.utils.common
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -38,6 +40,16 @@ fun View.setVisibility(show: Boolean) {
 @BindingAdapter("visibleInvisible")
 fun View.setVisibleInvisible(show: Boolean) {
     visibility = if (show) View.VISIBLE else View.INVISIBLE
+}
+
+@BindingAdapter("safeDrawableRes")
+fun CheckBox.setSafeImagesRes(drawableRes: Int) {
+    if (drawableRes != INVALID_RES) {
+        setButtonDrawable(drawableRes)
+        visibility = View.VISIBLE
+    } else {
+        visibility = View.INVISIBLE
+    }
 }
 
 @BindingAdapter("inputError")
@@ -217,12 +229,12 @@ fun ViewPager2.selectViewPagerPage(position: Int) {
 @BindingAdapter("bottomNavigationOnItemChange")
 fun BottomNavigationView.setOnBottomNavigationItemChange(callback: BottomNavigationChangesCallback) {
     setOnItemSelectedListener {
-            val position = when (it.itemId) {
-                R.id.recentChatsFragment -> RECENT_CHATS_PAGER_POSITION
-                R.id.contactsFragment -> CONTACTS_CHATS_PAGER_POSITION
-                else -> PROFILE_CHATS_PAGER_POSITION
-            }
-            callback.onItemChange(position)
+        val position = when (it.itemId) {
+            R.id.recentChatsFragment -> RECENT_CHATS_PAGER_POSITION
+            R.id.contactsFragment -> CONTACTS_CHATS_PAGER_POSITION
+            else -> PROFILE_CHATS_PAGER_POSITION
+        }
+        callback.onItemChange(position)
         return@setOnItemSelectedListener true
     }
 }
@@ -234,5 +246,16 @@ fun BottomNavigationView.checkBottomNavigationItem(itemId: Int) {
 
 @BindingAdapter("buttonIconId")
 fun CheckBox.setButtonIconId(icon: Int) {
-    setButtonDrawable(icon)
+    if (icon != INVALID_RES) {
+        setButtonDrawable(icon)
+    }
+}
+
+@BindingAdapter("buttonTintColor")
+fun CheckBox.setButtonTintColor(icon: Int) {
+    if (icon != INVALID_RES) {
+        buttonTintList = ColorStateList.valueOf(resources.getColor(R.color.cactus_green))
+    } else {
+        buttonTintList = ColorStateList.valueOf(resources.getColor(R.color.black))
+    }
 }

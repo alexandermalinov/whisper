@@ -64,7 +64,7 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
 
     protected fun observeDialogLiveData(dialogLiveData: LiveData<Dialog>) {
         dialogLiveData.observe(viewLifecycleOwner) { dialog ->
-            requireActivity().showDialog(dialog)
+            showDialog(dialog)
         }
     }
 }

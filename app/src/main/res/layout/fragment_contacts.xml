@@ -117,16 +117,16 @@
                 android:layout_marginHorizontal="@dimen/margin_medium"
                 android:background="@{model.invitationsCount > 0 ? @drawable/sp_rectangle_top_radius_medium : @drawable/sp_rectangle_all_radius_medium}"
                 android:onClick="@{() -> presenter.expandInvitations()}"
-                android:paddingHorizontal="@dimen/padding_medium"
-                android:paddingVertical="@dimen/padding_medium"
+                android:paddingVertical="@dimen/padding_tiny"
                 app:visibleGone="@{model.uiState != ContactsState.EMPTY}">
 
                 <ImageView
                     android:id="@+id/image_view_invitations"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:layout_marginStart="@dimen/margin_medium"
                     android:background="@drawable/sp_rectangle_orange"
-                    android:src="@drawable/ic_contact_add"
+                    android:src="@drawable/ic_add_contact"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -157,25 +157,25 @@
                     app:safeText="@{model.invitationsCount}"
                     tools:text="3" />
 
-                <ImageView
+                <CheckBox
                     android:id="@+id/button_expand"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/margin_tiny"
                     android:onClick="@{() -> presenter.expandInvitations()}"
-                    android:src="@drawable/ic_arrow_down"
+                    android:button="@drawable/ic_arrow_down"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
+                <CheckBox
                     android:id="@+id/button_shrink"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:onClick="@{() -> presenter.expandInvitations()}"
-                    android:src="@drawable/ic_arrow_up"
+                    android:button="@drawable/ic_arrow_up"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -189,7 +189,6 @@
                 android:layout_marginHorizontal="@dimen/margin_medium"
                 android:background="@drawable/sp_rectangle_bottom_radius_medium"
                 android:onClick="@{() -> presenter.expandInvitations()}"
-                android:paddingHorizontal="@dimen/padding_medium"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -213,14 +212,14 @@
                 android:layout_marginTop="@dimen/margin_medium"
                 android:background="@{model.pendingCount > 0 ? @drawable/sp_rectangle_top_radius_medium : @drawable/sp_rectangle_all_radius_medium}"
                 android:onClick="@{() -> presenter.expandPending()}"
-                android:paddingHorizontal="@dimen/padding_medium"
-                android:paddingVertical="@dimen/padding_medium"
+                android:paddingVertical="@dimen/padding_tiny"
                 app:visibleGone="@{model.uiState != ContactsState.EMPTY}">
 
                 <ImageView
                     android:id="@+id/image_view_pending"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:layout_marginStart="@dimen/margin_medium"
                     android:background="@drawable/sp_rectangle_blue"
                     android:src="@drawable/clock"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -253,24 +252,24 @@
                     app:safeText="@{model.pendingCount}"
                     tools:text="2" />
 
-                <ImageView
+                <CheckBox
                     android:id="@+id/button_pending_expand"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:onClick="@{() -> presenter.expandPending()}"
-                    android:src="@drawable/ic_arrow_down"
+                    android:button="@drawable/ic_arrow_down"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
+                <CheckBox
                     android:id="@+id/button_pending_collapse"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:onClick="@{() -> presenter.expandPending()}"
-                    android:src="@drawable/ic_arrow_up"
+                    android:button="@drawable/ic_arrow_up"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -284,7 +283,6 @@
                 android:layout_marginHorizontal="@dimen/margin_medium"
                 android:background="@drawable/sp_rectangle_bottom_radius_medium"
                 android:onClick="@{() -> presenter.expandInvitations()}"
-                android:paddingHorizontal="@dimen/padding_medium"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -299,8 +297,7 @@
                 android:layout_marginHorizontal="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_medium"
                 android:background="@{model.contactsCount > 0 ? @drawable/sp_rectangle_top_radius_medium : @drawable/sp_rectangle_all_radius_medium}"
-                android:paddingHorizontal="@dimen/padding_medium"
-                android:paddingVertical="@dimen/padding_medium"
+                android:paddingVertical="@dimen/padding_pre_small"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recycler_pending"
                 app:visibleGone="@{model.uiState != ContactsState.EMPTY}">
@@ -309,6 +306,7 @@
                     android:id="@+id/image_view_contacts"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:layout_marginStart="@dimen/margin_medium"
                     android:background="@drawable/sp_rectangle_green"
                     android:src="@drawable/ic_users"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -338,7 +336,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_medium"
                 android:background="@drawable/sp_rectangle_bottom_radius_medium"
-                android:paddingHorizontal="@dimen/padding_medium"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -147,6 +147,76 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
         }
     }
 
+    override suspend fun blockContact(
+        id: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        SendBird.blockUserWithUserId(id) { contact, exception ->
+            if (exception != null) {
+                block.invoke(Either.left(HttpError(serverMessage = exception.message)))
+            } else {
+                block.invoke(Either.right(ResponseResultOk))
+            }
+        }
+    }
+
+    override suspend fun unBlockContact(
+        id: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        SendBird.unblockUserWithUserId(id) { exception ->
+            if (exception != null) {
+                block.invoke(Either.left(HttpError(serverMessage = exception.message)))
+            } else {
+                block.invoke(Either.right(ResponseResultOk))
+            }
+        }
+    }
+
+    override suspend fun muteContact(
+        channelId: String,
+        contactId: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        GroupChannel.getChannel(channelId) { channel, e ->
+            if (e != null) {
+                block.invoke(Either.left(HttpError(serverMessage = e.message)))
+            }
+
+            if (channel.myRole == Member.Role.OPERATOR) {
+                channel.muteUserWithUserId(contactId) { exception ->
+                    if (exception != null) {
+                        block.invoke(Either.left(HttpError(serverMessage = exception.message)))
+                    } else {
+                        block.invoke(Either.right(ResponseResultOk))
+                    }
+                }
+            }
+        }
+    }
+
+    override suspend fun unmuteContact(
+        channelId: String,
+        contactId: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        GroupChannel.getChannel(channelId) { channel, e ->
+            if (e != null) {
+                block.invoke(Either.left(HttpError(serverMessage = e.message)))
+            }
+
+            if (channel.myRole == Member.Role.OPERATOR) {
+                channel.unmuteUserWithUserId(contactId) { exception ->
+                    if (exception != null) {
+                        block.invoke(Either.left(HttpError(serverMessage = exception.message)))
+                    } else {
+                        block.invoke(Either.right(ResponseResultOk))
+                    }
+                }
+            }
+        }
+    }
+
     /* --------------------------------------------------------------------------------------------
      * Private
     ----------------------------------------------------------------------------------------------*/
