@@ -91,7 +91,11 @@ class RecentChatsViewModel @Inject constructor(
     }
 
     override fun navigateToAddContact() {
-        _navigationLiveData.value = NavGraph(R.id.action_baseContactsFragment_to_addContactFragment)
+        viewModelScope.launch {
+            _navigationFlow.emit(
+                NavGraph(R.id.action_baseContactsFragment_to_addContactFragment)
+            )
+        }
     }
 
     /* --------------------------------------------------------------------------------------------

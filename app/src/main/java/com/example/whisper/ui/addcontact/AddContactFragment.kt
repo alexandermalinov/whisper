@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentAddContactBinding
 import com.example.whisper.ui.base.BaseFragment
@@ -27,8 +26,8 @@ class AddContactFragment : BaseFragment<FragmentAddContactBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUiData()
-        observeNavigation(viewModel.navigationLiveData)
-        observeDialogLiveData(viewModel.dialogLiveData)
+        observeNavigation(viewModel.navigationFlow)
+        observeDialogFlow(viewModel.dialogFlow)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_add_contact

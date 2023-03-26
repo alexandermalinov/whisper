@@ -28,7 +28,7 @@ class PeerToPeerChatFragment : BasePermissionFragment<FragmentPeerToPeerChatBind
         initUiData()
         collectUiStates()
         initVoiceButtonListener()
-        observeNavigation(viewModel.navigationLiveData)
+        observeNavigation(viewModel.navigationFlow)
         observePermissionData(viewModel.permissionLiveData)
     }
 

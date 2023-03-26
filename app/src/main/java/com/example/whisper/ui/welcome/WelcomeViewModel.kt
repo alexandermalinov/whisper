@@ -18,10 +18,14 @@ class WelcomeViewModel @Inject constructor(
      * Override
     ---------------------------------------------------------------------------------------------*/
     override fun onSignUpClick() {
-        _navigationLiveData.value = NavGraph(R.id.action_welcomeFragment_to_signUpFragment)
+        viewModelScope.launch {
+            _navigationFlow.emit(NavGraph(R.id.action_welcomeFragment_to_signUpFragment))
+        }
     }
 
     override fun onSignInClick() {
-        _navigationLiveData.value = NavGraph(R.id.action_welcomeFragment_to_signInFragment)
+        viewModelScope.launch {
+            _navigationFlow.emit(NavGraph(R.id.action_welcomeFragment_to_signInFragment))
+        }
     }
 }

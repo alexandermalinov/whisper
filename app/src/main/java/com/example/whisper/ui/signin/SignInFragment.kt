@@ -23,8 +23,8 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
-        observeNavigation(viewModel.navigationLiveData)
-        observeDialogLiveData(viewModel.dialogLiveData)
+        observeNavigation(viewModel.navigationFlow)
+        observeDialogFlow(viewModel.dialogFlow)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_sign_in

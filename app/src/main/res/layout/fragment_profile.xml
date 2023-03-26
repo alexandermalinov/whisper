@@ -11,7 +11,7 @@
 
         <variable
             name="presenter"
-            type="com.example.whisper.ui.contacts.ContactPresenter" />
+            type="com.example.whisper.ui.profile.ProfilePresenter" />
 
         <import type="com.example.whisper.R" />
 
@@ -190,7 +190,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_medium"
                 android:background="@drawable/sp_rectangle_all_radius_medium"
-                android:onClick="@{() -> presenter.expandInvitations()}"
                 android:paddingHorizontal="@dimen/padding_medium"
                 android:paddingVertical="@dimen/padding_medium"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -253,46 +252,48 @@
                     app:layout_constraintStart_toEndOf="@+id/image_22"
                     app:layout_constraintTop_toTopOf="@+id/image_22" />
 
-               <!-- <View
-                    android:id="@+id/divider_4"
-                    android:layout_width="0dp"
-                    android:layout_height="0.3dp"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:background="@color/arsenic_grey"
-                    app:layout_constraintStart_toStartOf="@+id/text_22"
-                    app:layout_constraintTop_toBottomOf="@+id/image_22" />
+                <!-- <View
+                     android:id="@+id/divider_4"
+                     android:layout_width="0dp"
+                     android:layout_height="0.3dp"
+                     android:layout_marginTop="@dimen/margin_small"
+                     android:background="@color/arsenic_grey"
+                     app:layout_constraintStart_toStartOf="@+id/text_22"
+                     app:layout_constraintTop_toBottomOf="@+id/image_22" />
 
-                <ImageView
-                    android:id="@+id/image_33"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="@dimen/margin_medium"
-                    android:background="@drawable/sp_rectangle_dark_grey"
-                    android:src="@drawable/ic_contact_add"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/image_22"
-                    app:tint="@color/white" />
+                 <ImageView
+                     android:id="@+id/image_33"
+                     android:layout_width="32dp"
+                     android:layout_height="32dp"
+                     android:layout_marginTop="@dimen/margin_medium"
+                     android:background="@drawable/sp_rectangle_dark_grey"
+                     android:src="@drawable/ic_contact_add"
+                     app:layout_constraintStart_toStartOf="parent"
+                     app:layout_constraintTop_toBottomOf="@+id/image_22"
+                     app:tint="@color/white" />
 
-                <TextView
-                    android:id="@+id/text_33"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_small"
-                    android:text="@string/hidden_contacts"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_medium"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/image_33"
-                    app:layout_constraintStart_toEndOf="@+id/image_33"
-                    app:layout_constraintTop_toTopOf="@+id/image_33" />-->
+                 <TextView
+                     android:id="@+id/text_33"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginStart="@dimen/margin_small"
+                     android:text="@string/hidden_contacts"
+                     android:textColor="@color/white"
+                     android:textSize="@dimen/text_medium"
+                     android:textStyle="bold"
+                     app:layout_constraintBottom_toBottomOf="@+id/image_33"
+                     app:layout_constraintStart_toEndOf="@+id/image_33"
+                     app:layout_constraintTop_toTopOf="@+id/image_33" />-->
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/materialButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_large"
                 android:backgroundTint="@color/raisin_black"
+                android:onClick="@{() -> presenter.onLogoutClicked()}"
                 android:paddingVertical="@dimen/padding_pre_small"
                 android:text="@string/logout"
                 android:textAllCaps="false"
@@ -300,7 +301,19 @@
                 app:cornerRadius="@dimen/radius_medium"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/settings_2" />
+                app:layout_constraintTop_toBottomOf="@+id/settings_2"
+                app:visibleInvisible="@{!model.loading}" />
+
+            <ProgressBar
+                android:id="@+id/loading_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintBottom_toBottomOf="@+id/materialButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/materialButton"
+                app:visibleInvisible="@{model.loading}" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -63,10 +63,16 @@ open class BaseContactsViewModel @Inject constructor(
     }
 
     override fun addContactOrCreateGroup() {
-        when (_uiModel.value.viewPagerPosition) {
-            RECENT_CHATS_PAGER_POSITION -> { /*navigateToAddContacts()*/ }
-            CONTACTS_CHATS_PAGER_POSITION -> { navigateToAddContacts() }
-            else -> { /* do nothing */ }
+        viewModelScope.launch {
+            when (_uiModel.value.viewPagerPosition) {
+                RECENT_CHATS_PAGER_POSITION -> { /*navigateToAddContacts()*/
+                }
+                CONTACTS_CHATS_PAGER_POSITION -> {
+                    navigateToAddContacts()
+                }
+                else -> { /* do nothing */
+                }
+            }
         }
     }
 
@@ -176,7 +182,7 @@ open class BaseContactsViewModel @Inject constructor(
             else -> INVALID_RES
         }
 
-    private fun navigateToAddContacts() {
-        _navigationLiveData.value = NavGraph(R.id.action_baseContactsFragment_to_addContactFragment)
+    private suspend fun navigateToAddContacts() {
+        _navigationFlow.emit(NavGraph(R.id.action_baseContactsFragment_to_addContactFragment))
     }
 }

@@ -30,7 +30,7 @@ class BaseContactsFragment : BaseFragment<FragmentBaseContactsBinding>() {
         initBottomNavigation()
         initViewPager()
         collectUiStates()
-        observeNavigation(viewModel.navigationLiveData)
+        observeNavigation(viewModel.navigationFlow)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_base_contacts

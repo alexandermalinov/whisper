@@ -47,6 +47,8 @@ class UserRepository @Inject constructor(
             profilePictureFile: File,
             block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
+
+        suspend fun logout()
     }
 
     interface LocalSource {
@@ -58,6 +60,8 @@ class UserRepository @Inject constructor(
         suspend fun setIsSignedIn(isSignedIn: Boolean)
 
         suspend fun isSignedIn(): Boolean
+
+        suspend fun logout()
     }
 
     suspend fun registerFirebaseAuth(
@@ -111,4 +115,9 @@ class UserRepository @Inject constructor(
     suspend fun isSignedIn() = local.isSignedIn()
 
     suspend fun getLoggedUser(id: String): User = local.getLoggedUser(id)
+
+    suspend fun logout() {
+        remote.logout()
+        local.setIsSignedIn(false)
+    }
 }

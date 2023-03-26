@@ -1,27 +1,27 @@
 package com.example.whisper.ui.base
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.whisper.ui.utils.menu.MenuUiModel
 import com.example.whisper.navigation.Destination
-import com.example.whisper.utils.SingleLiveEvent
 import com.example.whisper.vo.dialogs.Dialog
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 open class BaseViewModel : ViewModel() {
 
     /* --------------------------------------------------------------------------------------------
      * Properties
     ---------------------------------------------------------------------------------------------*/
-    val navigationLiveData: LiveData<Destination>
-        get() = _navigationLiveData
+    val navigationFlow
+        get() = _navigationFlow.asSharedFlow()
 
-    val popupMenuLiveData: LiveData<MenuUiModel>
-        get() = _popupMenuLiveData
+    val popupMenuFlow
+        get() = _popupMenuFlow.asSharedFlow()
 
-    val dialogLiveData: LiveData<Dialog>
-        get() = _dialogLiveData
+    val dialogFlow
+        get() = _dialogFlow.asSharedFlow()
 
-    protected val _navigationLiveData = SingleLiveEvent<Destination>()
-    protected val _popupMenuLiveData = SingleLiveEvent<MenuUiModel>()
-    protected val _dialogLiveData = SingleLiveEvent<Dialog>()
+    protected val _navigationFlow = MutableSharedFlow<Destination>()
+    protected val _popupMenuFlow = MutableSharedFlow<MenuUiModel>()
+    protected val _dialogFlow = MutableSharedFlow<Dialog>()
 }

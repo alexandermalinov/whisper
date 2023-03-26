@@ -24,8 +24,8 @@ class SignUpStepOneFragment : BaseFragment<FragmentSignUpStepOneBinding>() {
         super.onViewCreated(view, savedInstanceState)
         initUi()
         observeLiveData()
-        observeNavigation(viewModel.navigationLiveData)
-        observeDialogLiveData(viewModel.dialogLiveData)
+        observeNavigation(viewModel.navigationFlow)
+        observeDialogFlow(viewModel.dialogFlow)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_sign_up_step_one

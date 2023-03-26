@@ -2,11 +2,9 @@ package com.example.whisper.ui.recentchats
 
 import android.os.Bundle
 import android.view.View
-import android.view.View.OnScrollChangeListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentRecentChatsBinding
 import com.example.whisper.ui.base.BaseFragment
@@ -32,7 +30,7 @@ class RecentChatsFragment : BaseFragment<FragmentRecentChatsBinding>() {
         initUiData()
         initConnectionsRecyclerView()
         collectUiStates()
-        observeNavigation(viewModel.navigationLiveData)
+        observeNavigation(viewModel.navigationFlow)
     }
     override fun getLayoutId(): Int = R.layout.fragment_recent_chats
 

@@ -71,9 +71,11 @@ class AddContactViewModel @Inject constructor(
                     either.foldSuspend(
                         { failure ->
                             updateLoadingUser(contactId, false)
-                            _dialogLiveData.value = TitleMessageDialog(
-                                R.string.error_dialog_title_network,
-                                R.string.error_dialog_message_body_no_network
+                            _dialogFlow.emit(
+                                TitleMessageDialog(
+                                    R.string.error_dialog_title_network,
+                                    R.string.error_dialog_message_body_no_network
+                                )
                             )
                         },
                         { success ->
@@ -86,7 +88,9 @@ class AddContactViewModel @Inject constructor(
     }
 
     override fun onBackClicked() {
-        _navigationLiveData.value = PopBackStack
+        viewModelScope.launch {
+            _navigationFlow.emit(PopBackStack)
+        }
     }
 
     /* --------------------------------------------------------------------------------------------
@@ -108,7 +112,8 @@ class AddContactViewModel @Inject constructor(
 
     private suspend fun onSearchSuccessful(users: List<User>) {
         loggedUserId?.let { id ->
-            _users.emit(users.toContactsUiModel(id))
+            val filteredUsers = users.filter { it.userId != id }.toContactsUiModel(id)
+            _users.emit(filteredUsers)
         }
 
         when {

@@ -25,7 +25,6 @@
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:animateLayoutChanges="true"
         android:paddingTop="@dimen/padding_medium"
         app:layoutDescription="@xml/fragment_base_contacts_xml_constraintlayout2_scene2"
         tools:context=".ui.basecontacts.BaseContactsFragment">

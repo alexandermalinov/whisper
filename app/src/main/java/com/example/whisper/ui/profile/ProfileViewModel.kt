@@ -1,7 +1,9 @@
 package com.example.whisper.ui.profile
 
 import androidx.lifecycle.viewModelScope
+import com.example.whisper.R
 import com.example.whisper.data.repository.user.UserRepository
+import com.example.whisper.navigation.NavGraph
 import com.example.whisper.ui.base.BaseViewModel
 import com.example.whisper.utils.common.EMPTY
 import com.example.whisper.utils.common.USER_EMAIL
@@ -17,8 +19,11 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository
-) : BaseViewModel() {
+) : BaseViewModel(), ProfilePresenter {
 
+    /* --------------------------------------------------------------------------------------------
+     * Properties
+    ---------------------------------------------------------------------------------------------*/
     val uiState
         get() = _uiState.asStateFlow()
 
@@ -30,11 +35,26 @@ class ProfileViewModel @Inject constructor(
 
             _uiState.emit(
                 ProfileUiState(
-                    profilePictureUrl = currentUser.profileUrl,
-                    username = currentUser.nickname,
+                    profilePictureUrl = currentUser.profileUrl ?: EMPTY,
+                    username = currentUser.nickname ?: EMPTY,
                     userEmail = currentUser.metaData[USER_EMAIL] ?: EMPTY
                 )
             )
         }
+    }
+
+    /* --------------------------------------------------------------------------------------------
+     * Override
+    ---------------------------------------------------------------------------------------------*/
+    override fun onLogoutClicked() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiState.emit(_uiState.value.copy(isLoading = true))
+            userRepository.logout()
+            navigateToWelcome()
+        }
+    }
+
+    private suspend fun navigateToWelcome() {
+        _navigationFlow.emit(NavGraph(R.id.action_baseContactsFragment_to_welcomeFragment))
     }
 }

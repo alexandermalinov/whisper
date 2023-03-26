@@ -151,11 +151,17 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
         id: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        SendBird.blockUserWithUserId(id) { contact, exception ->
-            if (exception != null) {
-                block.invoke(Either.left(HttpError(serverMessage = exception.message)))
-            } else {
-                block.invoke(Either.right(ResponseResultOk))
+        GroupChannel.getChannel(id) { channel, e ->
+            if (e != null) {
+                block.invoke(Either.left(HttpError(serverMessage = e.message)))
+            }
+
+            channel.freeze { exception ->
+                if (exception != null) {
+                    block.invoke(Either.left(HttpError(serverMessage = exception.message)))
+                } else {
+                    block.invoke(Either.right(ResponseResultOk))
+                }
             }
         }
     }
@@ -164,11 +170,17 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
         id: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        SendBird.unblockUserWithUserId(id) { exception ->
-            if (exception != null) {
-                block.invoke(Either.left(HttpError(serverMessage = exception.message)))
-            } else {
-                block.invoke(Either.right(ResponseResultOk))
+        GroupChannel.getChannel(id) { channel, e ->
+            if (e != null) {
+                block.invoke(Either.left(HttpError(serverMessage = e.message)))
+            }
+
+            channel.unfreeze { exception ->
+                if (exception != null) {
+                    block.invoke(Either.left(HttpError(serverMessage = exception.message)))
+                } else {
+                    block.invoke(Either.right(ResponseResultOk))
+                }
             }
         }
     }

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.whisper.R
@@ -28,8 +27,8 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
         super.onViewCreated(view, savedInstanceState)
         initUiData()
         collectUiStates()
-        observeNavigation(viewModel.navigationLiveData)
-        observeDialogLiveData(viewModel.dialogLiveData)
+        observeNavigation(viewModel.navigationFlow)
+        observeDialogFlow(viewModel.dialogFlow)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_contacts

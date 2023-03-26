@@ -22,4 +22,7 @@ class UserLocalSource @Inject constructor(
     }
 
     override suspend fun isSignedIn(): Boolean = SharedPrefProvider.getIsUserSignedIn(context)
+    override suspend fun logout() {
+
+    }
 }

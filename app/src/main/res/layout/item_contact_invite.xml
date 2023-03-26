@@ -20,7 +20,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
         android:background="?attr/selectableItemBackground"
         android:paddingStart="@dimen/padding_medium"
         android:paddingTop="@dimen/padding_x_small">

@@ -93,7 +93,11 @@ class ContactsViewModel @Inject constructor(
     }
 
     override fun navigateToAddContact() {
-        _navigationLiveData.value = NavGraph(R.id.action_baseContactsFragment_to_addContactFragment)
+        viewModelScope.launch {
+            _navigationFlow.emit(
+                NavGraph(R.id.action_baseContactsFragment_to_addContactFragment)
+            )
+        }
     }
 
     override fun expandInvitations() {
@@ -109,15 +113,17 @@ class ContactsViewModel @Inject constructor(
     }
 
     override fun showBottomDialog(contact: ContactUiModel): Boolean {
-        val bundle = bundleOf(
-            CHANNEL_URL to contact.channelUrl,
-            CONTACT_ID to contact.contactId,
-            CONTACT_PROFILE_IMAGE to contact.pictureUrl,
-            CONTACT_USERNAME to contact.username,
-            CONTACT_EMAIL to contact.email
-        )
+        viewModelScope.launch {
+            val bundle = bundleOf(
+                CHANNEL_URL to contact.channelUrl,
+                CONTACT_ID to contact.contactId,
+                CONTACT_PROFILE_IMAGE to contact.pictureUrl,
+                CONTACT_USERNAME to contact.username,
+                CONTACT_EMAIL to contact.email
+            )
 
-        _dialogLiveData.value = ContactBottomDialog(bundle)
+            _dialogFlow.emit(ContactBottomDialog(bundle))
+        }
         return true
     }
 
@@ -268,6 +274,31 @@ class ContactsViewModel @Inject constructor(
                         loggedUserId?.let { id ->
                             val contact = channel?.toContactUiModel(id) ?: return@launch
                             _pending.emit(_pending.value.minus(contact))
+                            setState()
+                            updateContactsCount()
+                        }
+                    }
+                }
+
+                override fun onChannelFrozen(channel: BaseChannel?) {
+                    super.onChannelFrozen(channel)
+
+                    viewModelScope.launch {
+                        loggedUserId?.let { id ->
+
+                            _contacts.value.firstOrNull { it.channelUrl == channel?.url }
+                                ?.let {
+                                    _contacts.emit(_contacts.value.minus(it))
+                                }
+                                ?: _invitations.value.firstOrNull { it.channelUrl == channel?.url }
+                                    ?.let {
+                                        _invitations.emit(_invitations.value.minus(it))
+                                    }
+                                ?: _pending.value.firstOrNull { it.channelUrl == channel?.url }
+                                    ?.let {
+                                        _pending.emit(_pending.value.minus(it))
+                                    }
+
                             setState()
                             updateContactsCount()
                         }
