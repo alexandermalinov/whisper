@@ -7,13 +7,14 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
-import com.connection.menu.MenuUiModel
-import com.connection.menu.showMenu
 import com.example.whisper.navigation.Destination
 import com.example.whisper.navigation.navigate
 import com.example.whisper.ui.utils.dialogs.showDialog
+import com.example.whisper.ui.utils.menu.MenuUiModel
+import com.example.whisper.ui.utils.menu.showMenu
+import com.example.whisper.utils.common.collectState
 import com.example.whisper.vo.dialogs.Dialog
+import kotlinx.coroutines.flow.SharedFlow
 
 abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
 
@@ -47,24 +48,30 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
     /* --------------------------------------------------------------------------------------------
      * Protected
     ---------------------------------------------------------------------------------------------*/
-    protected fun observeNavigation(navigationLiveData: LiveData<Destination>) {
-        navigationLiveData.observe(viewLifecycleOwner) { destination ->
-            navigate(destination)
+    protected fun observeNavigation(navigationFlow: SharedFlow<Destination>) {
+        collectState {
+            navigationFlow.collect { destination ->
+                navigate(destination)
+            }
         }
     }
 
-    protected fun observeMenuLiveData(
-        menuLiveData: LiveData<MenuUiModel>,
+    protected fun observeMenuFlow(
+        menuFlow: SharedFlow<MenuUiModel>,
         menuIcon: View
     ) {
-        menuLiveData.observe(viewLifecycleOwner) { menu ->
-            requireActivity().showMenu(menu, menuIcon)
+        collectState {
+            menuFlow.collect { menu ->
+                requireActivity().showMenu(menu, menuIcon)
+            }
         }
     }
 
-    protected fun observeDialogLiveData(dialogLiveData: LiveData<Dialog>) {
-        dialogLiveData.observe(viewLifecycleOwner) { dialog ->
-            requireActivity().showDialog(dialog)
+    protected fun observeDialogFlow(dialogFlow: SharedFlow<Dialog>) {
+        collectState {
+            dialogFlow.collect { dialog ->
+                showDialog(dialog)
+            }
         }
     }
 }

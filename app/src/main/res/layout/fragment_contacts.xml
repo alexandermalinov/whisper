@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:shimmer="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -13,57 +14,377 @@
             name="presenter"
             type="com.example.whisper.ui.contacts.ContactPresenter" />
 
+        <import type="com.example.whisper.vo.contacts.ContactsState" />
+
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingVertical="@dimen/padding_medium"
-        android:paddingHorizontal="@dimen/padding_xx_medium">
+        android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/text_app_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/core_sans_regular"
-            android:text="@string/app_name"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_xx_medium"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/image_user_photo" />
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/image_user_photo"
-            android:layout_width="@dimen/profile_small"
-            android:layout_height="@dimen/profile_small"
-            android:src="@drawable/ic_avatar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearance="@style/CircleImageView" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_contacts"
+        <LinearLayout
+            android:id="@+id/contacts_container"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/margin_medium"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_app_name"
-            tools:listitem="@layout/item_contact" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin_small"
-            android:layout_marginBottom="@dimen/margin_large"
-            android:onClick="@{() -> presenter.navigateToAddContact()}"
-            android:src="@drawable/ic_plus"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:orientation="vertical">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/image_not_found"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_xx_medium"
+                android:src="@drawable/ic_no_results_found"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:visibleGone="@{model.uiState == ContactsState.EMPTY}" />
+
+            <TextView
+                android:id="@+id/text_not_found"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_xx_medium"
+                android:fontFamily="@font/core_sans_regular"
+                android:text="@string/no_results_found"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_xx_medium"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/image_not_found"
+                app:visibleGone="@{model.uiState == ContactsState.EMPTY}" />
+
+            <TextView
+                android:id="@+id/text_not_found_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_small"
+                android:text="@string/contacts_not_found_explanation"
+                android:textSize="@dimen/text_medium"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_not_found"
+                app:visibleGone="@{model.uiState == ContactsState.EMPTY}" />
+
+            <View
+                android:id="@+id/divider_top_start_chat"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_xx_medium"
+                android:background="@color/divider_grey"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_not_found_description"
+                app:visibleGone="@{model.uiState == ContactsState.EMPTY}" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_start_chat"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:onClick="@{() -> presenter.navigateToAddContact()}"
+                android:text="@string/invite_a_user"
+                android:textAlignment="textStart"
+                android:textAllCaps="false"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider_top_start_chat"
+                app:visibleGone="@{model.uiState == ContactsState.EMPTY}" />
+
+            <View
+                android:id="@+id/divider_bottom_start_chat"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:background="@color/divider_grey"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button_start_chat"
+                app:visibleGone="@{model.uiState == ContactsState.EMPTY}" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:background="@{model.invitationsCount > 0 ? @drawable/sp_rectangle_top_radius_medium : @drawable/sp_rectangle_all_radius_medium}"
+                android:onClick="@{() -> presenter.expandInvitations()}"
+                android:paddingVertical="@dimen/padding_tiny"
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}">
+
+                <ImageView
+                    android:id="@+id/image_view_invitations"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="@dimen/margin_medium"
+                    android:background="@drawable/sp_rectangle_orange"
+                    android:src="@drawable/ic_add_contact"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:id="@+id/text_invitations"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:text="@string/contact_requests"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_medium"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/image_view_invitations"
+                    app:layout_constraintStart_toEndOf="@+id/image_view_invitations"
+                    app:layout_constraintTop_toTopOf="@+id/image_view_invitations" />
+
+                <TextView
+                    android:id="@+id/text_invitations_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_medium"
+                    android:textSize="@dimen/text_medium"
+                    app:layout_constraintBottom_toBottomOf="@+id/text_invitations"
+                    app:layout_constraintEnd_toStartOf="@+id/button_expand"
+                    app:layout_constraintTop_toTopOf="@+id/text_invitations"
+                    app:safeText="@{model.invitationsCount}"
+                    tools:text="3" />
+
+                <CheckBox
+                    android:id="@+id/button_expand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/margin_tiny"
+                    android:onClick="@{() -> presenter.expandInvitations()}"
+                    android:button="@drawable/ic_arrow_down"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <CheckBox
+                    android:id="@+id/button_shrink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:onClick="@{() -> presenter.expandInvitations()}"
+                    android:button="@drawable/ic_arrow_up"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_invitations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:background="@drawable/sp_rectangle_bottom_radius_medium"
+                android:onClick="@{() -> presenter.expandInvitations()}"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_invitations"
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}"
+                tools:listitem="@layout/item_contact_invite" />
+
+            <!--<View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:background="@color/auro_metal_saurus"
+                android:visibility="visible"
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}" />-->
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/linear_layout_pending"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:background="@{model.pendingCount > 0 ? @drawable/sp_rectangle_top_radius_medium : @drawable/sp_rectangle_all_radius_medium}"
+                android:onClick="@{() -> presenter.expandPending()}"
+                android:paddingVertical="@dimen/padding_tiny"
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}">
+
+                <ImageView
+                    android:id="@+id/image_view_pending"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="@dimen/margin_medium"
+                    android:background="@drawable/sp_rectangle_blue"
+                    android:src="@drawable/clock"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:id="@+id/text_pending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:text="@string/pending_requests"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_medium"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/image_view_pending"
+                    app:layout_constraintStart_toEndOf="@+id/image_view_pending"
+                    app:layout_constraintTop_toTopOf="@+id/image_view_pending" />
+
+                <TextView
+                    android:id="@+id/text_pending_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_medium"
+                    android:textSize="@dimen/text_medium"
+                    app:layout_constraintBottom_toBottomOf="@+id/text_pending"
+                    app:layout_constraintEnd_toStartOf="@+id/button_pending_expand"
+                    app:layout_constraintTop_toTopOf="@+id/text_pending"
+                    app:safeText="@{model.pendingCount}"
+                    tools:text="2" />
+
+                <CheckBox
+                    android:id="@+id/button_pending_expand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:onClick="@{() -> presenter.expandPending()}"
+                    android:button="@drawable/ic_arrow_down"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <CheckBox
+                    android:id="@+id/button_pending_collapse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:onClick="@{() -> presenter.expandPending()}"
+                    android:button="@drawable/ic_arrow_up"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_pending"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:background="@drawable/sp_rectangle_bottom_radius_medium"
+                android:onClick="@{() -> presenter.expandInvitations()}"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_invitations"
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}"
+                tools:listitem="@layout/item_contact_pending" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout_contacts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:background="@{model.contactsCount > 0 ? @drawable/sp_rectangle_top_radius_medium : @drawable/sp_rectangle_all_radius_medium}"
+                android:paddingVertical="@dimen/padding_pre_small"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recycler_pending"
+                app:visibleGone="@{model.uiState != ContactsState.EMPTY}">
+
+                <ImageView
+                    android:id="@+id/image_view_contacts"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="@dimen/margin_medium"
+                    android:background="@drawable/sp_rectangle_green"
+                    android:src="@drawable/ic_users"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:id="@+id/text_contacts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:text="@string/contacts"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_medium"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/image_view_contacts"
+                    app:layout_constraintStart_toEndOf="@+id/image_view_contacts"
+                    app:layout_constraintTop_toTopOf="@+id/image_view_contacts"
+                    app:visibleGone="@{model.uiState != ContactsState.EMPTY}" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_contacts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:background="@drawable/sp_rectangle_bottom_radius_medium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraint_layout_contacts"
+                tools:listitem="@layout/item_contact" />
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmer_view_container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="@dimen/margin_medium"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:startShimmerAnimation="@{model.uiState == ContactsState.LOADING}"
+                app:visibleGone="@{model.uiState == ContactsState.LOADING}"
+                shimmer:duration="1000">
+
+                <!-- Adding 7 rows of placeholders -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/item_recent_chat_placeholder" />
+
+                    <include layout="@layout/item_recent_chat_placeholder" />
+
+                    <include layout="@layout/item_recent_chat_placeholder" />
+
+                    <include layout="@layout/item_recent_chat_placeholder" />
+
+                    <include layout="@layout/item_recent_chat_placeholder" />
+
+                    <include layout="@layout/item_recent_chat_placeholder" />
+
+                    <include layout="@layout/item_recent_chat_placeholder" />
+
+                    <include layout="@layout/item_recent_chat_placeholder" />
+
+                    <include layout="@layout/item_recent_chat_placeholder" />
+
+                    <include layout="@layout/item_recent_chat_placeholder" />
+                </LinearLayout>
+
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 </layout>

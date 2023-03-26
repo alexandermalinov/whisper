@@ -39,3 +39,18 @@ const val USER_EMAIL = "user_email"
 const val USER_PASSWORD = "user_password"
 const val USER_USERNAME = "user_username"
 const val USER_PROFILE_PICTURE = "user_profile_picture"
+
+// Sendbird
+const val RECENT_CHAT_HANDLER_ID = "chat_handler_id"
+
+// ViewPager screens positions
+const val RECENT_CHATS_PAGER_POSITION = 0
+const val CONTACTS_CHATS_PAGER_POSITION = 1
+const val PROFILE_CHATS_PAGER_POSITION = 2
+
+// SaveStateHandle Keys
+const val CHANNEL_URL = "CHANNEL_URL"
+const val CONTACT_ID = "CONTACT_ID"
+const val CONTACT_PROFILE_IMAGE = "CONTACT_PROFILE_IMAGE"
+const val CONTACT_USERNAME = "CONTACT_USERNAME"
+const val CONTACT_EMAIL = "CONTACT_EMAIL"

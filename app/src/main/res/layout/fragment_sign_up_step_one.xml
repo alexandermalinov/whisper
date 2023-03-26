@@ -19,6 +19,7 @@
         android:layout_height="match_parent"
         android:gravity="top"
         android:orientation="vertical"
+        android:animateLayoutChanges="true"
         android:paddingVertical="@dimen/padding_huge">
 
         <TextView

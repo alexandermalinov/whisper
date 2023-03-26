@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="1000">
+        <KeyFrameSet>
+           <!-- <KeyAttribute
+                app:motionTarget="@+id/edit_text_search"
+                app:framePosition="20"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/edit_text_search"
+                app:framePosition="100"
+                android:alpha="0" />-->
+            <KeyAttribute
+                app:motionTarget="@+id/text_chats_collapsed"
+                app:framePosition="80"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/text_chats_collapsed"
+                app:framePosition="20"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/text_chats_collapsed"
+                app:framePosition="0"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/text_chats_collapsed"
+                app:framePosition="100"
+                android:alpha="1" />
+            <!--<KeyAttribute
+                app:motionTarget="@+id/button_search"
+                app:framePosition="20"
+                android:alpha="0" />
+            <KeyAttribute
+                app:motionTarget="@+id/button_search"
+                app:framePosition="80"
+                android:alpha="0" />-->
+        </KeyFrameSet>
+        <OnSwipe
+            app:dragDirection="dragUp"
+            app:touchAnchorId="@id/viewPager"
+            app:touchAnchorSide="top" />
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+        <Constraint
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/margin_medium"
+            motion:layout_constraintBottom_toTopOf="@+id/bottom_navigation_menu"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@+id/text_chats_expanded" />
+        <Constraint
+            android:id="@+id/text_chats_expanded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_medium"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@+id/button_add_contact_or_create_group" />
+        <Constraint
+            android:id="@+id/text_chats_collapsed"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/button_add_contact_or_create_group"
+            app:layout_constraintTop_toTopOf="@+id/button_add_contact_or_create_group"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent" />
+        <!--<Constraint
+            android:id="@+id/edit_text_search"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_chats_expanded" />
+        <Constraint
+            android:id="@+id/button_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/button_add_contact_or_create_group"
+            android:layout_marginStart="@dimen/margin_medium"
+            app:layout_constraintTop_toTopOf="@id/button_add_contact_or_create_group"
+            app:layout_constraintStart_toStartOf="parent"
+            android:alpha="0" />-->
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/margin_medium"
+            motion:layout_constraintBottom_toTopOf="@+id/bottom_navigation_menu"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@+id/text_chats_collapsed" />
+        <Constraint
+            android:id="@+id/text_chats_expanded"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_medium"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@+id/button_add_contact_or_create_group" />
+        <Constraint
+            android:id="@+id/text_chats_collapsed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/button_add_contact_or_create_group"
+            app:layout_constraintTop_toTopOf="@+id/button_add_contact_or_create_group"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent" />
+       <!-- <Constraint
+            android:id="@+id/edit_text_search"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="@dimen/margin_medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_chats_expanded" />
+        <Constraint
+            android:id="@+id/button_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/button_add_contact_or_create_group"
+            android:layout_marginStart="@dimen/margin_medium"
+            app:layout_constraintTop_toTopOf="@id/button_add_contact_or_create_group"
+            app:layout_constraintStart_toStartOf="parent"
+            android:alpha="1" />-->
+    </ConstraintSet>
+</MotionScene>

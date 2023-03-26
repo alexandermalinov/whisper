@@ -3,33 +3,52 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="model"
+            type="com.example.whisper.vo.recentchats.RecentChatUiModel" />
+
+        <variable
+            name="presenter"
+            type="com.example.whisper.ui.recentchats.RecentChatPresenter" />
+
+        <import type="com.example.whisper.R" />
+
+        <import type="com.example.whisper.vo.recentchats.OnlineStatus" />
+
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/padding_medium">
+        android:paddingTop="@dimen/padding_medium">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image_user_photo"
             android:layout_width="@dimen/profile_pre_small"
             android:layout_height="@dimen/profile_pre_small"
+            app:defaultGlideRes="@{R.drawable.sp_profile_picture}"
+            app:glideRes="@{model.profilePicture}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/CircleImageView"
-            tools:src="@drawable/ic_avatar" />
+            tools:src="@drawable/sp_profile_picture" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image_online_indicator"
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:padding="1dp"
-            android:src="@color/normal_green"
+            android:background="@color/normal_green"
             app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
             app:layout_constraintEnd_toEndOf="@+id/image_user_photo"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintVertical_bias="1.0"
             app:shapeAppearanceOverlay="@style/CircleImageView"
-            app:strokeColor="@color/white"
-            app:strokeWidth="2dp" />
+            app:strokeColor="@color/black"
+            app:strokeWidth="2dp"
+            app:visibleInvisible="@{model.onlineStatus == OnlineStatus.ONLINE}" />
 
         <TextView
             android:id="@+id/text_user_name"
@@ -38,31 +57,69 @@
             android:layout_marginHorizontal="@dimen/margin_medium"
             android:ellipsize="end"
             android:maxLines="1"
+            android:text="@{model.username}"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_medium"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/textView4"
+            app:layout_constraintEnd_toStartOf="@+id/text_last_message_timestamp"
             app:layout_constraintStart_toEndOf="@+id/image_user_photo"
             app:layout_constraintTop_toTopOf="@+id/image_user_photo"
             tools:text="John Smith" />
 
         <TextView
+            android:id="@+id/text_last_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_small"
-            app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@{model.unreadMessagesCount > 0 ? @color/white : @color/dark_grey}"
+            app:lastMessage="@{model.lastMessageText}"
+            app:layout_constraintBottom_toTopOf="@+id/view"
+            app:layout_constraintEnd_toStartOf="@+id/text_unread_messages_count"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/text_user_name"
             app:layout_constraintTop_toBottomOf="@+id/text_user_name"
+            app:layout_constraintVertical_bias="0.0"
             tools:text="Read and negotiate contracts" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/text_last_message_timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@{model.lastMessageTimestamp}"
             android:textSize="@dimen/text_xxx_small"
+            app:layout_constraintBottom_toBottomOf="@+id/text_user_name"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/text_user_name"
+            app:visibleInvisible="@{!model.lastMessageText.empty}"
             tools:text="10:03" />
+
+        <TextView
+            android:id="@+id/text_unread_messages_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_circle"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_x_small"
+            app:layout_constraintBottom_toBottomOf="@+id/text_last_message"
+            app:layout_constraintEnd_toEndOf="@+id/text_last_message_timestamp"
+            app:layout_constraintTop_toTopOf="@+id/text_last_message"
+            app:unreadMessagesCount="@{model.unreadMessagesCount}"
+            app:visibleInvisible="@{model.unreadMessagesCount > 0}"
+            tools:text="3+" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="0dp"
+            android:layout_height="0.5dp"
+            android:background="@color/divider_grey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/text_user_name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

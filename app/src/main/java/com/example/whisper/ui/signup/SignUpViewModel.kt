@@ -93,7 +93,9 @@ class SignUpViewModel @Inject constructor(
     }
 
     override fun onBackClick() {
-        _navigationLiveData.value = PopBackStack
+        viewModelScope.launch {
+            _navigationFlow.emit(PopBackStack)
+        }
     }
 
     override fun onEmailTextChanged(textFlow: Flow<CharSequence>) {
@@ -160,7 +162,9 @@ class SignUpViewModel @Inject constructor(
     }
 
     override fun onProfileImageClick() {
-        _navigationLiveData.value = GalleryNavigation
+        viewModelScope.launch {
+            _navigationFlow.emit(GalleryNavigation)
+        }
     }
 
     /* --------------------------------------------------------------------------------------------
@@ -236,17 +240,21 @@ class SignUpViewModel @Inject constructor(
 
     private suspend fun showValidationErrorDialog() {
         _uiState.emit(_uiState.value.copy(isLoading = false))
-        _dialogLiveData.value = TitleMessageDialog(
-            R.string.error_dialog_title_try_again,
-            R.string.error_dialog_message_body_invalid_credentials
+        _dialogFlow.emit(
+            TitleMessageDialog(
+                R.string.error_dialog_title_try_again,
+                R.string.error_dialog_message_body_invalid_credentials
+            )
         )
     }
 
     private suspend fun showNoNetworkErrorDialog() {
         _uiState.emit(_uiState.value.copy(isLoading = false))
-        _dialogLiveData.value = TitleMessageDialog(
-            R.string.error_dialog_title_network,
-            R.string.error_dialog_message_body_no_network
+        _dialogFlow.emit(
+            TitleMessageDialog(
+                R.string.error_dialog_title_network,
+                R.string.error_dialog_message_body_no_network
+            )
         )
     }
 
@@ -269,13 +277,11 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToRecentChats() {
-        _navigationLiveData.value =
-            NavGraph(R.id.action_signUpStepTwoFragment_to_recentChatsFragment)
+    private suspend fun navigateToRecentChats() {
+        _navigationFlow.emit(NavGraph(R.id.action_signUpStepTwoFragment_to_baseContactsFragment))
     }
 
-    private fun navigateToStepTwo() {
-        _navigationLiveData.value =
-            NavGraph(R.id.action_signUpFragment_to_signUpStepTwoFragment)
+    private suspend fun navigateToStepTwo() {
+        _navigationFlow.emit(NavGraph(R.id.action_signUpFragment_to_signUpStepTwoFragment))
     }
 }

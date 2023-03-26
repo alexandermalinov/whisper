@@ -1,6 +1,8 @@
 package com.example.whisper.ui.contacts
 
 import android.os.Bundle
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,7 +27,8 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
         super.onViewCreated(view, savedInstanceState)
         initUiData()
         collectUiStates()
-        observeNavigation(viewModel.navigationLiveData)
+        observeNavigation(viewModel.navigationFlow)
+        observeDialogFlow(viewModel.dialogFlow)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_contacts
@@ -35,6 +38,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
     ---------------------------------------------------------------------------------------------*/
     private fun initUiData() {
         dataBinding.presenter = viewModel
+        lifecycle.addObserver(viewModel)
         initConnectionsRecyclerView()
     }
 
@@ -43,13 +47,74 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
             adapter = ContactsAdapter(viewModel)
             layoutManager = LinearLayoutManager(context)
         }
+
+        dataBinding.recyclerInvitations.apply {
+            adapter = ContactsInviteAdapter(viewModel)
+            layoutManager = LinearLayoutManager(context)
+        }
+
+        dataBinding.recyclerPending.apply {
+            adapter = ContactsPendingAdapter(viewModel)
+            layoutManager = LinearLayoutManager(context)
+        }
     }
 
     private fun collectUiStates() {
         collectState {
-            viewModel.contacts.collect { contacts ->
-                (dataBinding.recyclerContacts.adapter as ContactsAdapter).submitList(contacts)
+            viewModel.uiState.collect { uiState ->
+                dataBinding.model = uiState
             }
+        }
+
+        collectState {
+            viewModel.contacts.collect { contacts ->
+                (dataBinding.recyclerContacts.adapter as ContactsAdapter)
+                    .submitList(contacts)
+            }
+        }
+
+        collectState {
+            viewModel.invitations.collect { invitations ->
+                (dataBinding.recyclerInvitations.adapter as ContactsInviteAdapter)
+                    .submitList(invitations)
+            }
+        }
+
+        collectState {
+            viewModel.pending.collect { pendingContacts ->
+                (dataBinding.recyclerPending.adapter as ContactsPendingAdapter)
+                    .submitList(pendingContacts)
+            }
+        }
+
+        collectState {
+            viewModel.invitationsExpandEvent.collect { shouldExpand ->
+                expandInvitations(shouldExpand)
+            }
+        }
+
+        collectState {
+            viewModel.pendingExpandEvent.collect { shouldExpand ->
+                expandPending(shouldExpand)
+            }
+        }
+    }
+
+    private fun expandInvitations(shouldExpand: Boolean) {
+        dataBinding.apply {
+            TransitionManager.beginDelayedTransition(recyclerInvitations, AutoTransition())
+            recyclerInvitations.visibility = if (shouldExpand) View.VISIBLE else View.GONE
+            buttonExpand.visibility = if (shouldExpand) View.INVISIBLE else View.VISIBLE
+            buttonShrink.visibility = if (shouldExpand) View.VISIBLE else View.INVISIBLE
+        }
+    }
+
+    private fun expandPending(shouldExpand: Boolean) {
+        dataBinding.apply {
+            TransitionManager.beginDelayedTransition(recyclerInvitations, AutoTransition())
+            recyclerPending.visibility = if (shouldExpand) View.VISIBLE else View.GONE
+            buttonPendingExpand.visibility = if (shouldExpand) View.INVISIBLE else View.VISIBLE
+            buttonPendingCollapse.visibility = if (shouldExpand) View.VISIBLE else View.INVISIBLE
         }
     }
 }

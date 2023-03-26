@@ -15,11 +15,14 @@ class UserLocalSource @Inject constructor(
         userDao.saveUser(user)
     }
 
-    override suspend fun getLoggedUser(): User = userDao.getLoggedUser()
+    override suspend fun getLoggedUser(id: String): User = userDao.getLoggedUser(id)
 
     override suspend fun setIsSignedIn(isSignedIn: Boolean) {
         SharedPrefProvider.setIsUserSignedIn(context, isSignedIn)
     }
 
     override suspend fun isSignedIn(): Boolean = SharedPrefProvider.getIsUserSignedIn(context)
+    override suspend fun logout() {
+
+    }
 }

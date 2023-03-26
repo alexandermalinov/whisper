@@ -34,6 +34,16 @@ interface TextChangesCallback {
     fun textChanges(flow: Flow<CharSequence>)
 }
 
+interface ViewPagerChangesCallback {
+
+    fun onPageChange(position: Int)
+}
+
+interface BottomNavigationChangesCallback {
+
+    fun onItemChange(itemId: Int)
+}
+
 @ExperimentalCoroutinesApi
 fun EditText.textChanges(): Flow<CharSequence> = callbackFlow {
     val listener = object : TextWatcher {

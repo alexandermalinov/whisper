@@ -12,10 +12,38 @@
     <!-- app main background color -->
     <color name="dark_gunmetal">#100F0F</color>
     <color name="cactus_green">#1DA1F2</color>
-    <color name="eerie_black">#1A1A1A</color>
+    <color name="eerie_black">#17181c</color>
+    <color name="dark_grey">#8b8b8b</color>
 
-    <!--<color name="cactus_green">#3E7E55</color>-->
+    <!-- Grey shades -->
     <color name="milky_white">#E0E0E0</color>
-    <color name="normal_green">#4CAF50</color>
+    <color name="auro_metal_saurus">#687684</color>
+    <color name="arsenic_grey">#8e8e92</color>
+    <color name="raisin_black">#1c1c1e</color>
+    <color name="divider_grey">#39393c</color>
+
+    <!-- Red shades -->
     <color name="error_red">#FF1744</color>
+    <color name="light_red">#fe2c55</color>
+    <color name="notifications_red">#fe3c30</color>
+
+    <!-- Blue shades -->
+    <color name="brilliant_azure">#2d8fff</color>
+
+    <!-- Green shades -->
+    <color name="ufo_green">#34c759</color>
+    <color name="normal_green">#4CAF50</color>
+    <color name="japanese_laurel">#39763B</color>
+
+    <!-- Purple shades -->
+    <color name="slate_blue">#7448c7</color>
+
+    <!-- Orange shades -->
+    <color name="mango_tango">#fe8a37</color>
+
+    <!-- Yellow shades -->
+    <color name="deep_lemon">#fecb1b</color>
+
+    <!-- Placeholders -->
+    <color name="placeholder_main">#dddddd</color>
 </resources>

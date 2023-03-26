@@ -16,12 +16,12 @@ class AddContactAdapter(private val presenter: AddContactPresenter) :
             override fun areItemsTheSame(
                 oldItem: ContactUiModel,
                 newItem: ContactUiModel
-            ) = oldItem === newItem
+            ) = oldItem.contactId == newItem.contactId
 
             override fun areContentsTheSame(
                 oldItem: ContactUiModel,
                 newItem: ContactUiModel
-            ) = oldItem == newItem
+            ) = oldItem.isInvited == newItem.isInvited && oldItem.isLoading == newItem.isLoading
         }
     ) {
 

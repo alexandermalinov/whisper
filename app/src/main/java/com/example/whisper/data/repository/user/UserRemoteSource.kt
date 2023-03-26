@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 class UserRemoteSource @Inject constructor(
     private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val fireStore: FirebaseFirestore
 ) : UserRepository.RemoteSource {
 
     override suspend fun registerFirebaseAuth(
@@ -31,17 +31,6 @@ class UserRemoteSource @Inject constructor(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val id = task.result?.user?.uid ?: return@addOnCompleteListener
-                    val user = hashMapOf(USER_EMAIL to email, USER_PASSWORD to password)
-                    // register user in firebase firestore
-                   /* firestore.collection(USER_COLLECTION).document(id)
-                        .set(user)
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                block.invoke(Either.right(id))
-                            } else {
-                                block.invoke(Either.left(HttpError(serverMessage = task.exception?.message)))
-                            }
-                        }*/
                     block.invoke(Either.right(id))
                 } else {
                     block.invoke(Either.left(HttpError(serverMessage = task.exception?.message)))
@@ -114,6 +103,12 @@ class UserRemoteSource @Inject constructor(
             } else {
                 block.invoke(Either.right(ResponseResultOk))
             }
+        }
+    }
+
+    override suspend fun logout() {
+        SendBird.disconnect {
+            auth.signOut()
         }
     }
 

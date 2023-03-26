@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="presenter"
+            type="com.example.whisper.ui.basecontacts.BaseContactsPresenter" />
+
+        <variable
+            name="bottomNavigationCallback"
+            type="com.example.whisper.utils.common.BottomNavigationChangesCallback" />
+
+        <variable
+            name="model"
+            type="com.example.whisper.vo.basecontacts.BaseContactsUiModel" />
+
+        <import type="com.example.whisper.R" />
+
+    </data>
+
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/padding_medium"
+        app:layoutDescription="@xml/fragment_base_contacts_xml_constraintlayout2_scene2"
+        tools:context=".ui.basecontacts.BaseContactsFragment">
+
+        <TextView
+            android:id="@+id/text_chats_collapsed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/core_sans_regular"
+            android:text="@{model.pageTitle}"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_xx_medium"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/button_add_contact_or_create_group"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/button_add_contact_or_create_group"
+            tools:text="@string/chats" />
+
+        <CheckBox
+            android:id="@+id/button_add_contact_or_create_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:buttonTint="@color/cactus_green"
+            android:onClick="@{() -> presenter.addContactOrCreateGroup()}"
+            app:buttonIconId="@{model.addContactOrCreateGroupButtonIconId}"
+            app:buttonTintColor="@{model.searchDrawableRes}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <CheckBox
+            android:id="@+id/button_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:button="@drawable/search"
+            android:buttonTint="@color/cactus_green"
+            app:buttonTintColor="@{model.searchDrawableRes}"
+            app:layout_constraintBottom_toBottomOf="@id/button_add_contact_or_create_group"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/button_add_contact_or_create_group" />
+
+        <TextView
+            android:id="@+id/text_chats_expanded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_xx_medium"
+            android:fontFamily="@font/core_sans_regular"
+            android:text="@{model.pageTitle}"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_large"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_search"
+            tools:text="@string/chats" />
+
+        <!-- <EditText
+             android:id="@+id/edit_text_search"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:layout_marginHorizontal="@dimen/margin_medium"
+             android:layout_marginTop="@dimen/margin_medium"
+             android:drawableStart="@drawable/search"
+             android:drawablePadding="@dimen/padding_small"
+             app:visibleGone="@{model.searchVisible}"
+             android:background="@drawable/sp_edittext_radius_medium"
+             android:hint="@string/search"
+             android:paddingHorizontal="@dimen/padding_medium"
+             android:paddingVertical="@dimen/padding_small"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/text_chats_expanded" />-->
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/margin_medium"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_menu"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_add_contact_or_create_group"
+            app:selectViewPagerPage="@{model.viewPagerPosition}" />
+
+        <!-- <View
+             android:id="@+id/view3"
+             android:layout_width="match_parent"
+             android:layout_height="200dp"
+             android:background="@drawable/gradient_fade_black"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toStartOf="parent" />-->
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation_menu"
+            style="@style/Widget.MyTheme.BottomNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:DefaultIconId="@{R.drawable.sl_profile}"
+            app:checkBottomNavigationItem="@{model.bottomNavigationItemId}"
+            app:labelVisibilityMode="unlabeled"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/bottom_navigation_menu"
+            app:menuItemId="@{R.id.profileFragment}"
+            app:navigationIconId="@{model.profilePictureUrl}" />
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+</layout>

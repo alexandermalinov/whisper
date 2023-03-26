@@ -122,7 +122,9 @@ class SignInViewModel @Inject constructor(
     }
 
     override fun onBackClick() {
-        _navigationLiveData.value = PopBackStack
+        viewModelScope.launch {
+            _navigationFlow.emit(PopBackStack)
+        }
     }
 
     /* --------------------------------------------------------------------------------------------
@@ -139,22 +141,28 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun navigateToRecentChats() {
-        _navigationLiveData.value = NavGraph(R.id.action_signInFragment_to_recentChatsFragment)
+        viewModelScope.launch {
+            _navigationFlow.emit(NavGraph(R.id.action_signInFragment_to_baseContactsFragment))
+        }
     }
 
     private suspend fun showValidationErrorDialog() {
         _uiState.emit(_uiState.value.copy(isLoading = false))
-        _dialogLiveData.value = TitleMessageDialog(
-            R.string.error_dialog_title_try_again,
-            R.string.error_dialog_message_body_invalid_credentials
+        _dialogFlow.emit(
+            TitleMessageDialog(
+                R.string.error_dialog_title_try_again,
+                R.string.error_dialog_message_body_invalid_credentials
+            )
         )
     }
 
     private suspend fun showNoNetworkErrorDialog() {
         _uiState.emit(_uiState.value.copy(isLoading = false))
-        _dialogLiveData.value = TitleMessageDialog(
-            R.string.error_dialog_title_network,
-            R.string.error_dialog_message_body_no_network
+        _dialogFlow.emit(
+            TitleMessageDialog(
+                R.string.error_dialog_title_network,
+                R.string.error_dialog_message_body_no_network
+            )
         )
     }
 }

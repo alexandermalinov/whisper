@@ -1,56 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:shimmer="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="model"
+            type="com.example.whisper.vo.recentchats.RecentChatsUiModel" />
+
+        <variable
+            name="presenter"
+            type="com.example.whisper.ui.recentchats.RecentChatsPresenter" />
+
+        <import type="com.example.whisper.vo.recentchats.RecentChatState" />
+
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="@dimen/padding_medium">
-
-        <TextView
-            android:id="@+id/text_app_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/core_sans_regular"
-            android:text="@string/app_name"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_xx_medium"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/image_user_photo"
-            tools:text="Hello, Alexander" />
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/image_user_photo"
-            android:layout_width="@dimen/profile_small"
-            android:layout_height="@dimen/profile_small"
-            android:src="@drawable/ic_avatar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearance="@style/CircleImageView" />
+        android:paddingHorizontal="@dimen/padding_medium">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_recent_chats"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/margin_medium"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/padding_extra_huge"
+            android:visibility="gone"
+            app:visibleGone="@{model.uiState != RecentChatState.LOADING &amp; model.uiState != RecentChatState.ERROR}"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_app_name"
+            app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/item_recent_chat" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer_view_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:startShimmerAnimation="@{model.uiState == RecentChatState.LOADING}"
+            app:visibleGone="@{model.uiState == RecentChatState.LOADING}"
+            shimmer:duration="1000">
+
+            <!-- Adding 7 rows of placeholders -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+
+                <include layout="@layout/item_recent_chat_placeholder" />
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <ImageView
+            android:id="@+id/image_not_found"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_plus"
-            android:layout_marginEnd="@dimen/margin_small"
-            android:layout_marginBottom="@dimen/margin_large"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_marginTop="@dimen/margin_xx_medium"
+            android:src="@drawable/ic_not_found_robot"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:visibleGone="@{model.uiState == RecentChatState.EMPTY}" />
+
+        <TextView
+            android:id="@+id/text_not_found"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_xx_medium"
+            android:fontFamily="@font/core_sans_regular"
+            android:text="@string/no_results_found"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_xx_medium"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/image_not_found"
+            app:visibleGone="@{model.uiState == RecentChatState.EMPTY}" />
+
+        <TextView
+            android:id="@+id/text_not_found_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:text="@string/start_chat_explanation"
+            android:textSize="@dimen/text_medium"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_not_found"
+            app:visibleGone="@{model.uiState == RecentChatState.EMPTY}" />
+
+        <View
+            android:id="@+id/divider_top_start_chat"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="@dimen/margin_xx_medium"
+            android:background="@color/divider_grey"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_not_found_description"
+            app:visibleGone="@{model.uiState == RecentChatState.EMPTY}" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_start_chat"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> presenter.navigateToAddContact()}"
+            android:text="@string/invite_a_user"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider_top_start_chat"
+            app:visibleGone="@{model.uiState == RecentChatState.EMPTY}" />
+
+        <View
+            android:id="@+id/divider_bottom_start_chat"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/divider_grey"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_start_chat"
+            app:visibleGone="@{model.uiState == RecentChatState.EMPTY}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -6,11 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
 import com.example.whisper.R
 import com.example.whisper.databinding.ActivityMainBinding
-import com.example.whisper.utils.common.*
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -29,7 +28,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initDataBinding()
         initNavController()
-        initBottomNavigation()
     }
 
     override fun onSupportNavigateUp(): Boolean = navigationController.navigateUp()
@@ -48,20 +46,5 @@ class MainActivity : AppCompatActivity() {
         val navHostController = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navigationController = navHostController.navController
-        /*navigationController = Navigation.findNavController(
-            this,
-            R.id.nav_host_fragment
-        )*/
-    }
-
-    private fun initBottomNavigation() {
-        dataBinding
-            .bottomNavigationMenu
-            .setupWithNavController(navigationController)
-        viewModel
-            .setBottomNavigationVisibility(
-                navigationController,
-                dataBinding.bottomNavigationMenu
-            )
     }
 }

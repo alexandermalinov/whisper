@@ -20,18 +20,23 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/padding_medium">
+        android:background="?attr/selectableItemBackground"
+        android:onLongClick="@{() -> presenter.showBottomDialog(model)}"
+        android:paddingHorizontal="@dimen/padding_medium"
+        android:paddingTop="@dimen/padding_x_small">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image_user_photo"
             android:layout_width="@dimen/profile_pre_small"
             android:layout_height="@dimen/profile_pre_small"
-            app:defaultGlideRes="@{R.drawable.ic_avatar}"
+            android:layout_marginBottom="@dimen/margin_small"
+            app:defaultGlideRes="@{R.drawable.sp_profile_picture}"
             app:glideRes="@{model.pictureUrl}"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/CircleImageView"
-            tools:src="@drawable/ic_avatar" />
+            tools:src="@drawable/sp_profile_picture" />
 
         <TextView
             android:id="@+id/text_user_name"
@@ -41,13 +46,39 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@{model.username}"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_medium"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/image_user_photo"
             app:layout_constraintTop_toTopOf="@+id/image_user_photo"
             tools:text="John Smith" />
+
+        <TextView
+            android:id="@+id/text_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_medium"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{model.email}"
+            app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
+            app:layout_constraintEnd_toStartOf="@+id/button_options"
+            app:layout_constraintStart_toEndOf="@+id/image_user_photo"
+            app:layout_constraintTop_toBottomOf="@+id/text_user_name"
+            tools:text="john_smith@gmail.com" />
+
+        <CheckBox
+            android:id="@+id/button_options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/ic_trash"
+            android:buttonTint="@color/arsenic_grey"
+            android:onClick="@{() -> presenter.deleteContact(model.channelUrl)}"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/image_user_photo" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
