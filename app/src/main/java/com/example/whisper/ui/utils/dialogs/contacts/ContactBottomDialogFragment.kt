@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentContactBottomDialogBinding
+import com.example.whisper.ui.utils.dialogs.showDialog
 import com.example.whisper.utils.common.collectState
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,6 +59,12 @@ class ContactBottomDialogFragment : BottomSheetDialogFragment() {
         collectState {
             viewModel.dismissDialog.collect { shouldDismissDialog ->
                 if (shouldDismissDialog) dismissNow()
+            }
+        }
+
+        collectState {
+            viewModel.dialogFlow.collect { dialog ->
+                showDialog(dialog)
             }
         }
     }

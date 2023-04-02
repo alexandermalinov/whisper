@@ -13,6 +13,7 @@ import com.example.whisper.ui.base.ConnectionStatus
 import com.example.whisper.ui.basecontacts.BaseContactsViewModel
 import com.example.whisper.utils.DateTimeFormatter
 import com.example.whisper.utils.common.EMPTY
+import com.example.whisper.utils.common.PINNED_CONTACTS
 import com.example.whisper.utils.common.RECENT_CHAT_HANDLER_ID
 import com.example.whisper.utils.common.ZERO
 import com.example.whisper.vo.recentchats.*
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,11 +44,15 @@ class RecentChatsViewModel @Inject constructor(
     val recentChats
         get() = _recentChats.asStateFlow()
 
+    val pinnedChats
+        get() = _pinnedChats.asStateFlow()
+
     val chatsRecyclerViewState
         get() = _chatsRecyclerViewState.asSharedFlow()
 
     private val _uiState = MutableStateFlow(RecentChatsUiModel())
     private val _recentChats = MutableStateFlow(emptyList<RecentChatUiModel>())
+    private val _pinnedChats = MutableStateFlow(emptyList<RecentChatUiModel>())
     private val _chatsRecyclerViewState = MutableSharedFlow<ChatsRecyclerViewState>()
 
     private var isAtTheTopOfRecyclerview = true
@@ -55,17 +61,18 @@ class RecentChatsViewModel @Inject constructor(
         loggedUserId?.let { id ->
             viewModelScope.launch(Dispatchers.IO) {
                 _uiState.emit(_uiState.value.copy(uiState = RecentChatState.LOADING))
+
                 connectionStatus.collect { connectionStatus ->
                     when (connectionStatus) {
                         ConnectionStatus.CONNECTED -> {
                             fetchRecentChats(id)
                             initChatHandler()
                         }
-                        ConnectionStatus.NOT_CONNECTED -> {
-                            _uiState.emit(_uiState.value.copy(uiState = RecentChatState.ERROR))
-                        }
                         ConnectionStatus.CONNECTING -> {
                             _uiState.emit(_uiState.value.copy(uiState = RecentChatState.LOADING))
+                        }
+                        ConnectionStatus.NOT_CONNECTED -> {
+                            _uiState.emit(_uiState.value.copy(uiState = RecentChatState.ERROR))
                         }
                     }
                 }
@@ -111,10 +118,22 @@ class RecentChatsViewModel @Inject constructor(
     private suspend fun fetchRecentChats(id: String) {
         contactsRepository.getContacts(ContactConnectionStatus.CONNECTED) { either ->
             either.fold({ error ->
-                // TODO - Show contacts from local DB. Create LoadContactsUseCase
+                Timber.tag("Contacts Fetching").d("Couldn't fetch contacts")
             }, { contacts ->
                 viewModelScope.launch {
-                    _recentChats.emit(contacts.toListOfRecentChatsUiModel(id))
+                    val currentUser = SendBird.getCurrentUser()
+                    val pinned = contacts.filter { chat ->
+                        currentUser.metaData[PINNED_CONTACTS]
+                            ?.filterNot { it.isWhitespace() }
+                            ?.split(',')
+                            ?.contains(chat.members.first { it.userId != currentUser.userId }.userId)
+                            ?: false
+                    }
+                    val chats = contacts.filterNot { chat -> pinned.any{ it.url == chat.url} }
+
+                    _pinnedChats.emit(pinned.toListOfRecentChatsUiModel(id))
+                    _recentChats.emit(chats.toListOfRecentChatsUiModel(id))
+
                     if (contacts.isEmpty()) {
                         _uiState.emit(_uiState.value.copy(uiState = RecentChatState.EMPTY))
                     } else {

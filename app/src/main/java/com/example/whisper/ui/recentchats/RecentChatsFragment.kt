@@ -2,6 +2,7 @@ package com.example.whisper.ui.recentchats
 
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -49,6 +50,11 @@ class RecentChatsFragment : BaseFragment<FragmentRecentChatsBinding>() {
             adapter = RecentChatsAdapter(viewModel)
             layoutManager = linearLayoutManager
         }
+
+        dataBinding.recyclerPinnedChats.apply {
+            adapter = PinnedChatsAdapter(viewModel)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        }
         initScrollListener()
     }
 
@@ -63,6 +69,13 @@ class RecentChatsFragment : BaseFragment<FragmentRecentChatsBinding>() {
             viewModel.recentChats.collect { recentChats ->
                (dataBinding.recyclerRecentChats.adapter as RecentChatsAdapter)
                    .submitList(recentChats)
+            }
+        }
+
+        collectState {
+            viewModel.pinnedChats.collect { pinnedChats ->
+                (dataBinding.recyclerPinnedChats.adapter as PinnedChatsAdapter)
+                    .submitList(pinnedChats)
             }
         }
 

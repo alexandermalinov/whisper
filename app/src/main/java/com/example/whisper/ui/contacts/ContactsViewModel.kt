@@ -11,6 +11,9 @@ import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.navigation.NavGraph
 import com.example.whisper.ui.base.ConnectionStatus
+import com.example.whisper.ui.base.ConnectionStatus.CONNECTED
+import com.example.whisper.ui.base.ConnectionStatus.CONNECTING
+import com.example.whisper.ui.base.ConnectionStatus.NOT_CONNECTED
 import com.example.whisper.ui.basecontacts.BaseContactsViewModel
 import com.example.whisper.utils.common.*
 import com.example.whisper.vo.contacts.ContactUiModel
@@ -59,22 +62,26 @@ class ContactsViewModel @Inject constructor(
     private val _invitationsExpandEvent = MutableStateFlow(false)
     private val _pendingExpandEvent = MutableStateFlow(false)
 
+    private lateinit var userConnectionStatus: ConnectionStatus
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.emit(_uiState.value.copy(uiState = ContactsState.LOADING))
 
-            initContactListener()
-
             connectionStatus.collect { connectionStatus ->
                 when (connectionStatus) {
-                    ConnectionStatus.CONNECTED -> {
+                    CONNECTED -> {
+                        userConnectionStatus = CONNECTED
                         fetchContacts()
+                        initContactListener()
                     }
-                    ConnectionStatus.NOT_CONNECTED -> {
-                        _uiState.emit(_uiState.value.copy(uiState = ContactsState.ERROR))
-                    }
-                    ConnectionStatus.CONNECTING -> {
+                    CONNECTING -> {
+                        userConnectionStatus = CONNECTING
                         _uiState.emit(_uiState.value.copy(uiState = ContactsState.LOADING))
+                    }
+                    NOT_CONNECTED -> {
+                        userConnectionStatus = NOT_CONNECTED
+                        _uiState.emit(_uiState.value.copy(uiState = ContactsState.ERROR))
                     }
                 }
             }
@@ -119,7 +126,10 @@ class ContactsViewModel @Inject constructor(
                 CONTACT_ID to contact.contactId,
                 CONTACT_PROFILE_IMAGE to contact.pictureUrl,
                 CONTACT_USERNAME to contact.username,
-                CONTACT_EMAIL to contact.email
+                CONTACT_EMAIL to contact.email,
+                CONTACT_IS_MUTED to contact.isMuted,
+                CONTACT_IS_PINNED to contact.isPinned,
+                CONTACT_STATUS to getContactStatus(contact)
             )
 
             _dialogFlow.emit(ContactBottomDialog(bundle))
@@ -241,7 +251,7 @@ class ContactsViewModel @Inject constructor(
 
                     viewModelScope.launch {
                         loggedUserId?.let { id ->
-                            val contact = channel?.toContactUiModel(id) ?: return@launch
+                            val contact = channel?.toContactUiModel() ?: return@launch
                             _invitations.emit(_invitations.value.plus(contact))
                             setState()
                             updateContactsCount()
@@ -254,7 +264,7 @@ class ContactsViewModel @Inject constructor(
 
                     viewModelScope.launch {
                         loggedUserId?.let { id ->
-                            val contact = channel?.toContactUiModel(id) ?: return@launch
+                            val contact = channel?.toContactUiModel() ?: return@launch
                             _pending.emit(_pending.value.minus(contact))
                             _contacts.emit(_contacts.value.plus(contact))
                             setState()
@@ -272,7 +282,7 @@ class ContactsViewModel @Inject constructor(
 
                     viewModelScope.launch {
                         loggedUserId?.let { id ->
-                            val contact = channel?.toContactUiModel(id) ?: return@launch
+                            val contact = channel?.toContactUiModel() ?: return@launch
                             _pending.emit(_pending.value.minus(contact))
                             setState()
                             updateContactsCount()
@@ -301,6 +311,32 @@ class ContactsViewModel @Inject constructor(
 
                             setState()
                             updateContactsCount()
+                        }
+                    }
+                }
+
+                override fun onUserMuted(channel: BaseChannel?, user: User?) {
+                    super.onUserMuted(channel, user)
+
+                    viewModelScope.launch {
+                        _contacts.value.map { contact ->
+                            if (contact.contactId == user?.userId) contact.isMuted = true
+                            contact
+                        }.let {
+                            _contacts.emit(it)
+                        }
+                    }
+                }
+
+                override fun onUserUnmuted(channel: BaseChannel?, user: User?) {
+                    super.onUserUnmuted(channel, user)
+
+                    viewModelScope.launch {
+                        _contacts.value.map { contact ->
+                            if (contact.contactId == user?.userId) contact.isMuted = false
+                            contact
+                        }.let {
+                            _contacts.emit(it)
                         }
                     }
                 }
@@ -355,8 +391,9 @@ class ContactsViewModel @Inject constructor(
         contacts: MutableList<ContactUiModel>
     ) {
         allContacts.forEach { contact ->
-            val contactModel = contact.toContactUiModel(loggedUserId ?: EMPTY)
+            val contactModel = contact.toContactUiModel()
             when {
+                contact.isFrozen -> return@forEach
                 contact.joinedMemberCount == 1 && contact.myMemberState == MemberState.INVITED -> {
                     invitedContacts.add(contactModel)
                 }
@@ -396,5 +433,11 @@ class ContactsViewModel @Inject constructor(
                 pendingCount = _pending.value.size
             )
         )
+    }
+
+    private fun getContactStatus(contact: ContactUiModel) = when {
+        _contacts.value.any { it.contactId == contact.contactId } -> ContactState.JOINED
+        pending.value.any { it.contactId == contact.contactId } -> ContactState.PENDING
+        else -> ContactState.INVITED
     }
 }

@@ -21,7 +21,7 @@ open class BaseViewModel : ViewModel() {
     val dialogFlow
         get() = _dialogFlow.asSharedFlow()
 
-    protected val _navigationFlow = MutableSharedFlow<Destination>()
-    protected val _popupMenuFlow = MutableSharedFlow<MenuUiModel>()
-    protected val _dialogFlow = MutableSharedFlow<Dialog>()
+    protected val _navigationFlow = MutableSharedFlow<Destination>(0)
+    protected val _popupMenuFlow = MutableSharedFlow<MenuUiModel>(0)
+    protected val _dialogFlow = MutableSharedFlow<Dialog>(0)
 }

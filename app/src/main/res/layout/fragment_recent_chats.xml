@@ -25,18 +25,33 @@
         android:paddingHorizontal="@dimen/padding_medium">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_pinned_chats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:visibleGone="@{model.uiState != RecentChatState.LOADING &amp; model.uiState != RecentChatState.ERROR}"
+            tools:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_pinned_chats"
+            tools:orientation="horizontal" />
+
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_recent_chats"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="@dimen/margin_medium"
             android:clipToPadding="false"
             android:paddingBottom="@dimen/padding_extra_huge"
-            android:visibility="gone"
-            app:visibleGone="@{model.uiState != RecentChatState.LOADING &amp; model.uiState != RecentChatState.ERROR}"
+            android:visibility="visible"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recycler_pinned_chats"
+            app:visibleGone="@{model.uiState != RecentChatState.LOADING &amp; model.uiState != RecentChatState.ERROR}"
             tools:listitem="@layout/item_recent_chat" />
 
         <com.facebook.shimmer.ShimmerFrameLayout
@@ -58,12 +73,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <include layout="@layout/item_recent_chat_placeholder" />
-
-                <include layout="@layout/item_recent_chat_placeholder" />
-
-                <include layout="@layout/item_recent_chat_placeholder" />
 
                 <include layout="@layout/item_recent_chat_placeholder" />
 
