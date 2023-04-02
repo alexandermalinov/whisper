@@ -70,6 +70,16 @@ class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
             contactId: String,
             block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
+
+        suspend fun pinContact(
+            contactId: String,
+            block: (Either<HttpError, ResponseResultOk>) -> Unit
+        )
+
+        suspend fun unpinContact(
+            contactId: String,
+            block: (Either<HttpError, ResponseResultOk>) -> Unit
+        )
     }
 
     /* --------------------------------------------------------------------------------------------
@@ -152,5 +162,19 @@ class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
         remote.unmuteContact(channelId, contactId, block)
+    }
+
+    suspend fun pinContact(
+        contactId: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        remote.pinContact(contactId, block)
+    }
+
+    suspend fun unpinContact(
+        contactId: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        remote.unpinContact(contactId, block)
     }
 }

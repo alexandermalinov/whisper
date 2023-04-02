@@ -47,7 +47,9 @@
     <string name="go_to_chat">Go to Chat</string>
     <string name="delete_contact">Delete</string>
     <string name="pin_contact">Pin</string>
+    <string name="unpin_contact">Unpin</string>
     <string name="mute_contact">Mute</string>
+    <string name="unmute_contact">Unmute</string>
     <string name="block_contact">Block</string>
 
     <!-- Profile Screen -->
@@ -86,4 +88,10 @@
     <string name="error_dialog_message_body_no_network">No internet connection found. Check your connection or try again.</string>
     <string name="error_dialog_message_body_invalid_credentials">Email or password are invalid. Please try again with valid credentials.</string>
     <string name="error_dialog_body_message_setting_personal_info">There was an error setting your personal information</string>
+
+    <!-- General Error Messages -->
+    <string name="error">Error</string>
+    <string name="error_network_message">Network Error</string>
+    <string name="error_something_went_wrong_try_again">Something went wrong. Please try again.</string>
+    <string name="try_again">Try Again</string>
 </resources>

@@ -86,6 +86,11 @@ fun TextView.setSafeText(value: Int) {
     if (value != INVALID_RES) text = value.toString()
 }
 
+@BindingAdapter("textResource")
+fun TextView.setTextResource(resource: Int) {
+    if (resource != INVALID_RES) text = resources.getString(resource)
+}
+
 @BindingAdapter("textFormatted")
 fun TextView.setTextFormatted(textRes: TextRes) {
     with(textRes) {

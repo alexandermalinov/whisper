@@ -1,9 +1,11 @@
 package com.example.whisper.vo.contacts
 
 import com.example.whisper.utils.common.EMPTY
+import com.example.whisper.utils.common.PINNED_CONTACTS
 import com.example.whisper.utils.common.USER_EMAIL
 import com.example.whisper.utils.common.ZERO
 import com.sendbird.android.GroupChannel
+import com.sendbird.android.SendBird
 import com.sendbird.android.User
 
 data class ContactUiModel(
@@ -14,6 +16,8 @@ data class ContactUiModel(
     val channelUrl: String = EMPTY,
     val createdAt: Long = ZERO.toLong(),
     var isInvited: Boolean = false,
+    var isMuted: Boolean = false,
+    var isPinned: Boolean = false,
     var isLoading: Boolean = false
 )
 
@@ -32,15 +36,18 @@ fun List<User>.toContactsUiModel(loggedUserId: String) =
         )
     }
 
-fun GroupChannel.toContactUiModel(loggedUserId: String): ContactUiModel {
-    val contact = getContact(loggedUserId)
+fun GroupChannel.toContactUiModel(): ContactUiModel {
+    val currentUser = SendBird.getCurrentUser()
+    val contact = getContact(currentUser.userId)
     return ContactUiModel(
         contactId = contact?.userId ?: EMPTY,
         pictureUrl = contact?.profileUrl ?: EMPTY,
         username = contact?.nickname ?: EMPTY,
         email = contact?.metaData?.get(USER_EMAIL) ?: EMPTY,
         channelUrl = url,
-        createdAt = createdAt
+        createdAt = createdAt,
+        isMuted = contact?.isMuted ?: false,
+        isPinned = currentUser.isContactPinned(contact?.userId)
     )
 }
 
@@ -49,3 +56,7 @@ fun GroupChannel.toContactUiModel(loggedUserId: String): ContactUiModel {
 --------------------------------------------------------------------------------------------------*/
 private fun GroupChannel.getContact(currentUserId: String) =
     members.find { it.userId != currentUserId }
+
+private fun User.isContactPinned(contactId: String?) = metaData[PINNED_CONTACTS]?.split(',')
+    ?.contains(contactId)
+    ?: false

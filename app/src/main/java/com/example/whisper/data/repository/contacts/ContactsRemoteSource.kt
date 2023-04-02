@@ -1,5 +1,6 @@
 package com.example.whisper.data.repository.contacts
 
+import com.example.whisper.utils.common.PINNED_CONTACTS
 import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
 import com.example.whisper.utils.responsehandler.ResponseResultOk
@@ -225,6 +226,46 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
                         block.invoke(Either.right(ResponseResultOk))
                     }
                 }
+            }
+        }
+    }
+
+    override suspend fun pinContact(
+        contactId: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        val currentUser = SendBird.getCurrentUser()
+        val pinnedContacts = currentUser.metaData[PINNED_CONTACTS]
+            ?.split(',')
+            ?.plus(contactId)
+            ?.joinToString()
+            ?: contactId
+        currentUser.metaData.set(PINNED_CONTACTS, pinnedContacts)
+        currentUser.updateMetaData(currentUser.metaData) { metaDataMap, e ->
+            if (e != null) {
+                block.invoke(Either.left(HttpError(serverMessage = e.message)))
+            } else {
+                block.invoke(Either.right(ResponseResultOk))
+            }
+        }
+    }
+
+    override suspend fun unpinContact(
+        contactId: String,
+        block: (Either<HttpError, ResponseResultOk>) -> Unit
+    ) {
+        val currentUser = SendBird.getCurrentUser()
+        val pinnedContacts = currentUser.metaData[PINNED_CONTACTS]
+            ?.split(',')
+            ?.minus(contactId)
+            ?.joinToString()
+            ?: return
+        currentUser.metaData.set(PINNED_CONTACTS, pinnedContacts)
+        currentUser.updateMetaData(currentUser.metaData) { metaDataMap, e ->
+            if (e != null) {
+                block.invoke(Either.left(HttpError(serverMessage = e.message)))
+            } else {
+                block.invoke(Either.right(ResponseResultOk))
             }
         }
     }

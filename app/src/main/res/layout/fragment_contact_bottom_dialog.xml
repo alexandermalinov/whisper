@@ -15,6 +15,10 @@
 
         <import type="com.example.whisper.R" />
 
+        <import type="com.example.whisper.ui.contacts.ContactState" />
+
+        <import type="com.example.whisper.vo.dialogs.contacts.ContactBottomSheetState" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,7 +47,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view_drag"
             app:shapeAppearanceOverlay="@style/CircleImageView"
-            app:visibleInvisible="@{!model.loading}"
+            app:visibleInvisible="@{model.uiState == ContactBottomSheetState.IDLE}"
             tools:src="@drawable/sp_profile_picture" />
 
         <TextView
@@ -61,7 +65,7 @@
             app:layout_constraintStart_toEndOf="@+id/image_profile_picture"
             app:layout_constraintTop_toTopOf="@+id/image_profile_picture"
             app:layout_constraintVertical_chainStyle="packed"
-            app:visibleInvisible="@{!model.loading}"
+            app:visibleInvisible="@{model.uiState == ContactBottomSheetState.IDLE}"
             tools:text="Dummy Username" />
 
         <TextView
@@ -76,7 +80,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/image_profile_picture"
             app:layout_constraintTop_toBottomOf="@+id/text_username"
-            app:visibleInvisible="@{!model.loading}"
+            app:visibleInvisible="@{model.uiState == ContactBottomSheetState.IDLE}"
             tools:text="Dummy Email" />
 
         <View
@@ -88,27 +92,26 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/image_profile_picture"
-            app:visibleInvisible="@{!model.loading}" />
+            app:visibleInvisible="@{model.uiState == ContactBottomSheetState.IDLE}" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_pin_contact"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/raisin_black"
+            android:onClick="@{() -> presenter.pinContact()}"
             android:paddingHorizontal="@dimen/padding_medium"
-            android:text="@string/pin_contact"
+            android:text="@{model.pinned ? @string/unpin_contact : @string/pin_contact}"
             android:textAlignment="textStart"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:onClick="@{() -> presenter.pinContact()}"
             app:icon="@drawable/ic_pin_outlined"
             app:iconPadding="@dimen/padding_medium"
             app:iconTint="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider_1"
-            app:visibleInvisible="@{!model.loading}" />
+            app:visibleGone="@{model.uiState == ContactBottomSheetState.IDLE &amp; model.contactStatus == ContactState.JOINED}" />
 
         <View
             android:id="@+id/divider_2"
@@ -118,47 +121,46 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button_pin_contact"
-            app:visibleInvisible="@{!model.loading}" />
+            app:visibleGone="@{model.uiState == ContactBottomSheetState.IDLE &amp; model.contactStatus == ContactState.JOINED}" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_mute_contact"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/raisin_black"
+            android:onClick="@{() -> presenter.muteOrUnmuteContact()}"
             android:paddingHorizontal="@dimen/padding_medium"
-            android:text="@string/mute_contact"
-            android:onClick="@{() -> presenter.muteContact()}"
+            android:text="@{model.muted ? @string/unmute_contact : @string/mute_contact}"
             android:textAlignment="textStart"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            app:icon="@drawable/ic_contact_muted"
+            app:icon="@{model.muted ? @drawable/ic_unmuted : @drawable/ic_muted}"
             app:iconPadding="@dimen/padding_medium"
             app:iconTint="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider_2"
-            app:visibleInvisible="@{!model.loading}" />
+            app:visibleGone="@{model.uiState == ContactBottomSheetState.IDLE &amp; model.contactStatus == ContactState.JOINED}"
+            tools:text="@string/mute_contact" />
 
         <View
             android:id="@+id/divider_3"
             android:layout_width="0dp"
             android:layout_height="0.3dp"
-            android:backgroundTint="@color/raisin_black"
+            android:background="@color/divider_grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button_mute_contact"
-            app:visibleInvisible="@{!model.loading}" />
+            app:visibleGone="@{model.uiState == ContactBottomSheetState.IDLE &amp; model.contactStatus == ContactState.JOINED}" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_block_contact"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/raisin_black"
+            android:onClick="@{() -> presenter.blockContact()}"
             android:paddingHorizontal="@dimen/padding_medium"
             android:text="@string/block_contact"
-            android:onClick="@{() -> presenter.blockContact()}"
             android:textAlignment="textStart"
             android:textAllCaps="false"
             android:textColor="@color/white"
@@ -168,7 +170,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider_3"
-            app:visibleInvisible="@{!model.loading}" />
+            app:visibleGone="@{model.uiState == ContactBottomSheetState.IDLE &amp; model.contactStatus == ContactState.JOINED}" />
 
         <View
             android:id="@+id/divider_4"
@@ -178,14 +180,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button_block_contact"
-            app:visibleInvisible="@{!model.loading}" />
+            app:visibleGone="@{model.uiState == ContactBottomSheetState.IDLE &amp; model.contactStatus == ContactState.JOINED}" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_delete_contact"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/raisin_black"
+            android:clickable="true"
+            android:enabled="true"
             android:onClick="@{() -> presenter.deleteContact()}"
             android:paddingHorizontal="@dimen/padding_medium"
             android:text="@string/delete_contact"
@@ -194,18 +197,16 @@
             android:textColor="@color/light_red"
             app:icon="@drawable/ic_trash"
             app:iconPadding="@dimen/padding_medium"
-            android:clickable="true"
-            android:enabled="true"
             app:iconTint="@color/light_red"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider_4"
-            app:visibleInvisible="@{!model.loading}" />
+            app:visibleInvisible="@{model.uiState == ContactBottomSheetState.IDLE}" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animation_view_loading"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="272dp"
             app:layout_constraintBottom_toBottomOf="@+id/button_delete_contact"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -213,7 +214,61 @@
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/loading_bubble"
-            app:visibleInvisible="@{model.loading}" />
+            app:visibleGone="@{model.uiState == ContactBottomSheetState.LOADING}" />
+
+        <ImageView
+            android:id="@+id/image_error"
+            android:layout_width="0dp"
+            android:layout_height="124dp"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:src="@drawable/ic_not_found_robot"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_drag"
+            app:visibleGone="@{model.uiState == ContactBottomSheetState.ERROR}" />
+
+        <TextView
+            android:id="@+id/text_error_tittle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_medium"
+            app:textResource="@{model.errorTitle}"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_x_medium"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/image_error"
+            app:visibleGone="@{model.uiState == ContactBottomSheetState.ERROR}" />
+
+        <TextView
+            android:id="@+id/text_error_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:textResource="@{model.errorMessage}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_error_tittle"
+            app:visibleGone="@{model.uiState == ContactBottomSheetState.ERROR}" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_get_started"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:onClick="@{() -> presenter.tryAgain()}"
+            android:paddingVertical="@dimen/padding_x_small"
+            android:text="@string/try_again"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/cactus_green"
+            app:cornerRadius="@dimen/radius_medium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_error_message"
+            app:visibleGone="@{model.uiState == ContactBottomSheetState.ERROR}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

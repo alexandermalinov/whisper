@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="model"
+            type="com.example.whisper.vo.recentchats.RecentChatUiModel" />
+
+        <variable
+            name="presenter"
+            type="com.example.whisper.ui.recentchats.RecentChatPresenter" />
+
+        <import type="com.example.whisper.R" />
+
+        <import type="com.example.whisper.vo.recentchats.OnlineStatus" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="@dimen/padding_x_medium">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image_user_photo"
+            android:layout_width="@dimen/profile_pre_x_small"
+            android:layout_height="@dimen/profile_pre_x_small"
+            app:defaultGlideRes="@{R.drawable.sp_profile_picture}"
+            app:glideRes="@{model.profilePicture}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            tools:src="@drawable/sp_profile_picture" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image_online_indicator"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@color/normal_green"
+            android:padding="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
+            app:layout_constraintEnd_toEndOf="@+id/image_user_photo"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintVertical_bias="1.0"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            app:strokeColor="@color/black"
+            app:strokeWidth="2dp"
+            app:visibleInvisible="@{model.onlineStatus == OnlineStatus.ONLINE}" />
+
+        <TextView
+            android:id="@+id/text_user_name"
+            android:layout_width="0dp"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:layout_marginTop="@dimen/margin_micro"
+            android:text="@{model.username}"
+            android:textSize="@dimen/text_x_small"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/image_user_photo"
+            app:layout_constraintStart_toStartOf="@+id/image_user_photo"
+            app:layout_constraintTop_toBottomOf="@+id/image_user_photo"
+            tools:text="John Smith" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

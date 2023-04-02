@@ -24,7 +24,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/padding_medium">
+            android:paddingHorizontal="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_medium">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/container_personal_info"
@@ -234,7 +235,7 @@
                     android:layout_height="32dp"
                     android:layout_marginTop="@dimen/margin_medium"
                     android:background="@drawable/sp_rectangle_dark_grey"
-                    android:src="@drawable/ic_contact_muted"
+                    android:src="@drawable/ic_muted"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/image_11"
                     app:tint="@color/white" />

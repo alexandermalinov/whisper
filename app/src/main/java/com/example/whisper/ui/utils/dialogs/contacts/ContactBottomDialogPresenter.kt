@@ -4,13 +4,13 @@ interface ContactBottomDialogPresenter {
 
     fun pinContact()
 
-    fun muteContact()
-
-    fun unmuteContact()
+    fun muteOrUnmuteContact()
 
     fun blockContact()
 
     fun unblockContact()
 
     fun deleteContact()
+
+    fun tryAgain()
 }
