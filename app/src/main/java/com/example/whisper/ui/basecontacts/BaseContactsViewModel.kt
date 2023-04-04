@@ -38,7 +38,7 @@ open class BaseContactsViewModel @Inject constructor(
     private val _uiModel = MutableStateFlow(BaseContactsUiModel())
     private val _connectionStatus = MutableSharedFlow<ConnectionStatus>()
 
-    private var currentUser: User? = null
+    protected var currentUser: User? = null
     protected var loggedUserId: String? = null
 
     init {

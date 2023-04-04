@@ -32,6 +32,7 @@ class RecentChatsFragment : BaseFragment<FragmentRecentChatsBinding>() {
         initConnectionsRecyclerView()
         collectUiStates()
         observeNavigation(viewModel.navigationFlow)
+        observeDialogFlow(viewModel.dialogFlow)
     }
     override fun getLayoutId(): Int = R.layout.fragment_recent_chats
 
