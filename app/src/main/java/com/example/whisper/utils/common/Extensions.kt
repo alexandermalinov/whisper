@@ -4,12 +4,16 @@ import android.content.Intent
 import android.net.Uri
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MotionEvent
+import android.view.View
 import android.view.WindowManager
+import android.view.animation.AnimationUtils
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.whisper.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -64,5 +68,24 @@ fun Fragment.collectState(state: suspend () -> Unit) {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             state.invoke()
         }
+    }
+}
+
+fun View.setZoomAnimationOnTouch(zoomAnimationRes: Int) {
+    setOnTouchListener { view, motionEvent ->
+        val animZoomIn = AnimationUtils.loadAnimation(context, zoomAnimationRes)
+        when (motionEvent.action) {
+            MotionEvent.ACTION_DOWN -> {
+                startAnimation(animZoomIn)
+            }
+            MotionEvent.ACTION_UP -> {
+                clearAnimation()
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                clearAnimation()
+            }
+        }
+        performClick()
+        return@setOnTouchListener false
     }
 }

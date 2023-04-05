@@ -23,8 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/padding_small"
-        android:background="@drawable/sl_oval_item_selector"
-        android:onLongClick="@{() -> presenter.onRecentChatLongClicked(model)}">
+        android:paddingVertical="@dimen/padding_small"
+        app:longClickZoomMedium="@{() -> presenter.onRecentChatLongClicked(model)}">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image_user_photo"
