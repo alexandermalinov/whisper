@@ -21,9 +21,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        app:longClickZoomSmall="@{() -> presenter.showBottomDialog(model)}"
         android:paddingHorizontal="@dimen/padding_medium"
-        android:paddingTop="@dimen/padding_x_small">
+        android:paddingTop="@dimen/padding_x_small"
+        app:longClickZoomSmall="@{() -> presenter.showBottomDialog(model)}">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image_user_photo"
