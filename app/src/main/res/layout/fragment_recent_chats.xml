@@ -21,14 +21,14 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingHorizontal="@dimen/padding_medium">
+        android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_pinned_chats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="visible"
+            android:layout_marginStart="@dimen/margin_small"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -95,6 +95,7 @@
             android:id="@+id/image_not_found"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_medium"
             android:layout_marginTop="@dimen/margin_xx_medium"
             android:src="@drawable/ic_not_found_robot"
             android:visibility="invisible"
@@ -107,6 +108,7 @@
             android:id="@+id/text_not_found"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_medium"
             android:layout_marginTop="@dimen/margin_xx_medium"
             android:fontFamily="@font/core_sans_regular"
             android:text="@string/no_results_found"
@@ -121,6 +123,7 @@
             android:id="@+id/text_not_found_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_medium"
             android:layout_marginTop="@dimen/margin_small"
             android:text="@string/start_chat_explanation"
             android:textSize="@dimen/text_medium"
@@ -145,6 +148,7 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_medium"
             android:onClick="@{() -> presenter.navigateToAddContact()}"
             android:text="@string/invite_a_user"
             android:textAlignment="textStart"

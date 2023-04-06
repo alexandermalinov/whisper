@@ -250,8 +250,8 @@ class ContactsViewModel @Inject constructor(
                     super.onUserReceivedInvitation(channel, inviter, invitees)
 
                     viewModelScope.launch {
-                        loggedUserId?.let { id ->
-                            val contact = channel?.toContactUiModel() ?: return@launch
+                        currentUser?.let { user ->
+                            val contact = channel?.toContactUiModel(user) ?: return@launch
                             _invitations.emit(_invitations.value.plus(contact))
                             setState()
                             updateContactsCount()
@@ -263,8 +263,8 @@ class ContactsViewModel @Inject constructor(
                     super.onUserJoined(channel, user)
 
                     viewModelScope.launch {
-                        loggedUserId?.let { id ->
-                            val contact = channel?.toContactUiModel() ?: return@launch
+                        currentUser?.let { user ->
+                            val contact = channel?.toContactUiModel(user) ?: return@launch
                             _pending.emit(_pending.value.minus(contact))
                             _contacts.emit(_contacts.value.plus(contact))
                             setState()
@@ -281,8 +281,8 @@ class ContactsViewModel @Inject constructor(
                     super.onUserDeclinedInvitation(channel, inviter, invitee)
 
                     viewModelScope.launch {
-                        loggedUserId?.let { id ->
-                            val contact = channel?.toContactUiModel() ?: return@launch
+                        currentUser?.let { user ->
+                            val contact = channel?.toContactUiModel(user) ?: return@launch
                             _pending.emit(_pending.value.minus(contact))
                             setState()
                             updateContactsCount()
@@ -390,8 +390,9 @@ class ContactsViewModel @Inject constructor(
         pendingContacts: MutableList<ContactUiModel>,
         contacts: MutableList<ContactUiModel>
     ) {
+        if (currentUser == null) return
         allContacts.forEach { contact ->
-            val contactModel = contact.toContactUiModel()
+            val contactModel = contact.toContactUiModel(currentUser!!)
             when {
                 contact.isFrozen -> return@forEach
                 contact.joinedMemberCount == 1 && contact.myMemberState == MemberState.INVITED -> {

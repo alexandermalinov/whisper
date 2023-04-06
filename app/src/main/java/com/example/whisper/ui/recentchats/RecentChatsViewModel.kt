@@ -1,6 +1,7 @@
 package com.example.whisper.ui.recentchats
 
 import android.app.Application
+import androidx.core.os.bundleOf
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
@@ -11,11 +12,10 @@ import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.navigation.NavGraph
 import com.example.whisper.ui.base.ConnectionStatus
 import com.example.whisper.ui.basecontacts.BaseContactsViewModel
+import com.example.whisper.ui.contacts.ContactState
 import com.example.whisper.utils.DateTimeFormatter
-import com.example.whisper.utils.common.EMPTY
-import com.example.whisper.utils.common.PINNED_CONTACTS
-import com.example.whisper.utils.common.RECENT_CHAT_HANDLER_ID
-import com.example.whisper.utils.common.ZERO
+import com.example.whisper.utils.common.*
+import com.example.whisper.vo.dialogs.ContactBottomDialog
 import com.example.whisper.vo.recentchats.*
 import com.sendbird.android.BaseChannel
 import com.sendbird.android.BaseMessage
@@ -65,7 +65,7 @@ class RecentChatsViewModel @Inject constructor(
                 connectionStatus.collect { connectionStatus ->
                     when (connectionStatus) {
                         ConnectionStatus.CONNECTED -> {
-                            fetchRecentChats(id)
+                            fetchRecentChats()
                             initChatHandler()
                         }
                         ConnectionStatus.CONNECTING -> {
@@ -87,14 +87,30 @@ class RecentChatsViewModel @Inject constructor(
         super<BaseContactsViewModel>.onResume(owner)
 
         viewModelScope.launch(Dispatchers.IO) {
-            loggedUserId?.let { id ->
-                fetchRecentChats(id)
-            }
+            fetchRecentChats()
         }
     }
 
     override fun onRecentChatClicked(chatId: String) {
         // TODO("Not yet implemented")
+    }
+
+    override fun onRecentChatLongClicked(contact: RecentChatUiModel): Boolean {
+        viewModelScope.launch {
+            val bundle = bundleOf(
+                CHANNEL_URL to contact.chatUrl,
+                CONTACT_ID to contact.contactId,
+                CONTACT_PROFILE_IMAGE to contact.profilePicture,
+                CONTACT_USERNAME to contact.username,
+                CONTACT_EMAIL to contact.email,
+                CONTACT_IS_MUTED to contact.isMuted,
+                CONTACT_IS_PINNED to contact.isPinned,
+                CONTACT_STATUS to ContactState.JOINED
+            )
+
+            _dialogFlow.emit(ContactBottomDialog(bundle))
+        }
+        return true
     }
 
     override fun navigateToAddContact() {
@@ -115,24 +131,24 @@ class RecentChatsViewModel @Inject constructor(
     /* --------------------------------------------------------------------------------------------
      * Private
     ---------------------------------------------------------------------------------------------*/
-    private suspend fun fetchRecentChats(id: String) {
+    private suspend fun fetchRecentChats() {
         contactsRepository.getContacts(ContactConnectionStatus.CONNECTED) { either ->
             either.fold({ error ->
                 Timber.tag("Contacts Fetching").d("Couldn't fetch contacts")
             }, { contacts ->
+                if (currentUser == null) return@fold
                 viewModelScope.launch {
-                    val currentUser = SendBird.getCurrentUser()
                     val pinned = contacts.filter { chat ->
-                        currentUser.metaData[PINNED_CONTACTS]
+                        currentUser!!.metaData[PINNED_CONTACTS]
                             ?.filterNot { it.isWhitespace() }
                             ?.split(',')
-                            ?.contains(chat.members.first { it.userId != currentUser.userId }.userId)
+                            ?.contains(chat.members.first { it.userId != currentUser!!.userId }.userId)
                             ?: false
                     }
                     val chats = contacts.filterNot { chat -> pinned.any{ it.url == chat.url} }
 
-                    _pinnedChats.emit(pinned.toListOfRecentChatsUiModel(id))
-                    _recentChats.emit(chats.toListOfRecentChatsUiModel(id))
+                    _pinnedChats.emit(pinned.toListOfRecentChatsUiModel(currentUser!!))
+                    _recentChats.emit(chats.toListOfRecentChatsUiModel(currentUser!!))
 
                     if (contacts.isEmpty()) {
                         _uiState.emit(_uiState.value.copy(uiState = RecentChatState.EMPTY))
@@ -152,10 +168,10 @@ class RecentChatsViewModel @Inject constructor(
                 override fun onMessageReceived(channel: BaseChannel?, message: BaseMessage?) {
                     viewModelScope.launch {
                         val chat = _recentChats.value
-                                .firstOrNull { chat -> chat.id == channel?.url }
+                                .firstOrNull { chat -> chat.chatUrl == channel?.url }
                                 ?: return@launch
                         val newChat = RecentChatUiModel(
-                            id = chat.id,
+                            chatUrl = chat.chatUrl,
                             username = chat.username,
                             profilePicture = chat.profilePicture,
                             unreadMessagesCount = chat.unreadMessagesCount + 1,

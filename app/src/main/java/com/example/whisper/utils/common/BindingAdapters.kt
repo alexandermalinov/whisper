@@ -3,18 +3,14 @@ package com.example.whisper.utils.common
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.*
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
@@ -262,5 +258,23 @@ fun CheckBox.setButtonTintColor(icon: Int) {
         buttonTintList = ColorStateList.valueOf(resources.getColor(R.color.cactus_green))
     } else {
         buttonTintList = ColorStateList.valueOf(resources.getColor(R.color.black))
+    }
+}
+
+@BindingAdapter("longClickZoomSmall")
+inline fun View.setLongClickZoomSmall(crossinline function: () -> Unit) {
+    setZoomAnimationOnTouch(R.anim.zoom_in_small)
+    setOnLongClickListener {
+        function.invoke()
+        return@setOnLongClickListener true
+    }
+}
+
+@BindingAdapter("longClickZoomMedium")
+inline fun View.setLongClickZoomMedium(crossinline function: () -> Unit) {
+    setZoomAnimationOnTouch(R.anim.zoom_in_medium)
+    setOnLongClickListener {
+        function.invoke()
+        return@setOnLongClickListener true
     }
 }

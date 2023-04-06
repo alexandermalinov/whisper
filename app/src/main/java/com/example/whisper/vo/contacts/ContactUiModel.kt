@@ -36,8 +36,7 @@ fun List<User>.toContactsUiModel(loggedUserId: String) =
         )
     }
 
-fun GroupChannel.toContactUiModel(): ContactUiModel {
-    val currentUser = SendBird.getCurrentUser()
+fun GroupChannel.toContactUiModel(currentUser: User): ContactUiModel {
     val contact = getContact(currentUser.userId)
     return ContactUiModel(
         contactId = contact?.userId ?: EMPTY,
@@ -57,6 +56,8 @@ fun GroupChannel.toContactUiModel(): ContactUiModel {
 private fun GroupChannel.getContact(currentUserId: String) =
     members.find { it.userId != currentUserId }
 
-private fun User.isContactPinned(contactId: String?) = metaData[PINNED_CONTACTS]?.split(',')
+private fun User.isContactPinned(contactId: String?) = metaData[PINNED_CONTACTS]
+    ?.filterNot { it.isWhitespace() }
+    ?.split(',')
     ?.contains(contactId)
     ?: false
