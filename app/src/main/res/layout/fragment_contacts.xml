@@ -19,6 +19,7 @@
     </data>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/contacts_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -116,7 +117,6 @@
                 android:layout_marginHorizontal="@dimen/margin_medium"
                 android:layout_marginBottom="@dimen/margin_medium"
                 android:animateLayoutChanges="true"
-                android:background="@drawable/sp_rectangle_all_radius_medium"
                 android:onClick="@{() -> presenter.expandInvitations()}"
                 android:paddingVertical="@dimen/padding_tiny"
                 app:visibleGone="@{model.uiState == ContactsState.IDLE}">
@@ -173,6 +173,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_medium"
+                    android:background="@drawable/sp_rectangle_all_radius_medium"
                     android:onClick="@{() -> presenter.expandInvitations()}"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -189,7 +190,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_medium"
                 android:animateLayoutChanges="true"
-                android:background="@drawable/sp_rectangle_all_radius_medium"
                 android:onClick="@{() -> presenter.expandPending()}"
                 android:paddingVertical="@dimen/padding_tiny"
                 app:visibleGone="@{model.uiState == ContactsState.IDLE}">
@@ -246,6 +246,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_medium"
+                    android:background="@drawable/sp_rectangle_all_radius_medium"
                     android:onClick="@{() -> presenter.expandPending()}"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -262,7 +263,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_medium"
-                android:background="@{model.contactsCount > 0 ? @drawable/sp_rectangle_top_radius_medium : @drawable/sp_rectangle_all_radius_medium}"
                 android:paddingVertical="@dimen/padding_pre_small"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recycler_pending"
@@ -301,7 +301,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_medium"
-                android:background="@drawable/sp_rectangle_bottom_radius_medium"
+                android:background="@drawable/sp_rectangle_all_radius_medium"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

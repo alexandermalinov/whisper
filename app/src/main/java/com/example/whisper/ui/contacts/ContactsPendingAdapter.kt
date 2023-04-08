@@ -16,12 +16,17 @@ class ContactsPendingAdapter(private val presenter: ContactPresenter) :
             override fun areItemsTheSame(
                 oldItem: ContactUiModel,
                 newItem: ContactUiModel
-            ) = oldItem === newItem
+            ) = oldItem.channelUrl == newItem.channelUrl
 
             override fun areContentsTheSame(
                 oldItem: ContactUiModel,
                 newItem: ContactUiModel
-            ) = oldItem == newItem
+            ) = oldItem.pictureUrl == newItem.pictureUrl &&
+                    oldItem.username == newItem.username &&
+                    oldItem.isInvited == newItem.isInvited &&
+                    oldItem.isMuted == newItem.isMuted &&
+                    oldItem.isPinned == newItem.isPinned &&
+                    oldItem.isLoading == newItem.isLoading
         }
     ) {
 

@@ -113,7 +113,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
             recyclerInvitations.visibility = if (shouldExpand) View.VISIBLE else View.GONE
 
             ObjectAnimator.ofFloat(buttonExpand, "rotation", 0f, 180f)
-                .setDuration(300)
+                .setDuration(600)
                 .start()
 
             if (shouldExpand) {
@@ -133,7 +133,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
             recyclerPending.visibility = if (shouldExpand) View.VISIBLE else View.GONE
 
             ObjectAnimator.ofFloat(buttonPendingExpand, "rotation", 0f, 180f)
-                .setDuration(300)
+                .setDuration(600)
                 .start()
 
             if (shouldExpand) {

@@ -16,17 +16,20 @@ class RecentChatsAdapter(private val presenter: RecentChatPresenter) :
             override fun areItemsTheSame(
                 oldItem: RecentChatUiModel,
                 newItem: RecentChatUiModel
-            ) = oldItem === newItem
+            ) = oldItem.chatUrl == newItem.chatUrl
 
             override fun areContentsTheSame(
                 oldItem: RecentChatUiModel,
                 newItem: RecentChatUiModel
             ) = oldItem == newItem &&
                     oldItem.profilePicture == newItem.profilePicture &&
+                    oldItem.username == newItem.username &&
                     oldItem.lastMessageText == newItem.lastMessageText &&
                     oldItem.lastMessageTimestamp == newItem.lastMessageTimestamp &&
                     oldItem.onlineStatus == newItem.onlineStatus &&
-                    oldItem.unreadMessagesCount == newItem.unreadMessagesCount
+                    oldItem.unreadMessagesCount == newItem.unreadMessagesCount &&
+                    oldItem.isMuted == newItem.isMuted &&
+                    oldItem.isPinned == newItem.isPinned
         }
     ) {
 
