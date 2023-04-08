@@ -142,7 +142,7 @@ class RecentChatsViewModel @Inject constructor(
                         currentUser!!.metaData[PINNED_CONTACTS]
                             ?.filterNot { it.isWhitespace() }
                             ?.split(',')
-                            ?.contains(chat.members.first { it.userId != currentUser!!.userId }.userId)
+                            ?.contains(chat.members.firstOrNull { it.userId != currentUser!!.userId }?.userId)
                             ?: false
                     }
                     val chats = contacts.filterNot { chat -> pinned.any{ it.url == chat.url} }

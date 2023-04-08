@@ -16,12 +16,13 @@ class PinnedChatsAdapter(private val presenter: RecentChatPresenter) :
             override fun areItemsTheSame(
                 oldItem: RecentChatUiModel,
                 newItem: RecentChatUiModel
-            ) = oldItem === newItem
+            ) = oldItem.chatUrl == newItem.chatUrl
 
             override fun areContentsTheSame(
                 oldItem: RecentChatUiModel,
                 newItem: RecentChatUiModel
             ) = oldItem.profilePicture == newItem.profilePicture &&
+                    oldItem.username == newItem.username &&
                     oldItem.onlineStatus == newItem.onlineStatus
         }
     ) {
