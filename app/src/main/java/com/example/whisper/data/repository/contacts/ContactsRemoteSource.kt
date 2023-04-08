@@ -256,11 +256,12 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
     ) {
         val currentUser = SendBird.getCurrentUser()
         val pinnedContacts = currentUser.metaData[PINNED_CONTACTS]
+            ?.filterNot { it.isWhitespace() }
             ?.split(',')
             ?.minus(contactId)
             ?.joinToString()
             ?: return
-        currentUser.metaData.set(PINNED_CONTACTS, pinnedContacts)
+        currentUser.metaData[PINNED_CONTACTS] = pinnedContacts
         currentUser.updateMetaData(currentUser.metaData) { metaDataMap, e ->
             if (e != null) {
                 block.invoke(Either.left(HttpError(serverMessage = e.message)))

@@ -136,24 +136,25 @@ class RecentChatsViewModel @Inject constructor(
             either.fold({ error ->
                 Timber.tag("Contacts Fetching").d("Couldn't fetch contacts")
             }, { contacts ->
-                if (currentUser == null) return@fold
-                viewModelScope.launch {
-                    val pinned = contacts.filter { chat ->
-                        currentUser!!.metaData[PINNED_CONTACTS]
-                            ?.filterNot { it.isWhitespace() }
-                            ?.split(',')
-                            ?.contains(chat.members.firstOrNull { it.userId != currentUser!!.userId }?.userId)
-                            ?: false
-                    }
-                    val chats = contacts.filterNot { chat -> pinned.any{ it.url == chat.url} }
+                currentUser?.let { user ->
+                    viewModelScope.launch {
+                        val pinned = contacts.filter { chat ->
+                            user.metaData[PINNED_CONTACTS]
+                                ?.filterNot { it.isWhitespace() }
+                                ?.split(',')
+                                ?.contains(chat.members.firstOrNull { it.userId != user.userId }?.userId)
+                                ?: false
+                        }
+                        val chats = contacts.filterNot { chat -> pinned.any { it.url == chat.url } }
 
-                    _pinnedChats.emit(pinned.toListOfRecentChatsUiModel(currentUser!!))
-                    _recentChats.emit(chats.toListOfRecentChatsUiModel(currentUser!!))
+                        _pinnedChats.emit(pinned.toListOfRecentChatsUiModel(user))
+                        _recentChats.emit(chats.toListOfRecentChatsUiModel(user))
 
-                    if (contacts.isEmpty()) {
-                        _uiState.emit(_uiState.value.copy(uiState = RecentChatState.EMPTY))
-                    } else {
-                        _uiState.emit(_uiState.value.copy(uiState = RecentChatState.IDLE))
+                        if (contacts.isEmpty()) {
+                            _uiState.emit(_uiState.value.copy(uiState = RecentChatState.EMPTY))
+                        } else {
+                            _uiState.emit(_uiState.value.copy(uiState = RecentChatState.IDLE))
+                        }
                     }
                 }
             })
@@ -168,8 +169,8 @@ class RecentChatsViewModel @Inject constructor(
                 override fun onMessageReceived(channel: BaseChannel?, message: BaseMessage?) {
                     viewModelScope.launch {
                         val chat = _recentChats.value
-                                .firstOrNull { chat -> chat.chatUrl == channel?.url }
-                                ?: return@launch
+                            .firstOrNull { chat -> chat.chatUrl == channel?.url }
+                            ?: return@launch
                         val newChat = RecentChatUiModel(
                             chatUrl = chat.chatUrl,
                             username = chat.username,
