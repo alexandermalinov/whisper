@@ -21,7 +21,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
     ---------------------------------------------------------------------------------------------*/
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeNavigation(viewModel.navigationFlow)
+        collectNavigation(viewModel.navigationFlow)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_splash

@@ -1,5 +1,5 @@
 package com.example.whisper.vo.addcontact
 
-enum class AddContactEvents {
+enum class  AddContactEvents {
     HIDE_KEYBOARD
 }

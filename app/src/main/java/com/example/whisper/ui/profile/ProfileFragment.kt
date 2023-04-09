@@ -6,7 +6,7 @@ import androidx.fragment.app.viewModels
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentProfileBinding
 import com.example.whisper.ui.base.BaseFragment
-import com.example.whisper.utils.common.collectState
+import com.example.whisper.utils.common.collectLatestFlow
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,7 +24,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         super.onViewCreated(view, savedInstanceState)
         initUiData()
         collectUiStates()
-        observeNavigation(viewModel.navigationFlow)
+        collectNavigation(viewModel.navigationFlow)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_profile
@@ -35,11 +35,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     private fun initUiData() {
         dataBinding.presenter = viewModel
     }
+
     private fun collectUiStates() {
-        collectState {
-            viewModel.uiState.collect { uiState ->
-                dataBinding.model = uiState
-            }
+        collectLatestFlow(viewModel.uiState) { uiState ->
+            dataBinding.model = uiState
         }
     }
 }

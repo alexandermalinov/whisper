@@ -22,7 +22,7 @@ class WelcomeFragment : BaseFragment<FragmentWelcomeBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
-        observeNavigation(viewModel.navigationFlow)
+        collectNavigation(viewModel.navigationFlow)
     }
 
     /* --------------------------------------------------------------------------------------------

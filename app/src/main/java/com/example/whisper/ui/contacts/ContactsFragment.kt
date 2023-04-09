@@ -3,7 +3,6 @@ package com.example.whisper.ui.contacts
 import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.os.Bundle
-import android.os.Handler
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.View
@@ -12,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentContactsBinding
 import com.example.whisper.ui.base.BaseFragment
-import com.example.whisper.utils.common.collectState
+import com.example.whisper.utils.common.collectLatestFlow
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -31,8 +30,8 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
         super.onViewCreated(view, savedInstanceState)
         initUiData()
         collectUiStates()
-        observeNavigation(viewModel.navigationFlow)
-        observeDialogFlow(viewModel.dialogFlow)
+        collectNavigation(viewModel.navigationFlow)
+        collectDialogFlow(viewModel.dialogFlow)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_contacts
@@ -64,43 +63,30 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
     }
 
     private fun collectUiStates() {
-        collectState {
-            viewModel.uiState.collect { uiState ->
-                dataBinding.model = uiState
-            }
+        collectLatestFlow(viewModel.uiState) { uiState ->
+            dataBinding.model = uiState
         }
 
-        collectState {
-            viewModel.contacts.collect { contacts ->
-                (dataBinding.recyclerContacts.adapter as ContactsAdapter)
-                    .submitList(contacts)
-            }
+        collectLatestFlow(viewModel.contacts) { contacts ->
+            (dataBinding.recyclerContacts.adapter as ContactsAdapter).submitList(contacts)
         }
 
-        collectState {
-            viewModel.invitations.collect { invitations ->
-                (dataBinding.recyclerInvitations.adapter as ContactsInviteAdapter)
-                    .submitList(invitations)
-            }
+        collectLatestFlow(viewModel.invitations) { invitations ->
+            (dataBinding.recyclerInvitations.adapter as ContactsInviteAdapter)
+                .submitList(invitations)
         }
 
-        collectState {
-            viewModel.pending.collect { pendingContacts ->
-                (dataBinding.recyclerPending.adapter as ContactsPendingAdapter)
-                    .submitList(pendingContacts)
-            }
+        collectLatestFlow(viewModel.pending) { pendingContacts ->
+            (dataBinding.recyclerPending.adapter as ContactsPendingAdapter)
+                .submitList(pendingContacts)
         }
 
-        collectState {
-            viewModel.invitationsExpandEvent.collect { shouldExpand ->
-                expandInvitations(shouldExpand)
-            }
+        collectLatestFlow(viewModel.invitationsExpandEvent) { shouldExpand ->
+            expandInvitations(shouldExpand)
         }
 
-        collectState {
-            viewModel.pendingExpandEvent.collect { shouldExpand ->
-                expandPending(shouldExpand)
-            }
+        collectLatestFlow(viewModel.pendingExpandEvent) { shouldExpand ->
+            expandPending(shouldExpand)
         }
     }
 

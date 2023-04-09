@@ -7,7 +7,7 @@ import com.example.whisper.R
 import com.example.whisper.databinding.FragmentSignUpStepTwoBinding
 import com.example.whisper.navigation.External
 import com.example.whisper.ui.base.BaseFragment
-import com.example.whisper.utils.common.collectState
+import com.example.whisper.utils.common.collectLatestFlow
 import com.example.whisper.utils.common.grantReadUriPermission
 import com.example.whisper.utils.media.ActivityResultHandler
 import com.example.whisper.utils.media.SelectImageObserver
@@ -30,8 +30,8 @@ class SignUpStepTwoFragment : BaseFragment<FragmentSignUpStepTwoBinding>(), Acti
         setImagePicker()
         setObservers()
         observeLiveData()
-        observeNavigation(viewModel.navigationFlow)
-        observeDialogFlow(viewModel.dialogFlow)
+        collectNavigation(viewModel.navigationFlow)
+        collectDialogFlow(viewModel.dialogFlow)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_sign_up_step_two
@@ -43,10 +43,8 @@ class SignUpStepTwoFragment : BaseFragment<FragmentSignUpStepTwoBinding>(), Acti
    ---------------------------------------------------------------------------------------------*/
     private fun observeLiveData() {
         dataBinding.presenter = viewModel
-        collectState {
-            viewModel.uiState.collect { uiModel ->
-                dataBinding.model = uiModel
-            }
+        collectLatestFlow(viewModel.uiState) { uiModel ->
+            dataBinding.model = uiModel
         }
     }
 

@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentAddContactBinding
 import com.example.whisper.ui.base.BaseFragment
-import com.example.whisper.utils.common.collectState
+import com.example.whisper.utils.common.collectLatestFlow
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -26,8 +26,8 @@ class AddContactFragment : BaseFragment<FragmentAddContactBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUiData()
-        observeNavigation(viewModel.navigationFlow)
-        observeDialogFlow(viewModel.dialogFlow)
+        collectNavigation(viewModel.navigationFlow)
+        collectDialogFlow(viewModel.dialogFlow)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_add_contact
@@ -49,22 +49,16 @@ class AddContactFragment : BaseFragment<FragmentAddContactBinding>() {
     }
 
     private fun collectUiStates() {
-        collectState {
-            viewModel.uiState.collect { uiState ->
-                dataBinding.model = uiState
-            }
+        collectLatestFlow(viewModel.uiState) { uiState ->
+            dataBinding.model = uiState
         }
 
-        collectState {
-            viewModel.users.collect { users ->
-                (dataBinding.recyclerContacts.adapter as AddContactAdapter).submitList(users)
-            }
+        collectLatestFlow(viewModel.users) { users ->
+            (dataBinding.recyclerContacts.adapter as AddContactAdapter).submitList(users)
         }
 
-        collectState {
-            viewModel.addContactEvents.collect { event ->
-                dataBinding.event = event
-            }
+        collectLatestFlow(viewModel.addContactEvents) { event ->
+            dataBinding.event = event
         }
     }
 }

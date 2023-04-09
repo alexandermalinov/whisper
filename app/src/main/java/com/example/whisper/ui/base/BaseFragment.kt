@@ -12,7 +12,7 @@ import com.example.whisper.navigation.navigate
 import com.example.whisper.ui.utils.dialogs.showDialog
 import com.example.whisper.ui.utils.menu.MenuUiModel
 import com.example.whisper.ui.utils.menu.showMenu
-import com.example.whisper.utils.common.collectState
+import com.example.whisper.utils.common.collectLatestFlow
 import com.example.whisper.vo.dialogs.Dialog
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -48,30 +48,24 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
     /* --------------------------------------------------------------------------------------------
      * Protected
     ---------------------------------------------------------------------------------------------*/
-    protected fun observeNavigation(navigationFlow: SharedFlow<Destination>) {
-        collectState {
-            navigationFlow.collect { destination ->
-                navigate(destination)
-            }
+    protected fun collectNavigation(navigationFlow: SharedFlow<Destination>) {
+        collectLatestFlow(navigationFlow) { destination ->
+            navigate(destination)
         }
     }
 
-    protected fun observeMenuFlow(
+    protected fun collectMenuFlow(
         menuFlow: SharedFlow<MenuUiModel>,
         menuIcon: View
     ) {
-        collectState {
-            menuFlow.collect { menu ->
-                requireActivity().showMenu(menu, menuIcon)
-            }
+        collectLatestFlow(menuFlow) { menu ->
+            requireActivity().showMenu(menu, menuIcon)
         }
     }
 
-    protected fun observeDialogFlow(dialogFlow: SharedFlow<Dialog>) {
-        collectState {
-            dialogFlow.collect { dialog ->
-                showDialog(dialog)
-            }
+    protected fun collectDialogFlow(dialogFlow: SharedFlow<Dialog>) {
+        collectLatestFlow(dialogFlow) { dialog ->
+            showDialog(dialog)
         }
     }
 }

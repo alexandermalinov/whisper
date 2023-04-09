@@ -2,14 +2,13 @@ package com.example.whisper.ui.recentchats
 
 import android.os.Bundle
 import android.view.View
-import android.widget.LinearLayout
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentRecentChatsBinding
 import com.example.whisper.ui.base.BaseFragment
-import com.example.whisper.utils.common.collectState
+import com.example.whisper.utils.common.collectLatestFlow
 import com.example.whisper.vo.recentchats.ChatsRecyclerViewState
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,9 +30,10 @@ class RecentChatsFragment : BaseFragment<FragmentRecentChatsBinding>() {
         initUiData()
         initConnectionsRecyclerView()
         collectUiStates()
-        observeNavigation(viewModel.navigationFlow)
-        observeDialogFlow(viewModel.dialogFlow)
+        collectNavigation(viewModel.navigationFlow)
+        collectDialogFlow(viewModel.dialogFlow)
     }
+
     override fun getLayoutId(): Int = R.layout.fragment_recent_chats
 
     /* --------------------------------------------------------------------------------------------
@@ -60,32 +60,24 @@ class RecentChatsFragment : BaseFragment<FragmentRecentChatsBinding>() {
     }
 
     private fun collectUiStates() {
-        collectState {
-            viewModel.uiState.collect { uiState ->
-                dataBinding.model = uiState
-            }
+        collectLatestFlow(viewModel.uiState) { uiState ->
+            dataBinding.model = uiState
         }
 
-        collectState {
-            viewModel.recentChats.collect { recentChats ->
-               (dataBinding.recyclerRecentChats.adapter as RecentChatsAdapter)
-                   .submitList(recentChats)
-            }
+        collectLatestFlow(viewModel.pinnedChats) { pinnedChats ->
+            (dataBinding.recyclerPinnedChats.adapter as PinnedChatsAdapter)
+                .submitList(pinnedChats)
         }
 
-        collectState {
-            viewModel.pinnedChats.collect { pinnedChats ->
-                (dataBinding.recyclerPinnedChats.adapter as PinnedChatsAdapter)
-                    .submitList(pinnedChats)
-            }
+        collectLatestFlow(viewModel.recentChats) { recentChats ->
+            (dataBinding.recyclerRecentChats.adapter as RecentChatsAdapter)
+                .submitList(recentChats)
         }
 
-        collectState {
-            viewModel.chatsRecyclerViewState.collect { state ->
-                when (state) {
-                    ChatsRecyclerViewState.SCROLL_TO_TOP -> {
-                        dataBinding.recyclerRecentChats.scrollToPosition(0)
-                    }
+        collectLatestFlow(viewModel.chatsRecyclerViewState) { state ->
+            when (state) {
+                ChatsRecyclerViewState.SCROLL_TO_TOP -> {
+                    dataBinding.recyclerRecentChats.scrollToPosition(0)
                 }
             }
         }
