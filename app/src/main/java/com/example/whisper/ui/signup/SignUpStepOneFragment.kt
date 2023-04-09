@@ -6,7 +6,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentSignUpStepOneBinding
 import com.example.whisper.ui.base.BaseFragment
-import com.example.whisper.utils.common.collectState
+import com.example.whisper.utils.common.collectLatestFlow
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,8 +24,8 @@ class SignUpStepOneFragment : BaseFragment<FragmentSignUpStepOneBinding>() {
         super.onViewCreated(view, savedInstanceState)
         initUi()
         observeLiveData()
-        observeNavigation(viewModel.navigationFlow)
-        observeDialogFlow(viewModel.dialogFlow)
+        collectNavigation(viewModel.navigationFlow)
+        collectDialogFlow(viewModel.dialogFlow)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_sign_up_step_one
@@ -38,10 +38,8 @@ class SignUpStepOneFragment : BaseFragment<FragmentSignUpStepOneBinding>() {
     }
 
     private fun observeLiveData() {
-        collectState {
-            viewModel.uiState.collect { uiModel ->
-                dataBinding.model = uiModel
-            }
+        collectLatestFlow(viewModel.uiState) { uiModel ->
+            dataBinding.model = uiModel
         }
     }
 }

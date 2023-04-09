@@ -9,7 +9,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentBaseContactsBinding
 import com.example.whisper.ui.base.BaseFragment
-import com.example.whisper.utils.common.collectState
+import com.example.whisper.utils.common.collectLatestFlow
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -30,7 +30,7 @@ class BaseContactsFragment : BaseFragment<FragmentBaseContactsBinding>() {
         initBottomNavigation()
         initViewPager()
         collectUiStates()
-        observeNavigation(viewModel.navigationFlow)
+        collectNavigation(viewModel.navigationFlow)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_base_contacts
@@ -39,10 +39,8 @@ class BaseContactsFragment : BaseFragment<FragmentBaseContactsBinding>() {
      * Private
     ---------------------------------------------------------------------------------------------*/
     private fun collectUiStates() {
-        collectState {
-            viewModel.uiModel.collect { uiModel ->
-                dataBinding.model = uiModel
-            }
+        collectLatestFlow(viewModel.uiModel) { uiModel ->
+            dataBinding.model = uiModel
         }
     }
 

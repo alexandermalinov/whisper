@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentContactBottomDialogBinding
 import com.example.whisper.ui.utils.dialogs.showDialog
-import com.example.whisper.utils.common.collectState
+import com.example.whisper.utils.common.collectLatestFlow
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -50,22 +50,16 @@ class ContactBottomDialogFragment : BottomSheetDialogFragment() {
      * Private
    ---------------------------------------------------------------------------------------------*/
     private fun collectUiState() {
-        collectState {
-            viewModel.uiState.collect { uiModel ->
-                dataBinding.model = uiModel
-            }
+        collectLatestFlow(viewModel.uiState) { uiModel ->
+            dataBinding.model = uiModel
         }
 
-        collectState {
-            viewModel.dismissDialog.collect { shouldDismissDialog ->
-                if (shouldDismissDialog) dismissNow()
-            }
+        collectLatestFlow(viewModel.dismissDialog) { shouldDismissDialog ->
+            if (shouldDismissDialog) dismissNow()
         }
 
-        collectState {
-            viewModel.dialogFlow.collect { dialog ->
-                showDialog(dialog)
-            }
+        collectLatestFlow(viewModel.dialogFlow) { dialog ->
+            showDialog(dialog)
         }
     }
 

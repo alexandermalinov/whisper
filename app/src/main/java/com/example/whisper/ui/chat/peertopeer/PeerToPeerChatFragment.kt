@@ -8,7 +8,7 @@ import androidx.fragment.app.viewModels
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentPeerToPeerChatBinding
 import com.example.whisper.ui.base.BasePermissionFragment
-import com.example.whisper.utils.common.collectState
+import com.example.whisper.utils.common.collectLatestFlow
 import com.example.whisper.utils.permissions.PermissionStateHandler
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,7 +28,7 @@ class PeerToPeerChatFragment : BasePermissionFragment<FragmentPeerToPeerChatBind
         initUiData()
         collectUiStates()
         initVoiceButtonListener()
-        observeNavigation(viewModel.navigationFlow)
+        collectNavigation(viewModel.navigationFlow)
         observePermissionData(viewModel.permissionLiveData)
     }
 
@@ -42,10 +42,8 @@ class PeerToPeerChatFragment : BasePermissionFragment<FragmentPeerToPeerChatBind
     }
 
     private fun collectUiStates() {
-        collectState {
-            viewModel.uiState.collect { uiState ->
-                dataBinding.model = uiState
-            }
+        collectLatestFlow(viewModel.uiState) { uiState ->
+            dataBinding.model = uiState
         }
     }
 

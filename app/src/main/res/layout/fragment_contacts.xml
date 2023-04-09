@@ -155,6 +155,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/button_expand"
                     app:layout_constraintTop_toTopOf="@+id/button_expand"
                     app:safeText="@{model.invitationsCount}"
+                    app:visibleInvisible="@{model.invitationsCount >= 1 ? true : false}"
                     tools:text="3" />
 
                 <CheckBox
@@ -164,7 +165,6 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/margin_tiny"
                     android:button="@drawable/ic_arrow_down"
-                    android:onClick="@{() -> presenter.expandInvitations()}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -228,6 +228,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/button_pending_expand"
                     app:layout_constraintTop_toTopOf="@+id/button_pending_expand"
                     app:safeText="@{model.pendingCount}"
+                    app:visibleInvisible="@{model.pendingCount >= 1 ? true : false}"
                     tools:text="3" />
 
                 <CheckBox
@@ -237,7 +238,6 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/margin_tiny"
                     android:button="@drawable/ic_arrow_down"
-                    android:onClick="@{() -> presenter.expandPending()}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
