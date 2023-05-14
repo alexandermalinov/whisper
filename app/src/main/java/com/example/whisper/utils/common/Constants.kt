@@ -31,7 +31,7 @@ const val SPLASH_SCREEN_DELAY = 1000L
 // Shared Preferences Keys
 const val USER_SHARED_PREFS_KEY = "user_shared_prefs"
 const val USER_SHARED_PREFS_IS_SIGNED_IN_KEY = "user_shared_prefs"
-const val USER_SHARED_PREFS_IS_FIRST_TIME_KEY = "user_shared_prefs"
+const val USER_SHARED_PREFS_SIGNED_IN_USER_EMAIL_KEY = "user_shared_prefs_signed_in_user_email_key"
 
 // User Attributes Keys
 const val USER_ID = "user_id"

@@ -6,8 +6,10 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
+import com.example.whisper.data.local.entity.toUserModel
+import com.example.whisper.data.local.model.toContacts
 import com.example.whisper.data.repository.contacts.ContactConnectionStatus
-import com.example.whisper.data.repository.contacts.ContactsRepository
+import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.navigation.NavGraph
 import com.example.whisper.ui.base.ConnectionStatus
@@ -22,19 +24,17 @@ import com.sendbird.android.BaseMessage
 import com.sendbird.android.SendBird
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class RecentChatsViewModel @Inject constructor(
     application: Application,
-    userRepository: UserRepository,
-    private val contactsRepository: ContactsRepository,
+    private val userRepository: UserRepository,
+    private val contactsRepository: RecentChatsRepository,
 ) : BaseContactsViewModel(application, userRepository), RecentChatsPresenter,
     RecentChatPresenter, DefaultLifecycleObserver {
 
@@ -58,22 +58,24 @@ class RecentChatsViewModel @Inject constructor(
     private var isAtTheTopOfRecyclerview = true
 
     init {
-        loggedUserId?.let { id ->
-            viewModelScope.launch(Dispatchers.IO) {
-                _uiState.emit(_uiState.value.copy(uiState = RecentChatState.LOADING))
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiState.emit(_uiState.value.copy(uiState = RecentChatState.LOADING))
 
-                connectionStatus.collect { connectionStatus ->
-                    when (connectionStatus) {
-                        ConnectionStatus.CONNECTED -> {
-                            fetchRecentChats()
-                            initChatHandler()
-                        }
-                        ConnectionStatus.CONNECTING -> {
-                            _uiState.emit(_uiState.value.copy(uiState = RecentChatState.LOADING))
-                        }
-                        ConnectionStatus.NOT_CONNECTED -> {
-                            _uiState.emit(_uiState.value.copy(uiState = RecentChatState.ERROR))
-                        }
+            userRepository.getPinnedContacts().collect {
+                _pinnedChats.emit(it.toListOfRecentChatsUiModel())
+            }
+
+            connectionStatus.collect { connectionStatus ->
+                when (connectionStatus) {
+                    ConnectionStatus.CONNECTED -> {
+                        fetchRecentChats()
+                        initChatHandler()
+                    }
+                    ConnectionStatus.CONNECTING -> {
+                        _uiState.emit(_uiState.value.copy(uiState = RecentChatState.LOADING))
+                    }
+                    ConnectionStatus.NOT_CONNECTED -> {
+                        _uiState.emit(_uiState.value.copy(uiState = RecentChatState.ERROR))
                     }
                 }
             }
@@ -137,7 +139,7 @@ class RecentChatsViewModel @Inject constructor(
                 Timber.tag("Contacts Fetching").d("Couldn't fetch contacts")
             }, { contacts ->
                 currentUser?.let { user ->
-                    viewModelScope.launch {
+                    viewModelScope.launch(Dispatchers.IO) {
                         val pinned = contacts.filter { chat ->
                             user.metaData[PINNED_CONTACTS]
                                 ?.filterNot { it.isWhitespace() }
@@ -146,8 +148,11 @@ class RecentChatsViewModel @Inject constructor(
                                 ?: false
                         }
                         val chats = contacts.filterNot { chat -> pinned.any { it.url == chat.url } }
+                        val localUser = userRepository.getLoggedUser()
 
-                        _pinnedChats.emit(pinned.toListOfRecentChatsUiModel(user))
+                        localUser?.pinnedContacts = pinned.toContacts(localUser?.userId ?: EMPTY)
+                        userRepository.updateUserLocalDB(localUser?.toUserModel())
+
                         _recentChats.emit(chats.toListOfRecentChatsUiModel(user))
 
                         if (contacts.isEmpty()) {

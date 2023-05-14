@@ -31,13 +31,13 @@ class ProfileViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            val currentUser = SendBird.getCurrentUser()
+            val currentUser = userRepository.getLoggedUser()
 
             _uiState.emit(
                 ProfileUiState(
-                    profilePictureUrl = currentUser.profileUrl ?: EMPTY,
-                    username = currentUser.nickname ?: EMPTY,
-                    userEmail = currentUser.metaData[USER_EMAIL] ?: EMPTY
+                    profilePictureUrl = currentUser?.picture ?: EMPTY,
+                    username = currentUser?.username ?: EMPTY,
+                    userEmail = currentUser?.email ?: EMPTY
                 )
             )
         }

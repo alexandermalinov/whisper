@@ -3,7 +3,7 @@ package com.example.whisper.vo.signup
 import android.net.Uri
 import androidx.core.net.toUri
 import com.example.whisper.data.local.entity.User
-import com.example.whisper.data.remote.model.user.UserModel
+import com.example.whisper.data.local.model.UserModel
 import com.example.whisper.utils.common.EMPTY
 import com.example.whisper.utils.common.INVALID_RES
 import java.io.File
@@ -40,17 +40,17 @@ data class SignUpUiModel(
 }
 
 fun SignUpUiModel.toUserModel(id: String) = UserModel(
-    id = id,
+    userId = id,
     email = email,
     password = password,
     username = username,
-    profilePictureUrl = File(EMPTY)
+    profilePicture = EMPTY
 )
 
 fun SignUpUiModel.toUser(id: String) = User(
-    id = id,
-    userEmail = email,
-    userPassword = password,
+    userId = id,
+    email = email,
+    password = password,
     username = username,
-    userPicture = pictureFile.toUri().toString()
+    picture = pictureFile.toUri().toString()
 )

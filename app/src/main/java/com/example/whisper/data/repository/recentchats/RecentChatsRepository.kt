@@ -1,15 +1,14 @@
-package com.example.whisper.data.repository.contacts
+package com.example.whisper.data.repository.recentchats
 
-import com.example.whisper.data.local.model.ContactModel
+import com.example.whisper.data.repository.contacts.ContactConnectionStatus
 import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
 import com.example.whisper.utils.responsehandler.ResponseResultOk
 import com.sendbird.android.GroupChannel
 import com.sendbird.android.User
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ContactsRepository @Inject constructor(
+class RecentChatsRepository @Inject constructor(
     private val remote: RemoteSource,
     private val local: LocalSource
 ) {
@@ -19,7 +18,7 @@ class ContactsRepository @Inject constructor(
      ---------------------------------------------------------------------------------------------*/
     interface RemoteSource {
 
-        suspend fun getContacts(
+        suspend fun getRecentChats(
             filter: ContactConnectionStatus,
             block: (Either<HttpError, List<GroupChannel>>) -> Unit
         )
@@ -89,33 +88,7 @@ class ContactsRepository @Inject constructor(
 
     interface LocalSource {
 
-        suspend fun getContacts(): Flow<List<ContactModel>>
 
-        suspend fun getContactsInvited(): Flow<List<ContactModel>>
-
-        suspend fun getContactsPending(): Flow<List<ContactModel>>
-
-        suspend fun addContact(contact: ContactModel)
-
-        suspend fun getContact(id: String): ContactModel
-
-        suspend fun deleteContact(contactModel: ContactModel)
-
-        suspend fun acceptContactRequest(contactModel: ContactModel)
-
-        suspend fun declineContactRequest(contactModel: ContactModel)
-
-        suspend fun blockContact(contactModel: ContactModel)
-
-        suspend fun unBlockContact(contactModel: ContactModel)
-
-        suspend fun muteContact(contactModel: ContactModel)
-
-        suspend fun unmuteContact(contactModel: ContactModel)
-
-        suspend fun pinContact(contactUrl: String)
-
-        suspend fun unpinContact(contactUrl: String)
     }
 
     /* --------------------------------------------------------------------------------------------
@@ -132,7 +105,7 @@ class ContactsRepository @Inject constructor(
         filter: ContactConnectionStatus,
         block: (Either<HttpError, List<GroupChannel>>) -> Unit
     ) {
-        remote.getContacts(filter, block)
+        remote.getRecentChats(filter, block)
     }
 
     suspend fun searchUsers(
@@ -147,10 +120,6 @@ class ContactsRepository @Inject constructor(
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
         remote.addContact(contactId, block)
-    }
-
-    suspend fun addContactLocal(contactModel: ContactModel) {
-        local.addContact(contactModel)
     }
 
     suspend fun deleteContact(
@@ -216,13 +185,5 @@ class ContactsRepository @Inject constructor(
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
         remote.unpinContact(contactId, block)
-    }
-
-    suspend fun pinContactLocal(contactUrl: String) {
-        local.pinContact(contactUrl)
-    }
-
-    suspend fun unpinContactLocal(contactId: String) {
-        local.unpinContact(contactId)
     }
 }

@@ -102,7 +102,7 @@ class SignInViewModel @Inject constructor(
     override fun onContinueClick() {
         viewModelScope.launch {
             _uiState.emit(_uiState.value.copy(isLoading = true))
-            userRepository.loginFirebaseAuth(_uiState.value.email, _uiState.value.password) {
+            userRepository.loginUserFirebase(_uiState.value.email, _uiState.value.password) {
                 viewModelScope.launch {
                     it.foldSuspend(
                         { onFailure ->
@@ -111,8 +111,8 @@ class SignInViewModel @Inject constructor(
                             else
                                 showNoNetworkErrorDialog()
                         },
-                        { onSuccess ->
-                            userRepository.setIsSignedIn(true)
+                        { userModel ->
+                            userRepository.loginUserLocalDB(userModel.email, userModel.userId)
                             navigateToRecentChats()
                         }
                     )
