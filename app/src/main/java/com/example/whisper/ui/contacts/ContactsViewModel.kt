@@ -6,14 +6,13 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
+import com.example.whisper.data.local.model.toContactModel
 import com.example.whisper.data.repository.contacts.ContactConnectionStatus
 import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.navigation.NavGraph
 import com.example.whisper.ui.base.ConnectionStatus
-import com.example.whisper.ui.base.ConnectionStatus.CONNECTED
-import com.example.whisper.ui.base.ConnectionStatus.CONNECTING
-import com.example.whisper.ui.base.ConnectionStatus.NOT_CONNECTED
+import com.example.whisper.ui.base.ConnectionStatus.*
 import com.example.whisper.ui.basecontacts.BaseContactsViewModel
 import com.example.whisper.utils.common.*
 import com.example.whisper.vo.contacts.ContactUiModel
@@ -405,6 +404,9 @@ class ContactsViewModel @Inject constructor(
                     contacts.add(contactModel)
                 }
             }
+            contactsRepository.addContactLocal(
+                contact.toContactModel(currentUser?.userId ?: EMPTY)
+            )
         }
     }
 

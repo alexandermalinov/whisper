@@ -15,7 +15,7 @@
 
         <import type="com.example.whisper.R" />
 
-        <import type="com.example.whisper.vo.recentchats.OnlineStatus" />
+        <import type="com.example.whisper.ui.contacts.OnlineStatus" />
 
     </data>
 

@@ -1,5 +1,7 @@
 package com.example.whisper.vo.recentchats
 
+import com.example.whisper.data.local.model.ContactModel
+import com.example.whisper.ui.contacts.OnlineStatus
 import com.example.whisper.utils.DateTimeFormatter
 import com.example.whisper.utils.common.EMPTY
 import com.example.whisper.utils.common.PINNED_CONTACTS
@@ -24,10 +26,23 @@ data class RecentChatUiModel(
     val isPinned: Boolean = false
 )
 
-enum class OnlineStatus {
-    ONLINE,
-    OFFLINE,
-    BUSY
+fun ContactModel.toRecentChatsUiModel() = RecentChatUiModel(
+    chatUrl = contactUrl,
+    contactId = contactId,
+    username = username,
+    email = email,
+    profilePicture = picture,
+    onlineStatus = getOnlineStatus(onlineStatus),
+    unreadMessagesCount = unreadMessagesCount,
+    createdAt = lastMessageTimestamp,
+    lastMessageText = lastMessage,
+    lastMessageTimestamp = DateTimeFormatter.formatMessageDateTime(lastMessageTimestamp),
+    isMuted = isMuted,
+    isPinned = true
+)
+
+fun List<ContactModel>.toListOfRecentChatsUiModel() = map {
+    it.toRecentChatsUiModel()
 }
 
 fun List<GroupChannel>.toListOfRecentChatsUiModel(currentUser: User) =
@@ -59,6 +74,12 @@ private fun GroupChannel.getContact(currentUserId: String) =
 private fun getOnlineStatus(status: ConnectionStatus) = when (status) {
     ConnectionStatus.ONLINE -> OnlineStatus.ONLINE
     ConnectionStatus.OFFLINE -> OnlineStatus.OFFLINE
+    else -> OnlineStatus.BUSY
+}
+
+private fun getOnlineStatus(status: String) = when (status) {
+    "ONLINE" -> OnlineStatus.ONLINE
+    "OFFLINE" -> OnlineStatus.OFFLINE
     else -> OnlineStatus.BUSY
 }
 

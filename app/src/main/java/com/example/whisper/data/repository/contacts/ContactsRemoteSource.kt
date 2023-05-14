@@ -5,9 +5,11 @@ import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
 import com.example.whisper.utils.responsehandler.ResponseResultOk
 import com.sendbird.android.*
+import javax.inject.Inject
 
 
-class ContactsRemoteSource : ContactsRepository.RemoteSource {
+class ContactsRemoteSource @Inject constructor() : ContactsRepository.RemoteSource {
+
     private fun getConnectionStatus(filter: ContactConnectionStatus) = when (filter) {
         ContactConnectionStatus.CONNECTED -> GroupChannelListQuery.MemberStateFilter.ALL
         ContactConnectionStatus.INVITE_RECEIVED -> GroupChannelListQuery.MemberStateFilter.INVITED
@@ -240,7 +242,7 @@ class ContactsRemoteSource : ContactsRepository.RemoteSource {
             ?.plus(contactId)
             ?.joinToString()
             ?: contactId
-        currentUser.metaData.set(PINNED_CONTACTS, pinnedContacts)
+        currentUser.metaData[PINNED_CONTACTS] = pinnedContacts
         currentUser.updateMetaData(currentUser.metaData) { metaDataMap, e ->
             if (e != null) {
                 block.invoke(Either.left(HttpError(serverMessage = e.message)))

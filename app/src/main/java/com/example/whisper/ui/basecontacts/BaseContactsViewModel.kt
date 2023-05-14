@@ -5,6 +5,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
+import com.example.whisper.data.local.model.toUserModel
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.navigation.NavGraph
 import com.example.whisper.ui.base.BaseViewModel
@@ -15,6 +16,7 @@ import com.example.whisper.vo.basecontacts.BaseContactsUiModel
 import com.sendbird.android.SendBird
 import com.sendbird.android.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -42,7 +44,7 @@ open class BaseContactsViewModel @Inject constructor(
     protected var loggedUserId: String? = null
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             loggedUserId = userRepository.getLoggedUserId()
             loggedUserId?.let { id ->
                 connectUser(id)
@@ -141,7 +143,7 @@ open class BaseContactsViewModel @Inject constructor(
     ---------------------------------------------------------------------------------------------*/
     private suspend fun connectUser(userId: String) {
         _connectionStatus.emit(ConnectionStatus.CONNECTING)
-        userRepository.connectToSendbird(userId) { either ->
+        userRepository.connectUserSendbird(userId) { either ->
             viewModelScope.launch {
                 either.foldSuspend({ httpError ->
                     if (application.isNetworkAvailable().not()) {
@@ -149,6 +151,7 @@ open class BaseContactsViewModel @Inject constructor(
                     }
                     connectUser(userId)
                 }, { responseOk ->
+                    userRepository.updateUserLocalDB(SendBird.getCurrentUser().toUserModel())
                     currentUser = SendBird.getCurrentUser()
                     _connectionStatus.emit(ConnectionStatus.CONNECTED)
                     _uiModel.emit(

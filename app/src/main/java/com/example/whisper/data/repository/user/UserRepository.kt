@@ -1,10 +1,18 @@
 package com.example.whisper.data.repository.user
 
 import com.example.whisper.data.local.entity.User
-import com.example.whisper.data.remote.model.user.UserModel
+import com.example.whisper.data.local.entity.toUserModel
+import com.example.whisper.data.local.model.ContactModel
+import com.example.whisper.data.local.model.UserModel
+import com.example.whisper.data.local.model.toUser
+import com.example.whisper.utils.common.EMPTY
 import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
 import com.example.whisper.utils.responsehandler.ResponseResultOk
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
@@ -13,40 +21,48 @@ class UserRepository @Inject constructor(
     private val local: UserLocalSource
 ) {
 
+    var cachedUser: UserModel? = null
+
+    init {
+        CoroutineScope(SupervisorJob()).launch {
+            cachedUser = getLoggedUser()?.toUserModel()
+        }
+    }
+
     /* --------------------------------------------------------------------------------------------
      * Sources
      ---------------------------------------------------------------------------------------------*/
     interface RemoteSource {
 
-        suspend fun registerFirebaseAuth(
+        suspend fun registerUserFirebase(
             email: String,
             password: String,
             block: (Either<HttpError, String>) -> Unit
         )
 
-        suspend fun registerSendbird(
+        suspend fun registerUserSendbird(
             userModel: UserModel,
             block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
 
-        suspend fun loginFirebaseAuth(
+        suspend fun loginUserFirebase(
             email: String,
             password: String,
-            block: (Either<HttpError, ResponseResultOk>) -> Unit
+            block: (Either<HttpError, UserModel>) -> Unit
         )
 
-        suspend fun connectToSendbird(
+        suspend fun connectUserSendbird(
             userId: String,
             block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
 
-        suspend fun getCurrentUserId(): String
-
-        suspend fun updateRemoteUser(
+        suspend fun updateUserSendbird(
             username: String,
             profilePictureFile: File,
             block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
+
+        suspend fun getCurrentUserId(): String
 
         suspend fun logout()
     }
@@ -55,69 +71,87 @@ class UserRepository @Inject constructor(
 
         suspend fun registerUser(user: User)
 
-        suspend fun getLoggedUser(id: String): User
+        suspend fun getLoggedUser(): User?
 
-        suspend fun setIsSignedIn(isSignedIn: Boolean)
+        fun getPinnedContacts(email: String): Flow<List<ContactModel>>
 
-        suspend fun isSignedIn(): Boolean
+        suspend fun setIsUserLoggedIn(isSignedIn: Boolean)
+
+        suspend fun isUserLoggedIn(): Boolean
+
+        suspend fun setLoggedInUserEmail(email: String)
 
         suspend fun logout()
     }
 
-    suspend fun registerFirebaseAuth(
+    suspend fun registerUserFirebase(
         email: String,
         password: String,
         block: (Either<HttpError, String>) -> Unit
     ) {
-        remote.registerFirebaseAuth(email, password, block)
+        remote.registerUserFirebase(email, password, block)
     }
 
-    suspend fun loginFirebaseAuth(
+    suspend fun loginUserFirebase(
         email: String,
         password: String,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
+        block: (Either<HttpError, UserModel>) -> Unit
     ) {
-        remote.loginFirebaseAuth(email, password, block)
+        remote.loginUserFirebase(email, password, block)
     }
 
-    suspend fun connectUser(
+    suspend fun registerUserLocalDB(user: User) {
+        local.registerUser(user)
+        loginUserLocalDB(user.email)
+    }
+
+    suspend fun updateUserLocalDB(userModel: UserModel?) {
+        userModel?.let {
+            local.registerUser(userModel.toUser())
+            cachedUser = userModel
+        }
+    }
+
+    suspend fun loginUserLocalDB(email: String, id: String = EMPTY) {
+        local.setIsUserLoggedIn(true)
+        local.setLoggedInUserEmail(email)
+        local.registerUser(User(userId = id, email = email))
+        cachedUser = cachedUser?.copy(userId = id, email = email)
+    }
+
+    suspend fun registerUserSendbird(
         userModel: UserModel,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        remote.registerSendbird(userModel, block)
+        remote.registerUserSendbird(userModel, block)
     }
 
-    suspend fun connectToSendbird(
+    suspend fun connectUserSendbird(
         userId: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        remote.connectToSendbird(userId, block)
+        remote.connectUserSendbird(userId, block)
     }
 
-    suspend fun getLoggedUserId() = remote.getCurrentUserId()
-
-    suspend fun updateRemoteUser(
+    suspend fun updateUserSendbird(
         username: String,
         profilePictureFile: File,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        remote.updateRemoteUser(username, profilePictureFile, block)
+        remote.updateUserSendbird(username, profilePictureFile, block)
     }
 
-    suspend fun registerUserDB(user: User) {
-        local.registerUser(user)
-    }
+    suspend fun isUserLoggedIn() = local.isUserLoggedIn()
 
-    suspend fun setIsSignedIn(isSignedIn: Boolean) {
-        local.setIsSignedIn(isSignedIn)
-    }
+    suspend fun getLoggedUser(): User? = local.getLoggedUser()
 
-    suspend fun isSignedIn() = local.isSignedIn()
+    suspend fun getLoggedUserId() = local.getLoggedUser()?.userId
 
-    suspend fun getLoggedUser(id: String): User = local.getLoggedUser(id)
+    fun getPinnedContacts(): Flow<List<ContactModel>> =
+        local.getPinnedContacts(cachedUser?.email ?: EMPTY)
 
     suspend fun logout() {
         remote.logout()
-        local.setIsSignedIn(false)
+        local.logout()
     }
 }

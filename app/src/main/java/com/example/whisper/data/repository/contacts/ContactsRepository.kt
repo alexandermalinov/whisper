@@ -1,13 +1,18 @@
 package com.example.whisper.data.repository.contacts
 
+import com.example.whisper.data.local.model.ContactModel
 import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
 import com.example.whisper.utils.responsehandler.ResponseResultOk
 import com.sendbird.android.GroupChannel
 import com.sendbird.android.User
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
+class ContactsRepository @Inject constructor(
+    private val remote: RemoteSource,
+    private val local: LocalSource
+) {
 
     /* --------------------------------------------------------------------------------------------
      * Sources
@@ -82,6 +87,37 @@ class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
         )
     }
 
+    interface LocalSource {
+
+        suspend fun getContacts(): Flow<List<ContactModel>>
+
+        suspend fun getContactsInvited(): Flow<List<ContactModel>>
+
+        suspend fun getContactsPending(): Flow<List<ContactModel>>
+
+        suspend fun addContact(contact: ContactModel)
+
+        suspend fun getContact(id: String): ContactModel
+
+        suspend fun deleteContact(contactModel: ContactModel)
+
+        suspend fun acceptContactRequest(contactModel: ContactModel)
+
+        suspend fun declineContactRequest(contactModel: ContactModel)
+
+        suspend fun blockContact(contactModel: ContactModel)
+
+        suspend fun unBlockContact(contactModel: ContactModel)
+
+        suspend fun muteContact(contactModel: ContactModel)
+
+        suspend fun unmuteContact(contactModel: ContactModel)
+
+        suspend fun pinContact(contactUrl: String)
+
+        suspend fun unpinContact(contactUrl: String)
+    }
+
     /* --------------------------------------------------------------------------------------------
      * Exposed
      ---------------------------------------------------------------------------------------------*/
@@ -111,6 +147,10 @@ class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
         remote.addContact(contactId, block)
+    }
+
+    suspend fun addContactLocal(contactModel: ContactModel) {
+        local.addContact(contactModel)
     }
 
     suspend fun deleteContact(
@@ -176,5 +216,13 @@ class ContactsRepository @Inject constructor(private val remote: RemoteSource) {
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
         remote.unpinContact(contactId, block)
+    }
+
+    suspend fun pinContactLocal(contactUrl: String) {
+        local.pinContact(contactUrl)
+    }
+
+    suspend fun unpinContactLocal(contactId: String) {
+        local.unpinContact(contactId)
     }
 }
