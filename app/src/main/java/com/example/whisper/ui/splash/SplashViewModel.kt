@@ -27,7 +27,7 @@ class SplashViewModel @Inject constructor(
      * Private
     ---------------------------------------------------------------------------------------------*/
     private suspend fun navigateUser() {
-        if (userRepository.isSignedIn()) {
+        if (userRepository.isUserLoggedIn()) {
             navigateToHome()
         } else {
             navigateToWelcome()

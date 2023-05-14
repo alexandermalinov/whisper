@@ -1,11 +1,8 @@
 package com.example.whisper.data.repository.user
 
-import com.example.whisper.data.remote.model.user.UserModel
-import com.example.whisper.data.remote.model.user.toMap
+import com.example.whisper.data.local.model.UserModel
+import com.example.whisper.data.local.model.toMap
 import com.example.whisper.utils.common.EMPTY
-import com.example.whisper.utils.common.USER_EMAIL
-import com.example.whisper.utils.common.USER_PASSWORD
-import com.example.whisper.utils.common.USER_USERNAME
 import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
 import com.example.whisper.utils.responsehandler.ResponseResultOk
@@ -17,11 +14,10 @@ import java.io.File
 import javax.inject.Inject
 
 class UserRemoteSource @Inject constructor(
-    private val auth: FirebaseAuth,
-    private val fireStore: FirebaseFirestore
+    private val auth: FirebaseAuth
 ) : UserRepository.RemoteSource {
 
-    override suspend fun registerFirebaseAuth(
+    override suspend fun registerUserFirebase(
         email: String,
         password: String,
         block: (Either<HttpError, String>) -> Unit
@@ -38,11 +34,11 @@ class UserRemoteSource @Inject constructor(
             }
     }
 
-    override suspend fun registerSendbird(
+    override suspend fun registerUserSendbird(
         userModel: UserModel,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        SendBird.connect(userModel.id) { connectedUser, error ->
+        SendBird.connect(userModel.userId) { connectedUser, error ->
             if (error != null || connectedUser == null) {
                 block.invoke(Either.left(HttpError(serverMessage = error.message)))
             } else {
@@ -57,15 +53,25 @@ class UserRemoteSource @Inject constructor(
         }
     }
 
-    override suspend fun loginFirebaseAuth(
+    override suspend fun loginUserFirebase(
         email: String,
         password: String,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
+        block: (Either<HttpError, UserModel>) -> Unit
     ) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    block.invoke(Either.right(ResponseResultOk))
+                    block.invoke(
+                        Either.right(
+                            UserModel(
+                                userId = task.result.user?.uid ?: EMPTY,
+                                email = task.result.user?.email ?: EMPTY,
+                                password = EMPTY,
+                                username = EMPTY,
+                                profilePicture = EMPTY
+                            )
+                        )
+                    )
                     Timber.tag("Firebase Authentication").d("Successfully logged")
                 } else {
                     block.invoke(Either.left(HttpError(serverMessage = task.exception?.message)))
@@ -74,7 +80,7 @@ class UserRemoteSource @Inject constructor(
             }
     }
 
-    override suspend fun connectToSendbird(
+    override suspend fun connectUserSendbird(
         userId: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
@@ -89,7 +95,7 @@ class UserRemoteSource @Inject constructor(
 
     override suspend fun getCurrentUserId() = auth.currentUser?.uid ?: EMPTY
 
-    override suspend fun updateRemoteUser(
+    override suspend fun updateUserSendbird(
         username: String,
         profilePictureFile: File,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
@@ -110,9 +116,5 @@ class UserRemoteSource @Inject constructor(
         SendBird.disconnect {
             auth.signOut()
         }
-    }
-
-    companion object {
-        private const val USER_COLLECTION = "user"
     }
 }

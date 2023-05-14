@@ -57,7 +57,7 @@ class SignUpViewModel @Inject constructor(
     override fun onContinueClick() {
         viewModelScope.launch {
             _uiState.emit(_uiState.value.copy(isLoading = true))
-            userRepository.registerFirebaseAuth(_uiState.value.email, _uiState.value.password) {
+            userRepository.registerUserFirebase(_uiState.value.email, _uiState.value.password) {
                 viewModelScope.launch {
                     it.foldSuspend(
                         { onFailure ->
@@ -76,7 +76,7 @@ class SignUpViewModel @Inject constructor(
     override fun onFinish() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
-            userRepository.updateRemoteUser(_uiState.value.username, _uiState.value.pictureFile) {
+            userRepository.updateUserSendbird(_uiState.value.username, _uiState.value.pictureFile) {
                 viewModelScope.launch {
                     it.foldSuspend(
                         { onFailure ->
@@ -259,7 +259,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     private suspend fun registerInSendbird(id: String) {
-        userRepository.connectUser(_uiState.value.toUserModel(id)) { either ->
+        userRepository.registerUserSendbird(_uiState.value.toUserModel(id)) { either ->
             viewModelScope.launch {
                 either.foldSuspend(
                     { onFailure ->
@@ -267,8 +267,7 @@ class SignUpViewModel @Inject constructor(
                             showNoNetworkErrorDialog()
                     },
                     { onSuccess ->
-                        userRepository.registerUserDB(_uiState.value.toUser(id))
-                        userRepository.setIsSignedIn(true)
+                        userRepository.registerUserLocalDB(_uiState.value.toUser(id))
                         _uiState.emit(_uiState.value.copy(isLoading = false))
                         navigateToStepTwo()
                     }

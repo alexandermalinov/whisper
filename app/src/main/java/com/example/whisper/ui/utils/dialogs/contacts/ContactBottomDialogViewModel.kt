@@ -5,6 +5,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
 import com.example.whisper.data.repository.contacts.ContactsRepository
+import com.example.whisper.data.repository.user.UserRepository
+import com.example.whisper.domain.contact.PinContactUseCase
+import com.example.whisper.domain.contact.PinContactsState
 import com.example.whisper.ui.base.BaseViewModel
 import com.example.whisper.ui.contacts.ContactState
 import com.example.whisper.utils.common.*
@@ -24,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactBottomDialogViewModel @Inject constructor(
     private val contactsRepository: ContactsRepository,
+    private val userRepository: UserRepository,
     private val application: Application,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel(), ContactBottomDialogPresenter {
@@ -80,22 +84,30 @@ class ContactBottomDialogViewModel @Inject constructor(
 
             if (_uiState.value.isPinned) {
                 contactsRepository.unpinContact(_uiState.value.id) { either ->
-                    viewModelScope.launch {
+                    viewModelScope.launch(Dispatchers.IO) {
                         either.foldSuspend({ error ->
                             showErrorState()
                         }, { success ->
+                            contactsRepository.unpinContactLocal(_uiState.value.channelUrl)
                             _dismissDialog.emit(true)
                         })
                     }
                 }
             } else {
-                contactsRepository.pinContact(_uiState.value.id) { either ->
+                PinContactUseCase(contactsRepository).invoke(
+                    _uiState.value.id,
+                    _uiState.value.channelUrl,
+                    viewModelScope
+                ) {
                     viewModelScope.launch {
-                        either.foldSuspend({ error ->
-                            showErrorState()
-                        }, { success ->
-                            _dismissDialog.emit(true)
-                        })
+                        when (it) {
+                            is PinContactsState.ErrorState -> {
+                                showErrorState()
+                            }
+                            is PinContactsState.SuccessState -> {
+                                _dismissDialog.emit(true)
+                            }
+                        }
                     }
                 }
             }
@@ -134,7 +146,7 @@ class ContactBottomDialogViewModel @Inject constructor(
             delay(CONTACT_ACTION_DELAY_TIME)
 
             contactsRepository.blockContact(_uiState.value.channelUrl) { either ->
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     either.foldSuspend({ error ->
                         showErrorState()
                     }, {
@@ -151,7 +163,7 @@ class ContactBottomDialogViewModel @Inject constructor(
             delay(CONTACT_ACTION_DELAY_TIME)
 
             contactsRepository.deleteContact(_uiState.value.channelUrl) { either ->
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     either.foldSuspend({ error ->
                         showErrorState()
                     }, {
@@ -173,7 +185,7 @@ class ContactBottomDialogViewModel @Inject constructor(
     ----------------------------------------------------------------------------------------------*/
     private suspend fun unMute() {
         contactsRepository.unmuteContact(_uiState.value.channelUrl, _uiState.value.id) { either ->
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 either.foldSuspend({ error ->
                     showErrorState()
                 }, {
@@ -185,7 +197,7 @@ class ContactBottomDialogViewModel @Inject constructor(
 
     private suspend fun mute() {
         contactsRepository.muteContact(_uiState.value.channelUrl, _uiState.value.id) { either ->
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 either.foldSuspend({ error ->
                     showErrorState()
                 }, {

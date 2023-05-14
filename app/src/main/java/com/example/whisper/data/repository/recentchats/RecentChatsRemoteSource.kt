@@ -1,5 +1,6 @@
-package com.example.whisper.data.repository.contacts
+package com.example.whisper.data.repository.recentchats
 
+import com.example.whisper.data.repository.contacts.ContactConnectionStatus
 import com.example.whisper.utils.common.PINNED_CONTACTS
 import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
@@ -8,8 +9,7 @@ import com.sendbird.android.*
 import javax.inject.Inject
 
 
-class ContactsRemoteSource @Inject constructor() : ContactsRepository.RemoteSource {
-
+class RecentChatsRemoteSource @Inject constructor() : RecentChatsRepository.RemoteSource {
     private fun getConnectionStatus(filter: ContactConnectionStatus) = when (filter) {
         ContactConnectionStatus.CONNECTED -> GroupChannelListQuery.MemberStateFilter.ALL
         ContactConnectionStatus.INVITE_RECEIVED -> GroupChannelListQuery.MemberStateFilter.INVITED
@@ -47,7 +47,7 @@ class ContactsRemoteSource @Inject constructor() : ContactsRepository.RemoteSour
         }
     }
 
-    override suspend fun getContacts(
+    override suspend fun getRecentChats(
         filter: ContactConnectionStatus,
         block: (Either<HttpError, List<GroupChannel>>) -> Unit
     ) {
