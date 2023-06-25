@@ -2,13 +2,11 @@ package com.example.whisper.ui.profile
 
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
+import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.navigation.NavGraph
 import com.example.whisper.ui.base.BaseViewModel
-import com.example.whisper.utils.common.EMPTY
-import com.example.whisper.utils.common.USER_EMAIL
 import com.example.whisper.vo.profile.ProfileUiState
-import com.sendbird.android.SendBird
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val contactsRepository: ContactsRepository
 ) : BaseViewModel(), ProfilePresenter {
 
     /* --------------------------------------------------------------------------------------------
@@ -31,13 +30,12 @@ class ProfileViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            val currentUser = userRepository.getLoggedUser()
 
             _uiState.emit(
                 ProfileUiState(
-                    profilePictureUrl = currentUser?.picture ?: EMPTY,
-                    username = currentUser?.username ?: EMPTY,
-                    userEmail = currentUser?.email ?: EMPTY
+                    profilePictureUrl = userRepository.cachedUser.profilePicture,
+                    username = userRepository.cachedUser.username,
+                    userEmail = userRepository.cachedUser.email
                 )
             )
         }
@@ -50,6 +48,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.emit(_uiState.value.copy(isLoading = true))
             userRepository.logout()
+            contactsRepository.deleteAllContactDbCache()
             navigateToWelcome()
         }
     }

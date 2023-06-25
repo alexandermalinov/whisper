@@ -18,14 +18,14 @@ import javax.inject.Inject
 
 class UserRepository @Inject constructor(
     private val remote: UserRemoteSource,
-    private val local: UserLocalSource
+    private val local: UserLocalSource,
+    var cachedUser: UserModel
 ) {
-
-    var cachedUser: UserModel? = null
 
     init {
         CoroutineScope(SupervisorJob()).launch {
-            cachedUser = getLoggedUser()?.toUserModel()
+            val loggedUser = getLoggedUser()
+            if (loggedUser != null) cachedUser = loggedUser.toUserModel()
         }
     }
 
@@ -69,7 +69,11 @@ class UserRepository @Inject constructor(
 
     interface LocalSource {
 
+        suspend fun updateUser(user: UserModel)
+
         suspend fun registerUser(user: User)
+
+        suspend fun getUser(userId: String): User?
 
         suspend fun getLoggedUser(): User?
 
@@ -102,12 +106,13 @@ class UserRepository @Inject constructor(
 
     suspend fun registerUserLocalDB(user: User) {
         local.registerUser(user)
+        cachedUser = user.toUserModel()
         loginUserLocalDB(user.email)
     }
 
     suspend fun updateUserLocalDB(userModel: UserModel?) {
         userModel?.let {
-            local.registerUser(userModel.toUser())
+            //local.registerUser(userModel.toUser())
             cachedUser = userModel
         }
     }
@@ -115,8 +120,9 @@ class UserRepository @Inject constructor(
     suspend fun loginUserLocalDB(email: String, id: String = EMPTY) {
         local.setIsUserLoggedIn(true)
         local.setLoggedInUserEmail(email)
-        local.registerUser(User(userId = id, email = email))
-        cachedUser = cachedUser?.copy(userId = id, email = email)
+        if (local.getUser(id) == null) {
+            local.registerUser(User(userId = id, email = email))
+        }
     }
 
     suspend fun registerUserSendbird(
@@ -147,11 +153,12 @@ class UserRepository @Inject constructor(
 
     suspend fun getLoggedUserId() = local.getLoggedUser()?.userId
 
-    fun getPinnedContacts(): Flow<List<ContactModel>> =
-        local.getPinnedContacts(cachedUser?.email ?: EMPTY)
+    fun getPinnedContacts(): Flow<List<ContactModel>> = local.getPinnedContacts(cachedUser.email)
 
     suspend fun logout() {
         remote.logout()
         local.logout()
+        cachedUser = cachedUser.copy(pinnedContacts = emptyList())
+        local.updateUser(cachedUser)
     }
 }

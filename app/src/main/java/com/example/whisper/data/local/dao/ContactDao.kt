@@ -7,19 +7,29 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ContactDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     suspend fun insertContact(contact: Contact)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertContacts(contacts: List<Contact>)
 
     @Delete
     suspend fun deleteContact(contact: Contact)
 
-    @Transaction
-    @Query("SELECT * FROM contacts WHERE contact_url == :contactUrl")
-    fun getContact(contactUrl: String): Contact
+    @Query("DELETE FROM contacts")
+    suspend fun deleteAllContacts()
 
     @Transaction
-    @Query("SELECT * FROM contacts WHERE member_state == 'JOINED' ORDER BY username")
-    fun getContacts(): Flow<List<Contact>>
+    @Query("SELECT * FROM contacts WHERE contact_url == :contactUrl")
+    fun getContact(contactUrl: String): Contact?
+
+    @Transaction
+    @Query("SELECT * FROM contacts ORDER BY username")
+    fun getContactsFlow(): Flow<List<Contact>>
+
+    @Transaction
+    @Query("SELECT * FROM contacts ORDER BY username")
+    fun getContacts(): List<Contact>
 
     @Transaction
     @Query("SELECT * FROM contacts WHERE member_state == 'INVITED' ORDER BY created_at DESC")

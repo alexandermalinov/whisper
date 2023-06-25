@@ -17,7 +17,7 @@ interface UserDao {
     suspend fun saveUser(user: User)
 
     @Query("SELECT * FROM users WHERE user_id == :userId")
-    suspend fun getUserById(userId: String): User
+    suspend fun getUserById(userId: String): User?
 
     @Query("SELECT * FROM users WHERE email == :userEmail")
     suspend fun getLoggedUser(userEmail: String): User

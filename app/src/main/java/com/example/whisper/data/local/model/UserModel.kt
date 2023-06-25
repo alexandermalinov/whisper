@@ -7,7 +7,7 @@ import com.example.whisper.utils.common.USER_ID
 import com.example.whisper.utils.common.USER_PASSWORD
 import javax.inject.Inject
 
-data class UserModel @Inject constructor(
+data class UserModel(
     val userId: String,
     val email: String,
     val password: String,
