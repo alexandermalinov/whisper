@@ -1,13 +1,10 @@
 package com.example.whisper.data.local.model
 
 import com.example.whisper.data.local.entity.Contact
-import com.example.whisper.utils.common.EMPTY
-import com.example.whisper.utils.common.USER_EMAIL
-import com.example.whisper.utils.common.ZERO
+import com.example.whisper.utils.common.*
 import com.sendbird.android.GroupChannel
 import com.sendbird.android.Member
 import com.sendbird.android.User
-import java.util.UUID
 
 data class ContactModel(
     val contactUrl: String,
@@ -16,13 +13,13 @@ data class ContactModel(
     val username: String,
     val picture: String,
     val createdAt: Long,
-    val memberState: String,
-    val onlineStatus: String,
-    val unreadMessagesCount: Int,
-    val lastMessage: String,
-    val lastMessageTimestamp: Long,
-    val isMuted: Boolean,
-    val isBlocked: Boolean,
+    var memberState: String,
+    var onlineStatus: String,
+    var unreadMessagesCount: Int,
+    var lastMessage: String,
+    var lastMessageTimestamp: Long,
+    var isMuted: Boolean,
+    var isBlocked: Boolean,
 )
 
 fun List<ContactModel>.toContacts() = map { it.toContact() }
@@ -93,14 +90,30 @@ fun GroupChannel.toContactModel(
     )
 }
 
+fun User.toContactModel(channel: GroupChannel, memberState: String) = ContactModel(
+    contactUrl = channel.url ?: EMPTY,
+    contactId = userId ?: EMPTY,
+    email = metaData?.get(USER_EMAIL) ?: EMPTY,
+    username = nickname ?: EMPTY,
+    picture = profileUrl ?: EMPTY,
+    createdAt = channel.createdAt,
+    memberState = memberState,
+    onlineStatus = getOnlineStatus(connectionStatus ?: User.ConnectionStatus.OFFLINE),
+    unreadMessagesCount = channel.unreadMessageCount,
+    lastMessage = channel.lastMessage?.message ?: EMPTY,
+    lastMessageTimestamp = channel.lastMessage?.createdAt ?: ZERO.toLong(),
+    isMuted = false,
+    isBlocked = false
+)
+
 private fun GroupChannel.getContact(currentUserId: String) =
     members.find { it.userId != currentUserId }
 
 private fun getMemberState(contact: GroupChannel) = when {
-    contact.joinedMemberCount == 1 && contact.myMemberState == Member.MemberState.INVITED -> "INVITE_RECEIVED"
-    contact.joinedMemberCount == 1 && contact.myMemberState == Member.MemberState.JOINED -> "INVITE_SENT"
-    contact.joinedMemberCount == 2 -> "CONNECTED"
-    else -> "NOT_CONNECTED"
+    contact.joinedMemberCount == 1 && contact.myMemberState == Member.MemberState.INVITED -> MEMBER_STATE_INVITE_RECEIVED
+    contact.joinedMemberCount == 1 && contact.myMemberState == Member.MemberState.JOINED -> MEMBER_STATE_INVITE_SENT
+    contact.joinedMemberCount == 2 -> MEMBER_STATE_CONNECTED
+    else -> MEMBER_STATE_NOT_CONNECTED
 }
 
 private fun getOnlineStatus(status: User.ConnectionStatus) = when (status) {

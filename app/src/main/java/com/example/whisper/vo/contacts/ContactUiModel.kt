@@ -1,11 +1,11 @@
 package com.example.whisper.vo.contacts
 
+import com.example.whisper.data.local.model.ContactModel
+import com.example.whisper.data.local.model.UserModel
 import com.example.whisper.utils.common.EMPTY
-import com.example.whisper.utils.common.PINNED_CONTACTS
 import com.example.whisper.utils.common.USER_EMAIL
 import com.example.whisper.utils.common.ZERO
 import com.sendbird.android.GroupChannel
-import com.sendbird.android.SendBird
 import com.sendbird.android.User
 
 data class ContactUiModel(
@@ -36,7 +36,22 @@ fun List<User>.toContactsUiModel(loggedUserId: String) =
         )
     }
 
-fun GroupChannel.toContactUiModel(currentUser: User): ContactUiModel {
+fun List<ContactModel>.toContactsUiModels(currentUser: UserModel) = map {
+    it.toContactUiModel(currentUser)
+}
+
+fun ContactModel.toContactUiModel(currentUser: UserModel) = ContactUiModel(
+    contactId = contactId,
+    pictureUrl = picture,
+    username = username,
+    email = email,
+    channelUrl = contactUrl,
+    createdAt = createdAt,
+    isMuted = isMuted,
+    isPinned = currentUser.isContactPinned(contactId)
+)
+
+fun GroupChannel.toContactUiModel(currentUser: UserModel): ContactUiModel {
     val contact = getContact(currentUser.userId)
     return ContactUiModel(
         contactId = contact?.userId ?: EMPTY,
@@ -56,8 +71,10 @@ fun GroupChannel.toContactUiModel(currentUser: User): ContactUiModel {
 private fun GroupChannel.getContact(currentUserId: String) =
     members.find { it.userId != currentUserId }
 
-private fun User.isContactPinned(contactId: String?) = metaData[PINNED_CONTACTS]
+private fun UserModel.isContactPinned(contactId: String?): Boolean = pinnedContacts
+    .firstOrNull { it.contactId == contactId } != null
+/*metaData[PINNED_CONTACTS]
     ?.filterNot { it.isWhitespace() }
     ?.split(',')
     ?.contains(contactId)
-    ?: false
+    ?: false*/

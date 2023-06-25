@@ -91,7 +91,7 @@ class ContactsRemoteSource @Inject constructor() : ContactsRepository.RemoteSour
 
     override suspend fun addContact(
         contactId: String,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
+        block: (Either<HttpError, GroupChannel>) -> Unit
     ) {
         val usersIds = listOf(SendBird.getCurrentUser().userId, contactId)
 
@@ -105,7 +105,7 @@ class ContactsRemoteSource @Inject constructor() : ContactsRepository.RemoteSour
                     if (sendBirdException != null) {
                         block.invoke(Either.left(HttpError(serverMessage = sendBirdException.message)))
                     } else {
-                        block.invoke(Either.right(ResponseResultOk))
+                        block.invoke(Either.right(channel))
                     }
                 }
             }

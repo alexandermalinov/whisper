@@ -1,5 +1,6 @@
 package com.example.whisper.di.module
 
+import com.example.whisper.data.local.model.ContactModel
 import com.example.whisper.data.local.model.UserModel
 import com.example.whisper.utils.common.EMPTY
 import dagger.Module
@@ -15,4 +16,8 @@ class ModelModule {
     @Singleton
     @Provides
     fun provideUserModel(): UserModel = UserModel(EMPTY, EMPTY, EMPTY, EMPTY, EMPTY)
+
+    @Singleton
+    @Provides
+    fun provideCachedContacts(): List<ContactModel> = emptyList()
 }

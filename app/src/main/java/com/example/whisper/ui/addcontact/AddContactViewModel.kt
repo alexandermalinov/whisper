@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
 import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.user.UserRepository
+import com.example.whisper.domain.contact.AddContactState
+import com.example.whisper.domain.contact.AddContactUseCase
 import com.example.whisper.navigation.PopBackStack
 import com.example.whisper.ui.basecontacts.BaseContactsViewModel
 import com.example.whisper.utils.common.EMPTY
@@ -25,7 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddContactViewModel @Inject constructor(
     application: Application,
-    userRepository: UserRepository,
+    private val userRepository: UserRepository,
     private val contactsRepository: ContactsRepository,
 ) : BaseContactsViewModel(application, userRepository), AddContactPresenter {
 
@@ -66,22 +68,33 @@ class AddContactViewModel @Inject constructor(
     override fun onAddContactClicked(contactId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             updateLoadingUser(contactId, true)
-            contactsRepository.addContact(contactId) { either ->
-                viewModelScope.launch {
-                    either.foldSuspend(
-                        { failure ->
-                            updateLoadingUser(contactId, false)
-                            _dialogFlow.emit(
-                                TitleMessageDialog(
-                                    R.string.error_dialog_title_network,
-                                    R.string.error_dialog_message_body_no_network
-                                )
+
+            AddContactUseCase(userRepository, contactsRepository).invoke(
+                contactId = contactId,
+                coroutineScope = viewModelScope
+            ) { state ->
+                when (state) {
+                    is AddContactState.ErrorState -> {
+                        updateLoadingUser(contactId, false)
+                        _dialogFlow.emit(
+                            TitleMessageDialog(
+                                R.string.error_dialog_title,
+                                R.string.error_something_went_wrong_try_again
                             )
-                        },
-                        { success ->
-                            updateInvitedUser(contactId)
-                        }
-                    )
+                        )
+                    }
+                    is AddContactState.NetworkErrorState -> {
+                        updateLoadingUser(contactId, false)
+                        _dialogFlow.emit(
+                            TitleMessageDialog(
+                                R.string.error_dialog_title_network,
+                                R.string.error_dialog_message_body_no_network
+                            )
+                        )
+                    }
+                    is AddContactState.SuccessState -> {
+                        updateInvitedUser(contactId)
+                    }
                 }
             }
         }

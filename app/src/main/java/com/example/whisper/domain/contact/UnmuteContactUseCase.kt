@@ -5,29 +5,29 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class PinContactUseCase(val contactsRepository: ContactsRepository) {
+class UnmuteContactUseCase(val contactsRepository: ContactsRepository) {
 
     suspend operator fun invoke(
         contactId: String,
         contactUrl: String,
         coroutineScope: CoroutineScope,
-        onPin: (PinContactsState) -> Unit
+        onUnmute: (UnmuteContactState) -> Unit
     ) {
-        contactsRepository.pinContact(contactId) { either ->
+        contactsRepository.unmuteContact(contactUrl, contactId) { either ->
             coroutineScope.launch(Dispatchers.IO) {
                 either.foldSuspend({ error ->
-                    onPin.invoke(PinContactsState.ErrorState)
+                    onUnmute.invoke(UnmuteContactState.ErrorState)
                 }, { success ->
-                    contactsRepository.pinContactDbCache(contactUrl)
-                    onPin.invoke(PinContactsState.SuccessState)
+                    contactsRepository.unMuteContactDbCache(contactUrl)
+                    onUnmute.invoke(UnmuteContactState.SuccessState)
                 })
             }
         }
     }
 }
 
-sealed class PinContactsState {
-    object ErrorState : PinContactsState()
-    object SuccessState : PinContactsState()
+sealed class UnmuteContactState {
+    object ErrorState : UnmuteContactState()
+    object SuccessState : UnmuteContactState()
 }
 

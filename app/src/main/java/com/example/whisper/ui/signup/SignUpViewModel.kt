@@ -4,7 +4,10 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
+import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.user.UserRepository
+import com.example.whisper.domain.contact.PopulateContactsState
+import com.example.whisper.domain.contact.PopulateContactsUseCase
 import com.example.whisper.domain.signup.ValidateEmailUseCase
 import com.example.whisper.domain.signup.ValidationStates
 import com.example.whisper.navigation.GalleryNavigation
@@ -19,6 +22,7 @@ import com.example.whisper.vo.signup.SignUpUiModel
 import com.example.whisper.vo.signup.toUser
 import com.example.whisper.vo.signup.toUserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,6 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val userRepository: UserRepository,
+    private val contactsRepository: ContactsRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val application: Application
 ) : BaseInputChangeViewModel(), SignUpPresenter {
@@ -258,20 +263,34 @@ class SignUpViewModel @Inject constructor(
         )
     }
 
+    private suspend fun showErrorDialog() {
+        _uiState.emit(_uiState.value.copy(isLoading = false))
+        _dialogFlow.emit(
+            TitleMessageDialog(
+                R.string.error_dialog_title,
+                R.string.error_something_went_wrong_try_again
+            )
+        )
+    }
+
     private suspend fun registerInSendbird(id: String) {
         userRepository.registerUserSendbird(_uiState.value.toUserModel(id)) { either ->
-            viewModelScope.launch {
-                either.foldSuspend(
-                    { onFailure ->
-                        if (application.isNetworkAvailable().not())
-                            showNoNetworkErrorDialog()
-                    },
-                    { onSuccess ->
-                        userRepository.registerUserLocalDB(_uiState.value.toUser(id))
-                        _uiState.emit(_uiState.value.copy(isLoading = false))
-                        navigateToStepTwo()
-                    }
-                )
+            viewModelScope.launch(Dispatchers.IO) {
+                either.foldSuspend({ onFailure ->
+                    if (application.isNetworkAvailable().not())
+                        showNoNetworkErrorDialog()
+                }, { onSuccess ->
+                    userRepository.registerUserLocalDB(_uiState.value.toUser(id))
+                    PopulateContactsUseCase(contactsRepository)
+                        .invoke(userRepository.cachedUser.userId, viewModelScope) { state ->
+                            if (state == PopulateContactsState.SuccessState) {
+                                _uiState.emit(_uiState.value.copy(isLoading = false))
+                                navigateToStepTwo()
+                            } else {
+                                showErrorDialog()
+                            }
+                        }
+                })
             }
         }
     }

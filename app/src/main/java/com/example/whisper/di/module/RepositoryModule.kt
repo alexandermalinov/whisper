@@ -3,6 +3,7 @@ package com.example.whisper.di.module
 import android.content.Context
 import com.example.whisper.data.local.dao.ContactDao
 import com.example.whisper.data.local.dao.UserDao
+import com.example.whisper.data.local.model.ContactModel
 import com.example.whisper.data.local.model.UserModel
 import com.example.whisper.data.repository.contacts.ContactsLocalSource
 import com.example.whisper.data.repository.contacts.ContactsRemoteSource
@@ -29,8 +30,7 @@ class RepositoryModule {
     fun provideUserLocalSource(
         context: Context,
         userDao: UserDao,
-        user: UserModel
-    ): UserRepository.LocalSource = UserLocalSource(context, userDao, user)
+    ): UserRepository.LocalSource = UserLocalSource(context, userDao)
 
     @Singleton
     @Provides
@@ -42,8 +42,9 @@ class RepositoryModule {
     @Provides
     fun provideUserRepository(
         remote: UserRemoteSource,
-        local: UserLocalSource
-    ): UserRepository = UserRepository(remote, local)
+        local: UserLocalSource,
+        cachedUserModel: UserModel
+    ): UserRepository = UserRepository(remote, local, cachedUserModel)
 
     @Singleton
     @Provides
@@ -51,7 +52,11 @@ class RepositoryModule {
         contactDao: ContactDao,
         userDao: UserDao,
         userRepository: UserRepository
-    ): ContactsRepository.LocalSource = ContactsLocalSource(contactDao, userDao, userRepository)
+    ): ContactsRepository.LocalSource = ContactsLocalSource(
+        contactDao,
+        userDao,
+        userRepository
+    )
 
     @Singleton
     @Provides
@@ -61,8 +66,10 @@ class RepositoryModule {
     @Provides
     fun provideContactsRepository(
         remote: ContactsRemoteSource,
-        local: ContactsLocalSource
-    ): ContactsRepository = ContactsRepository(remote, local)
+        local: ContactsLocalSource,
+        userRepository: UserRepository,
+        cachedContacts: List<ContactModel>
+    ): ContactsRepository = ContactsRepository(remote, local, userRepository, cachedContacts)
 
     @Singleton
     @Provides

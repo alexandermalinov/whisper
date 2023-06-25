@@ -5,21 +5,28 @@ import com.example.whisper.data.local.SharedPrefProvider
 import com.example.whisper.data.local.dao.UserDao
 import com.example.whisper.data.local.entity.User
 import com.example.whisper.data.local.entity.toContactModels
+import com.example.whisper.data.local.entity.toUserModel
 import com.example.whisper.data.local.model.ContactModel
 import com.example.whisper.data.local.model.UserModel
+import com.example.whisper.data.local.model.toUser
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class UserLocalSource @Inject constructor(
     private val context: Context,
-    private val userDao: UserDao,
-    private val userModel: UserModel
+    private val userDao: UserDao
 ) : UserRepository.LocalSource {
+
+    override suspend fun updateUser(user: UserModel) {
+        userDao.updateUser(user = user.toUser())
+    }
 
     override suspend fun registerUser(user: User) {
         userDao.saveUser(user)
     }
+
+    override suspend fun getUser(userId: String): User? = userDao.getUserById(userId)
 
     override suspend fun getLoggedUser(): User? {
         val email = SharedPrefProvider.getLoggedInUserEmail(context)

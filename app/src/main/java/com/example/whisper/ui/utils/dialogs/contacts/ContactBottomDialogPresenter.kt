@@ -8,8 +8,6 @@ interface ContactBottomDialogPresenter {
 
     fun blockContact()
 
-    fun unblockContact()
-
     fun deleteContact()
 
     fun tryAgain()
