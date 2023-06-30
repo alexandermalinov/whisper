@@ -1,7 +1,6 @@
 package com.example.whisper.data.repository.contacts
 
 import com.example.whisper.data.local.model.ContactModel
-import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.utils.common.MEMBER_STATE_CONNECTED
 import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
@@ -18,18 +17,14 @@ import javax.inject.Inject
 class ContactsRepository @Inject constructor(
     private val remote: RemoteSource,
     private val local: LocalSource,
-    private val usersRepository: UserRepository,
     var cachedContacts: List<ContactModel>
 ) {
 
-    lateinit var contactsUpdateLister: ContactsUpdateLister
     private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     init {
         coroutineScope.launch {
             cachedContacts = local.getAllContactDb()
-            contactsUpdateLister = ContactsUpdateLister(this@ContactsRepository, usersRepository)
-            contactsUpdateLister.initContactUpdateListener()
         }
     }
 
@@ -120,7 +115,7 @@ class ContactsRepository @Inject constructor(
 
         suspend fun addContact(contact: ContactModel)
 
-        suspend fun addContacts(contacts: List<ContactModel>)
+        suspend fun addAllContacts(contacts: List<ContactModel>)
 
         suspend fun getContactDb(contactUrl: String): ContactModel?
 
@@ -140,9 +135,9 @@ class ContactsRepository @Inject constructor(
 
         suspend fun unmuteContact(contactModel: ContactModel)
 
-        suspend fun pinContact(contactUrl: String)
+        suspend fun pinContact(contactModel: ContactModel)
 
-        suspend fun unpinContact(contactUrl: String)
+        suspend fun unpinContact(contactModel: ContactModel)
     }
 
     /* --------------------------------------------------------------------------------------------
@@ -164,6 +159,8 @@ class ContactsRepository @Inject constructor(
 
     fun getContactsDbFlow() = local.getContactsFlow()
 
+    suspend fun getContactsDb() = local.getAllContactDb()
+
     suspend fun searchUsers(
         username: String,
         block: (Either<HttpError, List<User>>) -> Unit
@@ -184,7 +181,7 @@ class ContactsRepository @Inject constructor(
     }
 
     suspend fun addAllContactsDbCache(contactsModels: List<ContactModel>) {
-        local.addContacts(contactsModels)
+        local.addAllContacts(contactsModels)
         cachedContacts = contactsModels
     }
 
@@ -274,7 +271,7 @@ class ContactsRepository @Inject constructor(
         val contact = getContactFromCacheOrDb(contactUrl)
         contact?.memberState = MEMBER_STATE_CONNECTED
         if (contact != null) local.acceptContactRequest(contact)
-        cachedContacts.find { it.contactId == contactUrl }?.memberState = MEMBER_STATE_CONNECTED
+        cachedContacts.find { it.contactUrl == contactUrl }?.memberState = MEMBER_STATE_CONNECTED
     }
 
     suspend fun declineContactRequestDbCache(contactUrl: String) {
@@ -286,7 +283,7 @@ class ContactsRepository @Inject constructor(
     suspend fun blockContactDbCache(contactUrl: String) {
         val contact = getContactFromCacheOrDb(contactUrl)
         if (contact != null) local.blockContact(contact)
-        cachedContacts.find { it.contactId == contactUrl }?.isBlocked = true
+        cachedContacts.find { it.contactUrl == contactUrl }?.isBlocked = true
     }
 
     suspend fun unblockContactDbCache(contactUrl: String) {
@@ -298,21 +295,21 @@ class ContactsRepository @Inject constructor(
     suspend fun muteContactLocalDbCache(contactUrl: String) {
         val contact = getContactFromCacheOrDb(contactUrl)
         if (contact != null) local.muteContact(contact)
-        cachedContacts.find { it.contactId == contactUrl }?.isMuted = true
+        cachedContacts.find { it.contactUrl == contactUrl }?.isMuted = true
     }
 
     suspend fun unMuteContactDbCache(contactUrl: String) {
         val contact = getContactFromCacheOrDb(contactUrl)
         if (contact != null) local.muteContact(contact)
-        cachedContacts.find { it.contactId == contactUrl }?.isMuted = false
+        cachedContacts.find { it.contactUrl == contactUrl }?.isMuted = false
     }
 
-    suspend fun pinContactDbCache(contactUrl: String) {
-        local.pinContact(contactUrl)
+    suspend fun pinContactDbCache(contactModel: ContactModel) {
+        local.pinContact(contactModel)
     }
 
-    suspend fun unpinContactDbCache(contactId: String) {
-        local.unpinContact(contactId)
+    suspend fun unpinContactDbCache(contactModel: ContactModel) {
+        local.unpinContact(contactModel)
     }
 
     suspend fun deleteAllContactDbCache() {
@@ -321,7 +318,7 @@ class ContactsRepository @Inject constructor(
 
     suspend fun getContactDb(contactUrl: String) = local.getContactDb(contactUrl)
 
-    private suspend fun getContactFromCacheOrDb(contactUrl: String) = cachedContacts
+    suspend fun getContactFromCacheOrDb(contactUrl: String) = cachedContacts
         .find { it.contactUrl == contactUrl }
         ?: local.getContactDb(contactUrl)
 }

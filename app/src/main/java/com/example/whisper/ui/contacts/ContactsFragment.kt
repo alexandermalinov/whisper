@@ -94,7 +94,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
         if (viewModel.invitations.value.isEmpty()) return
 
         dataBinding.apply {
-            linearLayoutInvitations.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+            linearLayoutInvitations.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING)
             TransitionManager.beginDelayedTransition(recyclerInvitations, AutoTransition())
             recyclerInvitations.visibility = if (shouldExpand) View.VISIBLE else View.GONE
 
@@ -114,7 +114,7 @@ class ContactsFragment : BaseFragment<FragmentContactsBinding>() {
         if (viewModel.pending.value.isEmpty()) return
 
         dataBinding.apply {
-            linearLayoutPending.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+            linearLayoutPending.layoutTransition?.enableTransitionType(LayoutTransition.CHANGING)
             TransitionManager.beginDelayedTransition(recyclerPending, AutoTransition())
             recyclerPending.visibility = if (shouldExpand) View.VISIBLE else View.GONE
 

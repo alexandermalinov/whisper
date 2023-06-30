@@ -4,13 +4,8 @@ import android.content.Context
 import com.example.whisper.data.local.SharedPrefProvider
 import com.example.whisper.data.local.dao.UserDao
 import com.example.whisper.data.local.entity.User
-import com.example.whisper.data.local.entity.toContactModels
-import com.example.whisper.data.local.entity.toUserModel
-import com.example.whisper.data.local.model.ContactModel
 import com.example.whisper.data.local.model.UserModel
 import com.example.whisper.data.local.model.toUser
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class UserLocalSource @Inject constructor(
@@ -32,9 +27,6 @@ class UserLocalSource @Inject constructor(
         val email = SharedPrefProvider.getLoggedInUserEmail(context)
         return email?.let { userDao.getLoggedUser(it) }
     }
-
-    override fun getPinnedContacts(email: String): Flow<List<ContactModel>> =
-        userDao.getUserFlow(email).map { it.pinnedContacts.toContactModels() }
 
     override suspend fun setIsUserLoggedIn(isSignedIn: Boolean) {
         SharedPrefProvider.setIsUserLoggedIn(context, isSignedIn)

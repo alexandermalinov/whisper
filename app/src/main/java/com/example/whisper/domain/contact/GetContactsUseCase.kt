@@ -1,17 +1,13 @@
 package com.example.whisper.domain.contact
 
 import com.example.whisper.data.local.model.ContactModel
-import com.example.whisper.data.local.model.UserModel
-import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.utils.common.MEMBER_STATE_CONNECTED
 import com.example.whisper.utils.common.MEMBER_STATE_INVITE_RECEIVED
 import com.example.whisper.utils.common.MEMBER_STATE_INVITE_SENT
 
-class GetContactsUseCase(val contactsRepository: ContactsRepository, val currentUser: UserModel?) {
+class GetContactsUseCase {
 
     suspend operator fun invoke(allContacts: List<ContactModel>): GetContactsState {
-        if (currentUser == null) return GetContactsState.ErrorState
-
         val contactsSentInvite = mutableListOf<ContactModel>()
         val contactsReceivedInvite = mutableListOf<ContactModel>()
         val addedContacts = mutableListOf<ContactModel>()

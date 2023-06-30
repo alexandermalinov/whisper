@@ -1,11 +1,14 @@
 package com.example.whisper.data.repository.recentchats
 
-import com.example.whisper.data.repository.contacts.ContactConnectionStatus
+import com.example.whisper.data.local.model.ContactModel
 import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
 import com.example.whisper.utils.responsehandler.ResponseResultOk
-import com.sendbird.android.GroupChannel
-import com.sendbird.android.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class RecentChatsRepository @Inject constructor(
@@ -13,74 +16,43 @@ class RecentChatsRepository @Inject constructor(
     private val local: LocalSource
 ) {
 
+    var cachedRecentChats: HashMap<String, ContactModel> = hashMapOf()
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+    init {
+        coroutineScope.launch {
+            cachedRecentChats = local.getAllRecentChats().associateBy { it.contactUrl } as HashMap
+        }
+    }
+
     /* --------------------------------------------------------------------------------------------
      * Sources
      ---------------------------------------------------------------------------------------------*/
     interface RemoteSource {
 
-        suspend fun getRecentChats(
-            filter: ContactConnectionStatus,
-            block: (Either<HttpError, List<GroupChannel>>) -> Unit
-        )
-
-        suspend fun searchUsers(
-            username: String,
-            block: (Either<HttpError, List<User>>) -> Unit
-        )
-
-        suspend fun addContact(
-            contactId: String,
-            block: (Either<HttpError, ResponseResultOk>) -> Unit
-        )
-
-        suspend fun getContact(
-            id: String,
-            block: (Either<HttpError, GroupChannel>) -> Unit
-        )
-
-        suspend fun deleteContact(
+        suspend fun deleteRecentChat(
             id: String,
             block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
 
-        suspend fun acceptContactRequest(
-            id: String,
-            block: (Either<HttpError, ResponseResultOk>) -> Unit
-        )
-
-        suspend fun declineContactRequest(
-            id: String,
-            block: (Either<HttpError, ResponseResultOk>) -> Unit
-        )
-
-        suspend fun blockContact(
-            id: String,
-            block: (Either<HttpError, ResponseResultOk>) -> Unit
-        )
-
-        suspend fun unBlockContact(
-            id: String,
-            block: (Either<HttpError, ResponseResultOk>) -> Unit
-        )
-
-        suspend fun muteContact(
+        suspend fun muteRecentChat(
             channelId: String,
             contactId: String,
             block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
 
-        suspend fun unmuteContact(
+        suspend fun unmuteRecentChat(
             channelId: String,
             contactId: String,
             block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
 
-        suspend fun pinContact(
+        suspend fun pinRecentChat(
             contactId: String,
             block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
 
-        suspend fun unpinContact(
+        suspend fun unpinRecentChat(
             contactId: String,
             block: (Either<HttpError, ResponseResultOk>) -> Unit
         )
@@ -88,102 +60,123 @@ class RecentChatsRepository @Inject constructor(
 
     interface LocalSource {
 
+        suspend fun updateRecentChat(recentChat: ContactModel)
 
+        fun getRecentChatsFlow(): Flow<List<ContactModel>>
+
+        suspend fun getAllRecentChats(): List<ContactModel>
+
+        suspend fun addRecentChat(recentChat: ContactModel)
+
+        suspend fun addRecentChats(recentChats: List<ContactModel>)
+
+        suspend fun getRecentChat(recentChatUrl: String): ContactModel?
+
+        suspend fun deleteRecentChat(recentChat: ContactModel)
+
+        suspend fun deleteAllRecentChat()
+
+        suspend fun muteRecentChat(recentChat: ContactModel)
+
+        suspend fun unmuteRecentChat(recentChat: ContactModel)
+
+        suspend fun pinRecentChat(recentChat: ContactModel)
+
+        suspend fun unpinRecentChat(recentChat: ContactModel)
     }
 
     /* --------------------------------------------------------------------------------------------
      * Exposed
      ---------------------------------------------------------------------------------------------*/
-    suspend fun getContact(
-        id: String,
-        block: (Either<HttpError, GroupChannel>) -> Unit
-    ) {
-        remote.getContact(id, block)
-    }
 
-    suspend fun getContacts(
-        filter: ContactConnectionStatus,
-        block: (Either<HttpError, List<GroupChannel>>) -> Unit
-    ) {
-        remote.getRecentChats(filter, block)
-    }
-
-    suspend fun searchUsers(
-        username: String,
-        block: (Either<HttpError, List<User>>) -> Unit
-    ) {
-        remote.searchUsers(username, block)
-    }
-
-    suspend fun addContact(
-        contactId: String,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
-    ) {
-        remote.addContact(contactId, block)
-    }
-
-    suspend fun deleteContact(
+    suspend fun deleteRecentChat(
         id: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        remote.deleteContact(id, block)
+        remote.deleteRecentChat(id, block)
     }
 
-    suspend fun acceptContactRequest(
-        id: String,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
-    ) {
-        remote.acceptContactRequest(id, block)
-    }
-
-    suspend fun declineContactRequest(
-        id: String,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
-    ) {
-        remote.declineContactRequest(id, block)
-    }
-
-    suspend fun blockContact(
-        id: String,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
-    ) {
-        remote.blockContact(id, block)
-    }
-
-    suspend fun unBlockContact(
-        id: String,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
-    ) {
-        remote.unBlockContact(id, block)
-    }
-
-    suspend fun muteContact(
+    suspend fun muteRecentChat(
         channelId: String,
         contactId: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        remote.muteContact(channelId, contactId, block)
+        remote.muteRecentChat(channelId, contactId, block)
     }
 
-    suspend fun unmuteContact(
+    suspend fun unmuteRecentChat(
         channelId: String,
         contactId: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        remote.unmuteContact(channelId, contactId, block)
+        remote.unmuteRecentChat(channelId, contactId, block)
     }
 
-    suspend fun pinContact(
+    suspend fun pinRecentChat(
         contactId: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        remote.pinContact(contactId, block)
+        remote.pinRecentChat(contactId, block)
     }
 
-    suspend fun unpinContact(
+    suspend fun unpinRecentChat(
         contactId: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        remote.unpinContact(contactId, block)
+        remote.unpinRecentChat(contactId, block)
     }
+
+    fun getRecentChatsDbFlow() = local.getRecentChatsFlow()
+
+    suspend fun addRecentChatDbCache(recentChat: ContactModel) {
+        local.addRecentChat(recentChat)
+        cachedRecentChats[recentChat.contactUrl] = recentChat
+    }
+
+    suspend fun addAllRecentChatDbCache(recentChats: List<ContactModel>) {
+        local.addRecentChats(recentChats)
+        val chats = recentChats.associateBy { it.contactUrl }
+        cachedRecentChats = HashMap(chats)
+    }
+
+    suspend fun updateRecentChatDbCache(recentChat: ContactModel) {
+        local.updateRecentChat(recentChat)
+        cachedRecentChats[recentChat.contactUrl] = recentChat
+    }
+
+    suspend fun deleteRecentChatDbCache(recentChatUrl: String) {
+        val recentChat = getRecentChatFromCacheOrDb(recentChatUrl)
+        if (recentChat != null) local.deleteRecentChat(recentChat)
+        cachedRecentChats.remove(recentChatUrl)
+    }
+
+    suspend fun muteRecentChatDbCache(recentChatUrl: String) {
+        val recentChat = getRecentChatFromCacheOrDb(recentChatUrl)
+        if (recentChat != null) local.muteRecentChat(recentChat)
+        cachedRecentChats[recentChatUrl]?.isMuted = true
+    }
+
+    suspend fun unMuteRecentChatDbCache(recentChatUrl: String) {
+        val recentChat = getRecentChatFromCacheOrDb(recentChatUrl)
+        if (recentChat != null) local.muteRecentChat(recentChat)
+        cachedRecentChats[recentChatUrl]?.isMuted = false
+    }
+
+    suspend fun pinRecentChatDbCache(recentChat: ContactModel) {
+        local.pinRecentChat(recentChat)
+        cachedRecentChats[recentChat.contactUrl]?.isPinned = true
+    }
+
+    suspend fun unpinRecentDbCache(recentChat: ContactModel) {
+        local.unpinRecentChat(recentChat)
+        cachedRecentChats[recentChat.contactUrl]?.isPinned = false
+    }
+
+    suspend fun deleteAllRecentChatsDbCache() {
+        local.deleteAllRecentChat()
+        cachedRecentChats = hashMapOf()
+    }
+
+    suspend fun getRecentChatFromCacheOrDb(recentChatUrl: String): ContactModel? =
+        cachedRecentChats[recentChatUrl] ?: local.getRecentChat(recentChatUrl)
 }

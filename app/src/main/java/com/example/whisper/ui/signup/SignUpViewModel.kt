@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
 import com.example.whisper.data.repository.contacts.ContactsRepository
+import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.domain.contact.PopulateContactsState
 import com.example.whisper.domain.contact.PopulateContactsUseCase
@@ -33,6 +34,7 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val contactsRepository: ContactsRepository,
+    private val recentChatsRepository: RecentChatsRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val application: Application
 ) : BaseInputChangeViewModel(), SignUpPresenter {
@@ -63,7 +65,7 @@ class SignUpViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.emit(_uiState.value.copy(isLoading = true))
             userRepository.registerUserFirebase(_uiState.value.email, _uiState.value.password) {
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     it.foldSuspend(
                         { onFailure ->
                             if (application.isNetworkAvailable())
@@ -281,7 +283,7 @@ class SignUpViewModel @Inject constructor(
                         showNoNetworkErrorDialog()
                 }, { onSuccess ->
                     userRepository.registerUserLocalDB(_uiState.value.toUser(id))
-                    PopulateContactsUseCase(contactsRepository)
+                    PopulateContactsUseCase(contactsRepository, recentChatsRepository)
                         .invoke(userRepository.cachedUser.userId, viewModelScope) { state ->
                             if (state == PopulateContactsState.SuccessState) {
                                 _uiState.emit(_uiState.value.copy(isLoading = false))

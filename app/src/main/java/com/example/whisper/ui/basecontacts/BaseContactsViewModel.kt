@@ -5,16 +5,15 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
-import com.example.whisper.data.local.model.toUserModel
+import com.example.whisper.data.repository.contacts.ContactsRepository
+import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
+import com.example.whisper.domain.contact.PopulateContactsUseCase
 import com.example.whisper.navigation.NavGraph
 import com.example.whisper.ui.base.BaseViewModel
 import com.example.whisper.ui.base.ConnectionStatus
 import com.example.whisper.utils.common.*
-import com.example.whisper.utils.isNetworkAvailable
 import com.example.whisper.vo.basecontacts.BaseContactsUiModel
-import com.sendbird.android.SendBird
-import com.sendbird.android.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,12 +21,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 open class BaseContactsViewModel @Inject constructor(
     private val application: Application,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val contactsRepository: ContactsRepository,
+    private val recentChatsRepository: RecentChatsRepository
 ) : BaseViewModel(), DefaultLifecycleObserver, BaseContactsPresenter,
     BottomNavigationChangesCallback {
 
@@ -40,15 +42,10 @@ open class BaseContactsViewModel @Inject constructor(
     private val _uiModel = MutableStateFlow(BaseContactsUiModel())
     private val _connectionStatus = MutableSharedFlow<ConnectionStatus>()
 
-    protected var currentUser: User? = null
-    protected var loggedUserId: String? = null
-
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            loggedUserId = userRepository.getLoggedUserId()
-            loggedUserId?.let { id ->
-                connectUser(id)
-            }
+            setupBottomNavigationUserIcon()
+            connectUser(userRepository.cachedUser.userId)
         }
     }
 
@@ -57,22 +54,20 @@ open class BaseContactsViewModel @Inject constructor(
     ---------------------------------------------------------------------------------------------*/
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        viewModelScope.launch {
-            currentUser?.let {
-                _uiModel.emit(_uiModel.value.copy(profilePictureUrl = it.profileUrl))
-            }
-        }
+
     }
 
     override fun addContactOrCreateGroup() {
         viewModelScope.launch {
             when (_uiModel.value.viewPagerPosition) {
-                RECENT_CHATS_PAGER_POSITION -> { /*navigateToAddContacts()*/
+                RECENT_CHATS_PAGER_POSITION -> {
+
                 }
                 CONTACTS_CHATS_PAGER_POSITION -> {
                     navigateToAddContacts()
                 }
-                else -> { /* do nothing */
+                else -> {
+
                 }
             }
         }
@@ -141,24 +136,27 @@ open class BaseContactsViewModel @Inject constructor(
     /* --------------------------------------------------------------------------------------------
      * Private
     ---------------------------------------------------------------------------------------------*/
+    private suspend fun setupBottomNavigationUserIcon() {
+        withContext(Dispatchers.Default) {
+            val profilePicture = userRepository.cachedUser.profilePicture
+            _uiModel.emit(_uiModel.value.copy(profilePictureUrl = profilePicture))
+        }
+    }
+
     private suspend fun connectUser(userId: String) {
         _connectionStatus.emit(ConnectionStatus.CONNECTING)
+
         userRepository.connectUserSendbird(userId) { either ->
-            viewModelScope.launch {
-                either.foldSuspend({ httpError ->
-                    if (application.isNetworkAvailable().not()) {
-                        _connectionStatus.emit(ConnectionStatus.NOT_CONNECTED)
-                    }
+            viewModelScope.launch(Dispatchers.IO) {
+                either.foldSuspend({
+                    _connectionStatus.emit(ConnectionStatus.NOT_CONNECTED)
                     connectUser(userId)
-                }, { responseOk ->
-                    userRepository.updateUserLocalDB(SendBird.getCurrentUser().toUserModel())
-                    currentUser = SendBird.getCurrentUser()
+                }, {
                     _connectionStatus.emit(ConnectionStatus.CONNECTED)
-                    _uiModel.emit(
-                        _uiModel.value.copy(
-                            profilePictureUrl = currentUser?.profileUrl ?: EMPTY
-                        )
-                    )
+                    PopulateContactsUseCase(
+                        contactsRepository,
+                        recentChatsRepository
+                    ).invoke(userRepository.cachedUser.userId, viewModelScope) { }
                 })
             }
         }
