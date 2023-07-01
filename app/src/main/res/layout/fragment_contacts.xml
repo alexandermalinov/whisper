@@ -116,7 +116,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_medium"
                 android:layout_marginBottom="@dimen/margin_medium"
-                android:animateLayoutChanges="true"
                 android:onClick="@{() -> presenter.expandInvitations()}"
                 android:paddingVertical="@dimen/padding_tiny"
                 app:visibleGone="@{model.uiState == ContactsState.IDLE}">
@@ -189,7 +188,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_medium"
-                android:animateLayoutChanges="true"
                 android:onClick="@{() -> presenter.expandPending()}"
                 android:paddingVertical="@dimen/padding_tiny"
                 app:visibleGone="@{model.uiState == ContactsState.IDLE}">

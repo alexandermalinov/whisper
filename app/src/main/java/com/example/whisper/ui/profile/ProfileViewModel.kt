@@ -3,6 +3,7 @@ package com.example.whisper.ui.profile
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
 import com.example.whisper.data.repository.contacts.ContactsRepository
+import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.navigation.NavGraph
 import com.example.whisper.ui.base.BaseViewModel
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val contactsRepository: ContactsRepository
+    private val contactsRepository: ContactsRepository,
+    private val recentChatsRepository: RecentChatsRepository
 ) : BaseViewModel(), ProfilePresenter {
 
     /* --------------------------------------------------------------------------------------------
@@ -49,6 +51,7 @@ class ProfileViewModel @Inject constructor(
             _uiState.emit(_uiState.value.copy(isLoading = true))
             userRepository.logout()
             contactsRepository.deleteAllContactDbCache()
+            recentChatsRepository.deleteAllRecentChatsDbCache()
             navigateToWelcome()
         }
     }

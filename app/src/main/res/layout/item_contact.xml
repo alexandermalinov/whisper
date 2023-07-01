@@ -63,22 +63,10 @@
             android:maxLines="1"
             android:text="@{model.email}"
             app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
-            app:layout_constraintEnd_toStartOf="@+id/button_options"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/image_user_photo"
             app:layout_constraintTop_toBottomOf="@+id/text_user_name"
             tools:text="john_smith@gmail.com" />
-
-        <CheckBox
-            android:id="@+id/button_options"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:button="@drawable/ic_trash"
-            android:buttonTint="@color/arsenic_grey"
-            android:onClick="@{() -> presenter.deleteContact(model.channelUrl)}"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/image_user_photo"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/image_user_photo" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

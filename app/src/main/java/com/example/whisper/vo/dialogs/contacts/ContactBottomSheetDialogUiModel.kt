@@ -15,7 +15,8 @@ data class ContactBottomSheetDialogUiModel(
     val isPinned: Boolean = false,
     val contactStatus: ContactState = ContactState.JOINED,
     val errorTitle: Int = INVALID_RES,
-    val errorMessage: Int = INVALID_RES
+    val errorMessage: Int = INVALID_RES,
+    val isRecentChat: Boolean = false
 )
 
 enum class ContactBottomSheetState {

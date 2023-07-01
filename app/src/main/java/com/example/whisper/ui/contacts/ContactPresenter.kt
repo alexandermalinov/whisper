@@ -15,6 +15,4 @@ interface ContactPresenter {
     fun declineInvite(contactId: String)
 
     fun showBottomDialog(contact: ContactUiModel): Boolean
-
-    fun deleteContact(channelUrl: String)
 }

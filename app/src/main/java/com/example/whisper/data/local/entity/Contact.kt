@@ -22,6 +22,7 @@ data class Contact(
     @ColumnInfo(name = "last_message_timestamp") val lastMessageTimestamp: Long,
     @ColumnInfo(name = "is_muted") val isMuted: Boolean,
     @ColumnInfo(name = "is_blocked") val isBlocked: Boolean,
+    @ColumnInfo(name = "is_pinned") val isPinned: Boolean,
 )
 
 fun List<Contact>.toContactModels() = map { it.toContact() }
@@ -39,5 +40,6 @@ fun Contact.toContact() = ContactModel(
     lastMessage = lastMessage,
     lastMessageTimestamp = lastMessageTimestamp,
     isMuted = isMuted,
-    isBlocked = isBlocked
+    isBlocked = isBlocked,
+    isPinned = isPinned,
 )

@@ -3,17 +3,16 @@ package com.example.whisper.ui.contacts
 import android.app.Application
 import androidx.core.os.bundleOf
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
 import com.example.whisper.data.repository.contacts.ContactsRepository
+import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.domain.contact.*
 import com.example.whisper.navigation.NavGraph
-import com.example.whisper.ui.base.ConnectionStatus
-import com.example.whisper.ui.base.ConnectionStatus.*
 import com.example.whisper.ui.basecontacts.BaseContactsViewModel
-import com.example.whisper.utils.common.*
+import com.example.whisper.utils.common.CONTACT_BOTTOM_DIALOG_KEY
+import com.example.whisper.utils.common.IS_RECENT_CHAT
 import com.example.whisper.vo.contacts.ContactUiModel
 import com.example.whisper.vo.contacts.ContactsState
 import com.example.whisper.vo.contacts.ContactsUiState
@@ -29,9 +28,11 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
     application: Application,
-    private val userRepository: UserRepository,
-    private val contactsRepository: ContactsRepository
-) : BaseContactsViewModel(application, userRepository), ContactPresenter, DefaultLifecycleObserver {
+    userRepository: UserRepository,
+    private val contactsRepository: ContactsRepository,
+    recentChatsRepository: RecentChatsRepository
+) : BaseContactsViewModel(application, userRepository, contactsRepository, recentChatsRepository),
+    ContactPresenter, DefaultLifecycleObserver {
 
     val uiState
         get() = _uiState.asStateFlow()
@@ -58,41 +59,16 @@ class ContactsViewModel @Inject constructor(
     private val _invitationsExpandEvent = MutableStateFlow(false)
     private val _pendingExpandEvent = MutableStateFlow(false)
 
-    private lateinit var userConnectionStatus: ConnectionStatus
-
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             //_uiState.emit(_uiState.value.copy(uiState = ContactsState.LOADING))
             fetchContacts()
-
-            connectionStatus.collect { connectionStatus ->
-                userConnectionStatus = when (connectionStatus) {
-                    CONNECTED -> {
-                        CONNECTED
-                    }
-                    CONNECTING -> {
-                        CONNECTING
-                        //_uiState.emit(_uiState.value.copy(uiState = ContactsState.LOADING))
-                    }
-                    NOT_CONNECTED -> {
-                        NOT_CONNECTED
-                        //_uiState.emit(_uiState.value.copy(uiState = ContactsState.ERROR))
-                    }
-                }
-            }
         }
     }
 
     /* --------------------------------------------------------------------------------------------
      * Override
     ---------------------------------------------------------------------------------------------*/
-    override fun onResume(owner: LifecycleOwner) {
-        super<BaseContactsViewModel>.onResume(owner)
-
-        viewModelScope.launch(Dispatchers.IO) {
-            fetchContacts()
-        }
-    }
 
     override fun navigateToAddContact() {
         viewModelScope.launch {
@@ -115,43 +91,19 @@ class ContactsViewModel @Inject constructor(
     }
 
     override fun showBottomDialog(contact: ContactUiModel): Boolean {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            val contactModel = contactsRepository
+                .getContactFromCacheOrDb(contact.channelUrl)
+                ?: return@launch
+
             val bundle = bundleOf(
-                CHANNEL_URL to contact.channelUrl,
-                CONTACT_ID to contact.contactId,
-                CONTACT_PROFILE_IMAGE to contact.pictureUrl,
-                CONTACT_USERNAME to contact.username,
-                CONTACT_EMAIL to contact.email,
-                CONTACT_IS_MUTED to contact.isMuted,
-                CONTACT_IS_PINNED to contact.isPinned,
-                CONTACT_STATUS to getContactStatus(contact)
+                CONTACT_BOTTOM_DIALOG_KEY to contactModel,
+                IS_RECENT_CHAT to false
             )
 
             _dialogFlow.emit(ContactBottomDialog(bundle))
         }
         return true
-    }
-
-    override fun deleteContact(channelUrl: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            setLoadingState(channelUrl, true)
-
-            DeleteContactUseCase(contactsRepository).invoke(
-                contactUrl = channelUrl,
-                coroutineScope = viewModelScope
-            ) {
-                viewModelScope.launch {
-                    when (it) {
-                        is DeleteContactState.ErrorState -> {
-                            setLoadingState(channelUrl, false)
-                        }
-                        is DeleteContactState.SuccessState -> {
-
-                        }
-                    }
-                }
-            }
-        }
     }
 
     override fun acceptInvite(contactId: String) {
@@ -166,9 +118,10 @@ class ContactsViewModel @Inject constructor(
                 contactUrl = contact.channelUrl,
                 coroutineScope = viewModelScope
             ) {
+                setLoadingState(contactId, false)
                 when (it) {
                     is AcceptContactInviteState.ErrorState -> {
-                        setLoadingState(contactId, false)
+
                     }
                     is AcceptContactInviteState.SuccessState -> {
 
@@ -190,9 +143,10 @@ class ContactsViewModel @Inject constructor(
                 contactUrl = contact.channelUrl,
                 coroutineScope = viewModelScope
             ) {
+                setLoadingState(contactId, false)
                 when (it) {
                     is DeclineContactInviteState.ErrorState -> {
-                        setLoadingState(contactId, false)
+
                     }
                     is DeclineContactInviteState.SuccessState -> {
 
@@ -208,21 +162,17 @@ class ContactsViewModel @Inject constructor(
 
     private suspend fun fetchContacts() {
         contactsRepository.getContactsDbFlow().collect { contacts ->
-            viewModelScope.launch {
-                val result = GetContactsUseCase(contactsRepository, userRepository.cachedUser)
-                    .invoke(contacts)
+            val result = GetContactsUseCase().invoke(contacts)
 
-                when (result) {
-                    is GetContactsState.ErrorState -> {}
-                    is GetContactsState.SuccessState -> {
-                        setState(contacts.isEmpty())
-                        userRepository.cachedUser.let { user ->
-                            _invitations.emit(result.contactsReceivedInvite.toContactsUiModels(user))
-                            _contacts.emit(result.addedContacts.toContactsUiModels(user))
-                            _pending.emit(result.contactsSentInvite.toContactsUiModels(user))
-                        }
-                        updateContactsCount()
-                    }
+            setState(contacts.isEmpty())
+
+            when (result) {
+                is GetContactsState.ErrorState -> {}
+                is GetContactsState.SuccessState -> {
+                    _invitations.emit(result.contactsReceivedInvite.toContactsUiModels())
+                    _pending.emit(result.contactsSentInvite.toContactsUiModels())
+                    _contacts.emit(result.addedContacts.toContactsUiModels())
+                    updateContactsCount()
                 }
             }
         }
@@ -240,21 +190,12 @@ class ContactsViewModel @Inject constructor(
     }
 
     private suspend fun setLoadingState(contactId: String, isLoading: Boolean) {
-        val updatedContacts = _invitations.value.toMutableList()
-        updatedContacts.mapIndexed { index, uiModel ->
-            if (uiModel.contactId == contactId) {
-                updatedContacts[index] = ContactUiModel(
-                    contactId = uiModel.contactId,
-                    pictureUrl = uiModel.pictureUrl,
-                    username = uiModel.username,
-                    email = uiModel.email,
-                    channelUrl = uiModel.channelUrl,
-                    isInvited = uiModel.isInvited,
-                    isLoading = isLoading
-                )
+        _invitations.value
+            .map { uiModel ->
+                if (uiModel.contactId == contactId) uiModel.copy(isLoading = isLoading) else uiModel
             }
-        }
-        _invitations.emit(updatedContacts)
+            .toMutableList()
+            .let { updatedContacts -> _invitations.emit(updatedContacts) }
     }
 
     private suspend fun updateContactsCount() {
@@ -267,9 +208,9 @@ class ContactsViewModel @Inject constructor(
         )
     }
 
-    private fun getContactStatus(contact: ContactUiModel) = when {
-        _contacts.value.any { it.contactId == contact.contactId } -> ContactState.JOINED
-        pending.value.any { it.contactId == contact.contactId } -> ContactState.PENDING
+    private fun ContactUiModel.getContactStatus() = when {
+        _contacts.value.any { it.contactId == contactId } -> ContactState.JOINED
+        _pending.value.any { it.contactId == contactId } -> ContactState.PENDING
         else -> ContactState.INVITED
     }
 }

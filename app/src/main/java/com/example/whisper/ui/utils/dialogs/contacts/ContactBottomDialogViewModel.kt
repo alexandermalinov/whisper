@@ -4,12 +4,14 @@ import android.app.Application
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
+import com.example.whisper.data.local.model.ContactModel
 import com.example.whisper.data.repository.contacts.ContactsRepository
-import com.example.whisper.data.repository.user.UserRepository
+import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.domain.contact.*
 import com.example.whisper.ui.base.BaseViewModel
-import com.example.whisper.ui.contacts.ContactState
-import com.example.whisper.utils.common.*
+import com.example.whisper.ui.contacts.getContactState
+import com.example.whisper.utils.common.CONTACT_BOTTOM_DIALOG_KEY
+import com.example.whisper.utils.common.IS_RECENT_CHAT
 import com.example.whisper.utils.isNetworkAvailable
 import com.example.whisper.vo.dialogs.contacts.ContactBottomSheetDialogUiModel
 import com.example.whisper.vo.dialogs.contacts.ContactBottomSheetState
@@ -26,7 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactBottomDialogViewModel @Inject constructor(
     private val contactsRepository: ContactsRepository,
-    private val userRepository: UserRepository,
+    private val recentChatsRepository: RecentChatsRepository,
     private val application: Application,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel(), ContactBottomDialogPresenter {
@@ -42,32 +44,29 @@ class ContactBottomDialogViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(ContactBottomSheetDialogUiModel())
     private val _dismissDialog = MutableSharedFlow<Boolean>()
+    private lateinit var contact: ContactModel
 
     init {
         viewModelScope.launch {
             with(savedStateHandle) {
-                val channelUrl = get<String>(CHANNEL_URL)
-                val contactId = get<String>(CONTACT_ID)
-                val contactProfileImage = get<String>(CONTACT_PROFILE_IMAGE) ?: EMPTY
-                val contactUsername = get<String>(CONTACT_USERNAME) ?: EMPTY
-                val contactEmail = get<String>(CONTACT_EMAIL) ?: EMPTY
-                val contactIsMuted = get<Boolean>(CONTACT_IS_MUTED) ?: false
-                val contactIsPinned = get<Boolean>(CONTACT_IS_PINNED) ?: false
-                val contactStatus = get<ContactState>(CONTACT_STATUS) ?: ContactState.JOINED
+                val contactModel = get<ContactModel>(CONTACT_BOTTOM_DIALOG_KEY)
+                val isRecentChat = get<Boolean>(IS_RECENT_CHAT) ?: true
 
-                if (channelUrl != null && contactId != null) {
+                contactModel?.apply {
                     _uiState.emit(
                         ContactBottomSheetDialogUiModel(
                             id = contactId,
-                            channelUrl = channelUrl,
-                            profileImageUrl = contactProfileImage,
-                            username = contactUsername,
-                            email = contactEmail,
-                            isMuted = contactIsMuted,
-                            isPinned = contactIsPinned,
-                            contactStatus = contactStatus
+                            channelUrl = contactUrl,
+                            profileImageUrl = picture,
+                            username = username,
+                            email = email,
+                            isMuted = isMuted,
+                            isPinned = isPinned,
+                            contactStatus = getContactState(memberState),
+                            isRecentChat = isRecentChat
                         )
                     )
+                    contact = contactModel
                 }
             }
         }
@@ -82,36 +81,28 @@ class ContactBottomDialogViewModel @Inject constructor(
             delay(CONTACT_ACTION_DELAY_TIME)
 
             if (_uiState.value.isPinned) {
-                UnpinContactUseCase(contactsRepository).invoke(
-                    contactId = _uiState.value.id,
-                    contactUrl = _uiState.value.channelUrl,
-                    coroutineScope = viewModelScope
+                UnpinContactUseCase(contactsRepository, recentChatsRepository).invoke(
+                    contact = contact
                 ) {
-                    viewModelScope.launch {
-                        when (it) {
-                            is UnpinContactsState.ErrorState -> {
-                                showErrorState()
-                            }
-                            is UnpinContactsState.SuccessState -> {
-                                _dismissDialog.emit(true)
-                            }
+                    when (it) {
+                        is UnpinContactsState.ErrorState -> {
+                            showErrorState()
+                        }
+                        is UnpinContactsState.SuccessState -> {
+                            _dismissDialog.emit(true)
                         }
                     }
                 }
             } else {
-                PinContactUseCase(contactsRepository).invoke(
-                    contactId = _uiState.value.id,
-                    contactUrl = _uiState.value.channelUrl,
-                    coroutineScope = viewModelScope
+                PinContactUseCase(contactsRepository, recentChatsRepository).invoke(
+                    contact = contact
                 ) {
-                    viewModelScope.launch {
-                        when (it) {
-                            is PinContactsState.ErrorState -> {
-                                showErrorState()
-                            }
-                            is PinContactsState.SuccessState -> {
-                                _dismissDialog.emit(true)
-                            }
+                    when (it) {
+                        is PinContactsState.ErrorState -> {
+                            showErrorState()
+                        }
+                        is PinContactsState.SuccessState -> {
+                            _dismissDialog.emit(true)
                         }
                     }
                 }
@@ -133,7 +124,7 @@ class ContactBottomDialogViewModel @Inject constructor(
             _uiState.emit(_uiState.value.copy(uiState = ContactBottomSheetState.LOADING))
             delay(CONTACT_ACTION_DELAY_TIME)
 
-            BlockContactUseCase(contactsRepository).invoke(
+            BlockContactUseCase(contactsRepository, recentChatsRepository).invoke(
                 contactUrl = _uiState.value.channelUrl,
                 coroutineScope = viewModelScope
             ) {
@@ -156,9 +147,10 @@ class ContactBottomDialogViewModel @Inject constructor(
             _uiState.emit(_uiState.value.copy(uiState = ContactBottomSheetState.LOADING))
             delay(CONTACT_ACTION_DELAY_TIME)
 
-            DeleteContactUseCase(contactsRepository).invoke(
+            DeleteContactUseCase(contactsRepository, recentChatsRepository).invoke(
                 contactUrl = _uiState.value.channelUrl,
-                coroutineScope = viewModelScope
+                coroutineScope = viewModelScope,
+                _uiState.value.isRecentChat
             ) {
                 viewModelScope.launch {
                     when (it) {
@@ -184,38 +176,30 @@ class ContactBottomDialogViewModel @Inject constructor(
      * Private
     ----------------------------------------------------------------------------------------------*/
     private suspend fun unMute() {
-        UnmuteContactUseCase(contactsRepository).invoke(
-            contactId = _uiState.value.id,
+        UnmuteContactUseCase(contactsRepository, recentChatsRepository).invoke(
             contactUrl = _uiState.value.channelUrl,
-            coroutineScope = viewModelScope
         ) {
-            viewModelScope.launch {
-                when (it) {
-                    is UnmuteContactState.ErrorState -> {
-                        showErrorState()
-                    }
-                    is UnmuteContactState.SuccessState -> {
-                        _dismissDialog.emit(true)
-                    }
+            when (it) {
+                is UnmuteContactState.ErrorState -> {
+                    showErrorState()
+                }
+                is UnmuteContactState.SuccessState -> {
+                    _dismissDialog.emit(true)
                 }
             }
         }
     }
 
     private suspend fun mute() {
-        MuteContactUseCase(contactsRepository).invoke(
-            contactId = _uiState.value.id,
+        MuteContactUseCase(contactsRepository, recentChatsRepository).invoke(
             contactUrl = _uiState.value.channelUrl,
-            coroutineScope = viewModelScope
         ) {
-            viewModelScope.launch {
-                when (it) {
-                    is MuteContactState.ErrorState -> {
-                        showErrorState()
-                    }
-                    is MuteContactState.SuccessState -> {
-                        _dismissDialog.emit(true)
-                    }
+            when (it) {
+                is MuteContactState.ErrorState -> {
+                    showErrorState()
+                }
+                is MuteContactState.SuccessState -> {
+                    _dismissDialog.emit(true)
                 }
             }
         }

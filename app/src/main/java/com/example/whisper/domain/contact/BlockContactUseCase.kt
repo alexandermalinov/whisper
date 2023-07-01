@@ -1,11 +1,15 @@
 package com.example.whisper.domain.contact
 
 import com.example.whisper.data.repository.contacts.ContactsRepository
+import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class BlockContactUseCase(val contactsRepository: ContactsRepository) {
+class BlockContactUseCase(
+    val contactsRepository: ContactsRepository,
+    val recentChatsRepository: RecentChatsRepository
+) {
 
     suspend operator fun invoke(
         contactUrl: String,
@@ -18,6 +22,7 @@ class BlockContactUseCase(val contactsRepository: ContactsRepository) {
                     onBlock.invoke(BlockContactState.ErrorState)
                 }, { success ->
                     contactsRepository.blockContactDbCache(contactUrl)
+                    recentChatsRepository.deleteRecentChatDbCache(contactUrl)
                     onBlock.invoke(BlockContactState.SuccessState)
                 })
             }

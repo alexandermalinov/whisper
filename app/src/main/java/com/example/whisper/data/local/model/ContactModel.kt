@@ -1,11 +1,14 @@
 package com.example.whisper.data.local.model
 
 import com.example.whisper.data.local.entity.Contact
+import com.example.whisper.data.local.entity.RecentChat
 import com.example.whisper.utils.common.*
 import com.sendbird.android.GroupChannel
 import com.sendbird.android.Member
 import com.sendbird.android.User
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ContactModel(
     val contactUrl: String,
     val contactId: String,
@@ -20,7 +23,8 @@ data class ContactModel(
     var lastMessageTimestamp: Long,
     var isMuted: Boolean,
     var isBlocked: Boolean,
-)
+    var isPinned: Boolean,
+): java.io.Serializable
 
 fun List<ContactModel>.toContacts() = map { it.toContact() }
 
@@ -37,38 +41,40 @@ fun ContactModel.toContact() = Contact(
     lastMessage = lastMessage,
     lastMessageTimestamp = lastMessageTimestamp,
     isMuted = isMuted,
-    isBlocked = isBlocked
+    isBlocked = isBlocked,
+    isPinned = isPinned,
 )
 
-fun List<GroupChannel>.toContacts(currentUserId: String): List<Contact> =
-    map { it.toContact(currentUserId) }
+fun List<ContactModel>.toRecentChats() = map { it.toRecentChat() }
 
-fun GroupChannel.toContact(currentUserId: String): Contact {
-    val contact = getContact(currentUserId)
-    return Contact(
-        contactUrl = url,
-        contactId = contact?.userId ?: EMPTY,
-        email = contact?.metaData?.get(USER_EMAIL) ?: EMPTY,
-        username = contact?.nickname ?: EMPTY,
-        picture = contact?.profileUrl ?: EMPTY,
-        createdAt = createdAt,
-        memberState = EMPTY,
-        onlineStatus = getOnlineStatus(
-            contact?.connectionStatus ?: User.ConnectionStatus.OFFLINE
-        ),
-        unreadMessagesCount = unreadMessageCount,
-        lastMessage = lastMessage?.message ?: EMPTY,
-        lastMessageTimestamp = lastMessage?.createdAt ?: ZERO.toLong(),
-        isMuted = contact?.isMuted ?: false,
-        isBlocked = contact?.isBlockedByMe ?: false
-    )
+fun ContactModel.toRecentChat() = RecentChat(
+    contactUrl = contactUrl,
+    contactId = contactId,
+    email = email,
+    username = username,
+    picture = picture,
+    createdAt = createdAt,
+    onlineStatus = onlineStatus,
+    unreadMessagesCount = unreadMessagesCount,
+    lastMessage = lastMessage,
+    lastMessageTimestamp = lastMessageTimestamp,
+    isMuted = isMuted,
+    isPinned = isPinned,
+)
+
+fun List<GroupChannel>.toContactModels(
+    currentUserId: String,
+    dbContacts: List<ContactModel>
+): List<ContactModel> = map { remoteContact ->
+    val dbContact = dbContacts
+        .firstOrNull() { dbContact -> dbContact.contactUrl == remoteContact.url }
+
+    remoteContact.toContactModel(currentUserId, dbContact)
 }
 
-fun List<GroupChannel>.toContactModels(currentUserId: String): List<ContactModel> =
-    map { it.toContactModel(currentUserId) }
-
 fun GroupChannel.toContactModel(
-    currentUserId: String
+    currentUserId: String,
+    dbContact: ContactModel?
 ): ContactModel {
     val contact = getContact(currentUserId)
     return ContactModel(
@@ -85,8 +91,9 @@ fun GroupChannel.toContactModel(
         unreadMessagesCount = unreadMessageCount,
         lastMessage = lastMessage?.message ?: EMPTY,
         lastMessageTimestamp = lastMessage?.createdAt ?: ZERO.toLong(),
-        isMuted = contact?.isMuted ?: false,
-        isBlocked = contact?.isBlockedByMe ?: false
+        isBlocked = contact?.isBlockedByMe ?: false,
+        isMuted = dbContact?.isMuted ?: false ,
+        isPinned = dbContact?.isPinned ?: false
     )
 }
 
@@ -103,7 +110,8 @@ fun User.toContactModel(channel: GroupChannel, memberState: String) = ContactMod
     lastMessage = channel.lastMessage?.message ?: EMPTY,
     lastMessageTimestamp = channel.lastMessage?.createdAt ?: ZERO.toLong(),
     isMuted = false,
-    isBlocked = false
+    isBlocked = false,
+    isPinned = false
 )
 
 private fun GroupChannel.getContact(currentUserId: String) =

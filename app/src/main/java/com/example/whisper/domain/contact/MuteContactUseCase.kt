@@ -1,27 +1,28 @@
 package com.example.whisper.domain.contact
 
 import com.example.whisper.data.repository.contacts.ContactsRepository
-import kotlinx.coroutines.CoroutineScope
+import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class MuteContactUseCase(val contactsRepository: ContactsRepository) {
+class MuteContactUseCase(
+    val contactsRepository: ContactsRepository,
+    val recentChatsRepository: RecentChatsRepository
+) {
 
     suspend operator fun invoke(
-        contactId: String,
         contactUrl: String,
-        coroutineScope: CoroutineScope,
-        onMute: (MuteContactState) -> Unit
+        onMute: suspend (MuteContactState) -> Unit
     ) {
-        contactsRepository.muteContact(contactUrl, contactId) { either ->
-            coroutineScope.launch(Dispatchers.IO) {
-                either.foldSuspend({ error ->
-                    onMute.invoke(MuteContactState.ErrorState)
-                }, { success ->
-                    contactsRepository.muteContactLocalDbCache(contactUrl)
-                    onMute.invoke(MuteContactState.SuccessState)
-                })
-            }
+        if (contactUrl.isEmpty()){
+            onMute.invoke(MuteContactState.ErrorState)
+            return
+        }
+
+        withContext(Dispatchers.IO) {
+            contactsRepository.muteContactLocalDbCache(contactUrl)
+            recentChatsRepository.muteRecentChatDbCache(contactUrl)
+            onMute.invoke(MuteContactState.SuccessState)
         }
     }
 }

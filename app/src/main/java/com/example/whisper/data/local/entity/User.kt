@@ -18,7 +18,6 @@ data class User(
     @ColumnInfo(name = "finger_print_enabled") val isFingerPrintEnabled: Boolean = false,
     @ColumnInfo(name = "pin_password_enabled") val isPinEnabled: Boolean = false,
     @ColumnInfo(name = "pin_password") val pin: String = EMPTY,
-    @ColumnInfo(name = "pinned_contacts") var pinnedContacts: List<Contact> = emptyList()
 )
 
 fun User.toUserModel() = UserModel(
@@ -31,5 +30,4 @@ fun User.toUserModel() = UserModel(
     isFingerPrintEnabled = isFingerPrintEnabled,
     isPinEnabled = isPinEnabled,
     pin = pin,
-    pinnedContacts = pinnedContacts.toContactModels()
 )

@@ -2,6 +2,7 @@ package com.example.whisper.di.module
 
 import android.content.Context
 import com.example.whisper.data.local.dao.ContactDao
+import com.example.whisper.data.local.dao.RecentChatDao
 import com.example.whisper.data.local.dao.UserDao
 import com.example.whisper.data.local.model.ContactModel
 import com.example.whisper.data.local.model.UserModel
@@ -49,14 +50,8 @@ class RepositoryModule {
     @Singleton
     @Provides
     fun provideContactsLocalSource(
-        contactDao: ContactDao,
-        userDao: UserDao,
-        userRepository: UserRepository
-    ): ContactsRepository.LocalSource = ContactsLocalSource(
-        contactDao,
-        userDao,
-        userRepository
-    )
+        contactDao: ContactDao
+    ): ContactsRepository.LocalSource = ContactsLocalSource(contactDao)
 
     @Singleton
     @Provides
@@ -67,17 +62,14 @@ class RepositoryModule {
     fun provideContactsRepository(
         remote: ContactsRemoteSource,
         local: ContactsLocalSource,
-        userRepository: UserRepository,
         cachedContacts: List<ContactModel>
-    ): ContactsRepository = ContactsRepository(remote, local, userRepository, cachedContacts)
+    ): ContactsRepository = ContactsRepository(remote, local, cachedContacts)
 
     @Singleton
     @Provides
     fun provideRecentChatsLocalSource(
-        contactDao: ContactDao,
-        userDao: UserDao,
-        currentUser: UserModel
-    ): RecentChatsRepository.LocalSource = RecentChatsLocalSource(contactDao, userDao, currentUser)
+        recentChatDao: RecentChatDao
+    ): RecentChatsRepository.LocalSource = RecentChatsLocalSource(recentChatDao)
 
     @Singleton
     @Provides

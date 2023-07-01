@@ -1,6 +1,5 @@
 package com.example.whisper.data.repository.contacts
 
-import com.example.whisper.utils.common.PINNED_CONTACTS
 import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
 import com.example.whisper.utils.responsehandler.ResponseResultOk
@@ -236,7 +235,7 @@ class ContactsRemoteSource @Inject constructor() : ContactsRepository.RemoteSour
         contactId: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        val currentUser = SendBird.getCurrentUser()
+       /* val currentUser = SendBird.getCurrentUser()
         val pinnedContacts = currentUser.metaData[PINNED_CONTACTS]
             ?.split(',')
             ?.plus(contactId)
@@ -249,14 +248,14 @@ class ContactsRemoteSource @Inject constructor() : ContactsRepository.RemoteSour
             } else {
                 block.invoke(Either.right(ResponseResultOk))
             }
-        }
+        }*/
     }
 
     override suspend fun unpinContact(
         contactId: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-        val currentUser = SendBird.getCurrentUser()
+        /*val currentUser = SendBird.getCurrentUser()
         val pinnedContacts = currentUser.metaData[PINNED_CONTACTS]
             ?.filterNot { it.isWhitespace() }
             ?.split(',')
@@ -270,7 +269,7 @@ class ContactsRemoteSource @Inject constructor() : ContactsRepository.RemoteSour
             } else {
                 block.invoke(Either.right(ResponseResultOk))
             }
-        }
+        }*/
     }
 
     /* --------------------------------------------------------------------------------------------

@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
 import com.example.whisper.data.repository.contacts.ContactsRepository
+import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.domain.contact.AddContactState
 import com.example.whisper.domain.contact.AddContactUseCase
@@ -13,6 +14,8 @@ import com.example.whisper.utils.common.EMPTY
 import com.example.whisper.vo.addcontact.AddContactEvents
 import com.example.whisper.vo.addcontact.AddContactUiModel
 import com.example.whisper.vo.addcontact.AddContactUiState
+import com.example.whisper.vo.addcontact.AddContactUiState.SEARCH_EMPTY
+import com.example.whisper.vo.addcontact.AddContactUiState.SEARCH_FOUND
 import com.example.whisper.vo.contacts.ContactUiModel
 import com.example.whisper.vo.contacts.toContactsUiModel
 import com.example.whisper.vo.dialogs.TitleMessageDialog
@@ -29,7 +32,9 @@ class AddContactViewModel @Inject constructor(
     application: Application,
     private val userRepository: UserRepository,
     private val contactsRepository: ContactsRepository,
-) : BaseContactsViewModel(application, userRepository), AddContactPresenter {
+    recentChatsRepository: RecentChatsRepository
+) : BaseContactsViewModel(application, userRepository, contactsRepository, recentChatsRepository),
+    AddContactPresenter {
 
     val uiState
         get() = _uiState.asStateFlow()
@@ -124,17 +129,13 @@ class AddContactViewModel @Inject constructor(
     }
 
     private suspend fun onSearchSuccessful(users: List<User>) {
-        loggedUserId?.let { id ->
-            val filteredUsers = users.filter { it.userId != id }.toContactsUiModel(id)
-            _users.emit(filteredUsers)
-        }
+        val currentUserId = userRepository.cachedUser.userId
+        users.filter { it.userId != currentUserId }
+            .toContactsUiModel(currentUserId)
+            .let { filteredUsers -> _users.emit(filteredUsers) }
 
-        when {
-            users.isEmpty() -> AddContactUiState.SEARCH_EMPTY
-            else -> AddContactUiState.SEARCH_FOUND
-        }.let { newUiState ->
-            changeState(newUiState)
-        }
+        val newUiState = if (users.isEmpty()) SEARCH_EMPTY else SEARCH_FOUND
+        changeState(newUiState)
     }
 
     private suspend fun changeState(uiState: AddContactUiState) {
@@ -142,39 +143,28 @@ class AddContactViewModel @Inject constructor(
     }
 
     private suspend fun updateInvitedUser(contactId: String) {
-        val updatedContacts = _users.value.toMutableList()
-        updatedContacts.mapIndexed { index, uiModel ->
-            if (uiModel.contactId == contactId) {
-                val contact = ContactUiModel(
-                    contactId = uiModel.contactId,
-                    pictureUrl = uiModel.pictureUrl,
-                    username = uiModel.username,
-                    email = uiModel.email,
-                    channelUrl = uiModel.channelUrl,
-                    isInvited = true,
-                    isLoading = false
-                )
-                updatedContacts[index] = contact
+        _users.value
+            .map { uiModel ->
+                if (uiModel.contactId == contactId) {
+                    uiModel.copy(isInvited = true, isLoading = false)
+                } else {
+                    uiModel
+                }
             }
-        }
-        _users.emit(updatedContacts)
+            .toMutableList()
+            .let { updatedContacts -> _users.emit(updatedContacts) }
     }
 
     private suspend fun updateLoadingUser(contactId: String, isLoading: Boolean) {
-        val updatedContacts = _users.value.toMutableList()
-        updatedContacts.mapIndexed { index, uiModel ->
-            if (uiModel.contactId == contactId) {
-                val contact = ContactUiModel(
-                    contactId = uiModel.contactId,
-                    pictureUrl = uiModel.pictureUrl,
-                    username = uiModel.username,
-                    email = uiModel.email,
-                    channelUrl = uiModel.channelUrl,
-                    isLoading = isLoading
-                )
-                updatedContacts[index] = contact
+        _users.value
+            .map { uiModel ->
+                if (uiModel.contactId == contactId) {
+                    uiModel.copy(isLoading = isLoading)
+                } else {
+                    uiModel
+                }
             }
-        }
-        _users.emit(updatedContacts)
+            .toMutableList()
+            .let { updatedContacts -> _users.emit(updatedContacts) }
     }
 }

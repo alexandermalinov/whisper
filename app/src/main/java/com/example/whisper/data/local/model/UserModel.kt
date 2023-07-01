@@ -5,7 +5,6 @@ import com.example.whisper.utils.common.EMPTY
 import com.example.whisper.utils.common.USER_EMAIL
 import com.example.whisper.utils.common.USER_ID
 import com.example.whisper.utils.common.USER_PASSWORD
-import javax.inject.Inject
 
 data class UserModel(
     val userId: String,
@@ -17,7 +16,6 @@ data class UserModel(
     val isFingerPrintEnabled: Boolean = false,
     val isPinEnabled: Boolean = false,
     val pin: String = EMPTY,
-    val pinnedContacts: List<ContactModel> = emptyList()
 )
 
 fun UserModel.toUser() = User(
@@ -30,7 +28,6 @@ fun UserModel.toUser() = User(
     isFingerPrintEnabled = isFingerPrintEnabled,
     isPinEnabled = isPinEnabled,
     pin = pin,
-    pinnedContacts = pinnedContacts.toContacts()
 )
 
 fun com.sendbird.android.User.toUserModel() = UserModel(

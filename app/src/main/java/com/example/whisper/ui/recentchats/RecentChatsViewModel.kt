@@ -6,36 +6,35 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
-import com.example.whisper.data.local.entity.toUserModel
-import com.example.whisper.data.local.model.toContacts
-import com.example.whisper.data.repository.contacts.ContactConnectionStatus
+import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.navigation.NavGraph
-import com.example.whisper.ui.base.ConnectionStatus
 import com.example.whisper.ui.basecontacts.BaseContactsViewModel
-import com.example.whisper.ui.contacts.ContactState
-import com.example.whisper.utils.DateTimeFormatter
-import com.example.whisper.utils.common.*
+import com.example.whisper.utils.common.CONTACT_BOTTOM_DIALOG_KEY
+import com.example.whisper.utils.common.IS_RECENT_CHAT
 import com.example.whisper.vo.dialogs.ContactBottomDialog
-import com.example.whisper.vo.recentchats.*
-import com.sendbird.android.BaseChannel
-import com.sendbird.android.BaseMessage
-import com.sendbird.android.SendBird
+import com.example.whisper.vo.recentchats.ChatsRecyclerViewState
+import com.example.whisper.vo.recentchats.RecentChatUiModel
+import com.example.whisper.vo.recentchats.RecentChatsUiModel
+import com.example.whisper.vo.recentchats.toListOfRecentChatsUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class RecentChatsViewModel @Inject constructor(
     application: Application,
-    private val userRepository: UserRepository,
-    private val contactsRepository: RecentChatsRepository,
-) : BaseContactsViewModel(application, userRepository), RecentChatsPresenter,
+    userRepository: UserRepository,
+    contactsRepository: ContactsRepository,
+    private val recentChatsRepository: RecentChatsRepository
+) : BaseContactsViewModel(application, userRepository, contactsRepository, recentChatsRepository),
+    RecentChatsPresenter,
     RecentChatPresenter, DefaultLifecycleObserver {
 
     val uiState
@@ -59,25 +58,12 @@ class RecentChatsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            _uiState.emit(_uiState.value.copy(uiState = RecentChatState.LOADING))
+            //_uiState.emit(_uiState.value.copy(uiState = RecentChatState.LOADING))
 
-            userRepository.getPinnedContacts().collect {
-                _pinnedChats.emit(it.toListOfRecentChatsUiModel())
-            }
-
-            connectionStatus.collect { connectionStatus ->
-                when (connectionStatus) {
-                    ConnectionStatus.CONNECTED -> {
-                        fetchRecentChats()
-                        initChatHandler()
-                    }
-                    ConnectionStatus.CONNECTING -> {
-                        _uiState.emit(_uiState.value.copy(uiState = RecentChatState.LOADING))
-                    }
-                    ConnectionStatus.NOT_CONNECTED -> {
-                        _uiState.emit(_uiState.value.copy(uiState = RecentChatState.ERROR))
-                    }
-                }
+            recentChatsRepository.getRecentChatsDbFlow().collect { contacts ->
+                val (pinned, notPinned) = contacts.partition { contact -> contact.isPinned }
+                _pinnedChats.emit(pinned.toListOfRecentChatsUiModel())
+                _recentChats.emit(notPinned.toListOfRecentChatsUiModel())
             }
         }
     }
@@ -88,9 +74,9 @@ class RecentChatsViewModel @Inject constructor(
     override fun onResume(owner: LifecycleOwner) {
         super<BaseContactsViewModel>.onResume(owner)
 
-        viewModelScope.launch(Dispatchers.IO) {
-            fetchRecentChats()
-        }
+        /*viewModelScope.launch(Dispatchers.IO) {
+
+         }*/
     }
 
     override fun onRecentChatClicked(chatId: String) {
@@ -98,16 +84,14 @@ class RecentChatsViewModel @Inject constructor(
     }
 
     override fun onRecentChatLongClicked(contact: RecentChatUiModel): Boolean {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            val contactModel = recentChatsRepository
+                .getRecentChatFromCacheOrDb(contact.chatUrl)
+                ?: return@launch
+
             val bundle = bundleOf(
-                CHANNEL_URL to contact.chatUrl,
-                CONTACT_ID to contact.contactId,
-                CONTACT_PROFILE_IMAGE to contact.profilePicture,
-                CONTACT_USERNAME to contact.username,
-                CONTACT_EMAIL to contact.email,
-                CONTACT_IS_MUTED to contact.isMuted,
-                CONTACT_IS_PINNED to contact.isPinned,
-                CONTACT_STATUS to ContactState.JOINED
+                CONTACT_BOTTOM_DIALOG_KEY to contactModel,
+                IS_RECENT_CHAT to true
             )
 
             _dialogFlow.emit(ContactBottomDialog(bundle))
@@ -133,70 +117,4 @@ class RecentChatsViewModel @Inject constructor(
     /* --------------------------------------------------------------------------------------------
      * Private
     ---------------------------------------------------------------------------------------------*/
-    private suspend fun fetchRecentChats() {
-        contactsRepository.getContacts(ContactConnectionStatus.CONNECTED) { either ->
-            either.fold({ error ->
-                Timber.tag("Contacts Fetching").d("Couldn't fetch contacts")
-            }, { contacts ->
-                currentUser?.let { user ->
-                    viewModelScope.launch(Dispatchers.IO) {
-                        val pinned = contacts.filter { chat ->
-                            user.metaData[PINNED_CONTACTS]
-                                ?.filterNot { it.isWhitespace() }
-                                ?.split(',')
-                                ?.contains(chat.members.firstOrNull { it.userId != user.userId }?.userId)
-                                ?: false
-                        }
-                        val chats = contacts.filterNot { chat -> pinned.any { it.url == chat.url } }
-                        val localUser = userRepository.getLoggedUser()
-
-                        localUser?.pinnedContacts = pinned.toContacts(localUser?.userId ?: EMPTY)
-                        userRepository.updateUserLocalDB(localUser?.toUserModel())
-
-                        _recentChats.emit(chats.toListOfRecentChatsUiModel(user))
-
-                        if (contacts.isEmpty()) {
-                            _uiState.emit(_uiState.value.copy(uiState = RecentChatState.EMPTY))
-                        } else {
-                            _uiState.emit(_uiState.value.copy(uiState = RecentChatState.IDLE))
-                        }
-                    }
-                }
-            })
-        }
-    }
-
-    private suspend fun initChatHandler() {
-        SendBird.addChannelHandler(
-            RECENT_CHAT_HANDLER_ID,
-            object : SendBird.ChannelHandler() {
-
-                override fun onMessageReceived(channel: BaseChannel?, message: BaseMessage?) {
-                    viewModelScope.launch {
-                        val chat = _recentChats.value
-                            .firstOrNull { chat -> chat.chatUrl == channel?.url }
-                            ?: return@launch
-                        val newChat = RecentChatUiModel(
-                            chatUrl = chat.chatUrl,
-                            username = chat.username,
-                            profilePicture = chat.profilePicture,
-                            unreadMessagesCount = chat.unreadMessagesCount + 1,
-                            lastMessageText = message?.message ?: EMPTY,
-                            lastMessageTimestamp = DateTimeFormatter.formatMessageDateTime(
-                                message?.createdAt ?: ZERO.toLong()
-                            )
-                        )
-                        val linkList = _recentChats.value.toMutableList()
-                        linkList.removeAt(linkList.indexOf(chat))
-                        linkList.add(0, newChat)
-                        _recentChats.emit(linkList)
-
-                        if (isAtTheTopOfRecyclerview) {
-                            _chatsRecyclerViewState.emit(ChatsRecyclerViewState.SCROLL_TO_TOP)
-                        }
-                    }
-                }
-            }
-        )
-    }
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
 import com.example.whisper.data.local.model.toUserModel
 import com.example.whisper.data.repository.contacts.ContactsRepository
+import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
 import com.example.whisper.domain.contact.PopulateContactsState
 import com.example.whisper.domain.contact.PopulateContactsUseCase
@@ -13,14 +14,13 @@ import com.example.whisper.domain.signup.ValidationStates
 import com.example.whisper.navigation.NavGraph
 import com.example.whisper.navigation.PopBackStack
 import com.example.whisper.ui.base.BaseInputChangeViewModel
-import com.example.whisper.ui.base.ConnectionStatus
-import com.example.whisper.utils.common.EMPTY
 import com.example.whisper.utils.common.INVALID_RES
 import com.example.whisper.utils.isNetworkAvailable
 import com.example.whisper.vo.dialogs.TitleMessageDialog
 import com.example.whisper.vo.signin.SignInUiModel
 import com.sendbird.android.SendBird
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,6 +31,7 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val contactsRepository: ContactsRepository,
+    private val recentChatsRepository: RecentChatsRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val application: Application
 ) : BaseInputChangeViewModel(), SignInPresenter {
@@ -122,23 +123,30 @@ class SignInViewModel @Inject constructor(
                         },
                         { userModel ->
                             userRepository.connectUserSendbird(userModel.userId) { either ->
-                                viewModelScope.launch {
+                                viewModelScope.launch(Dispatchers.IO) {
                                     either.foldSuspend({ httpError ->
                                         if (application.isNetworkAvailable())
                                             showValidationErrorDialog()
                                         else
                                             showNoNetworkErrorDialog()
                                     }, { responseOk ->
-                                        userRepository.loginUserLocalDB(userModel.email, userModel.userId)
-                                        userRepository.updateUserLocalDB(SendBird.getCurrentUser().toUserModel())
-                                        PopulateContactsUseCase(contactsRepository)
-                                            .invoke(userModel.userId, viewModelScope) { state ->
-                                                if (state == PopulateContactsState.SuccessState) {
-                                                    navigateToRecentChats()
-                                                } else {
-                                                    showError()
-                                                }
+                                        userRepository.loginUserLocalDB(
+                                            userModel.email,
+                                            userModel.userId
+                                        )
+                                        userRepository.updateUserLocalDB(
+                                            SendBird.getCurrentUser().toUserModel()
+                                        )
+                                        PopulateContactsUseCase(
+                                            contactsRepository,
+                                            recentChatsRepository
+                                        ).invoke(userModel.userId, viewModelScope) { state ->
+                                            if (state == PopulateContactsState.SuccessState) {
+                                                navigateToRecentChats()
+                                            } else {
+                                                showError()
                                             }
+                                        }
                                     })
                                 }
                             }

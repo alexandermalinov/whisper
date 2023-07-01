@@ -26,7 +26,7 @@ const val SELECT_IMAGE_KEY = "image_picker_key"
 const val IMAGE_TYPE = "image/*"
 
 // Delays
-const val SPLASH_SCREEN_DELAY = 1000L
+const val SPLASH_SCREEN_DELAY = 500L
 
 // Shared Preferences Keys
 const val USER_SHARED_PREFS_KEY = "user_shared_prefs"
@@ -50,6 +50,7 @@ const val CONTACTS_CHATS_PAGER_POSITION = 1
 const val PROFILE_CHATS_PAGER_POSITION = 2
 
 // SaveStateHandle Keys
+const val IS_RECENT_CHAT = "IS_RECENT_CHAT"
 const val CHANNEL_URL = "CHANNEL_URL"
 const val CONTACT_ID = "CONTACT_ID"
 const val CONTACT_PROFILE_IMAGE = "CONTACT_PROFILE_IMAGE"
@@ -58,6 +59,7 @@ const val CONTACT_EMAIL = "CONTACT_EMAIL"
 const val CONTACT_IS_MUTED = "CONTACT_IS_MUTED"
 const val CONTACT_IS_PINNED = "CONTACT_IS_PINNED"
 const val CONTACT_STATUS = "CONTACT_STATUS"
+const val CONTACT_BOTTOM_DIALOG_KEY = "CONTACT_BOTTOM_DIALOG"
 
 // Contacts
 const val MEMBER_STATE_CONNECTED = "CONNECTED"

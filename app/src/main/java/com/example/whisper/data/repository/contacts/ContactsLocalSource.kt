@@ -1,20 +1,18 @@
 package com.example.whisper.data.repository.contacts
 
 import com.example.whisper.data.local.dao.ContactDao
-import com.example.whisper.data.local.dao.UserDao
 import com.example.whisper.data.local.entity.toContact
 import com.example.whisper.data.local.entity.toContactModels
-import com.example.whisper.data.local.model.*
-import com.example.whisper.data.repository.user.UserRepository
+import com.example.whisper.data.local.model.ContactModel
+import com.example.whisper.data.local.model.toContact
+import com.example.whisper.data.local.model.toContacts
 import com.example.whisper.utils.common.MEMBER_STATE_CONNECTED
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ContactsLocalSource @Inject constructor(
-    private val contactDao: ContactDao,
-    private val userDao: UserDao,
-    private var userRepository: UserRepository
+    private val contactDao: ContactDao
 ) : ContactsRepository.LocalSource {
 
     override suspend fun updateContact(contact: ContactModel) {
@@ -37,7 +35,10 @@ class ContactsLocalSource @Inject constructor(
         contactDao.insertContact(contact.toContact())
     }
 
-    override suspend fun addContacts(contacts: List<ContactModel>) {
+    override suspend fun addAllContacts(contacts: List<ContactModel>) {
+        // TODO WHISPER-6 Add check if the contact should be updated or added, so the isPinned value
+        // is not lost + more optimised code
+        contactDao.deleteAllContacts()
         contactDao.insertContacts(contacts.toContacts())
     }
 
@@ -82,22 +83,13 @@ class ContactsLocalSource @Inject constructor(
         contactDao.updateContact(contact)
     }
 
-    override suspend fun pinContact(contactUrl: String) {
-        val contact = contactDao.getContact(contactUrl)?.toContact() ?: return
-        userRepository.cachedUser = userRepository.cachedUser.copy(
-            pinnedContacts = userRepository.cachedUser
-                .pinnedContacts
-                .plus(contact)
-        )
-        userDao.updateUser(userRepository.cachedUser.toUser())
+    override suspend fun pinContact(contactModel: ContactModel) {
+        val contact = contactModel.copy(isPinned = true).toContact()
+        contactDao.updateContact(contact)
     }
 
-    override suspend fun unpinContact(contactUrl: String) {
-        userRepository.cachedUser = userRepository.cachedUser.copy(
-            pinnedContacts = userRepository.cachedUser
-                .pinnedContacts
-                .filter { it.contactUrl != contactUrl }
-        )
-        userDao.updateUser(userRepository.cachedUser.toUser())
+    override suspend fun unpinContact(contactModel: ContactModel) {
+        val contact = contactModel.copy(isPinned = false).toContact()
+        contactDao.updateContact(contact)
     }
 }
