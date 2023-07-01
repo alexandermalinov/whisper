@@ -33,10 +33,7 @@ class ContactsRepository @Inject constructor(
      ---------------------------------------------------------------------------------------------*/
     interface RemoteSource {
 
-        suspend fun getContacts(
-            filter: ContactConnectionStatus,
-            block: (Either<HttpError, List<GroupChannel>>) -> Unit
-        )
+        suspend fun getContacts(filter: ContactConnectionStatus): Either<HttpError, List<GroupChannel>>
 
         suspend fun searchUsers(
             username: String,
@@ -150,12 +147,8 @@ class ContactsRepository @Inject constructor(
         remote.getContact(id, block)
     }
 
-    suspend fun getContacts(
-        filter: ContactConnectionStatus,
-        block: (Either<HttpError, List<GroupChannel>>) -> Unit
-    ) {
-        remote.getContacts(filter, block)
-    }
+    suspend fun getContacts(filter: ContactConnectionStatus): Either<HttpError, List<GroupChannel>> =
+        remote.getContacts(filter)
 
     fun getContactsDbFlow() = local.getContactsFlow()
 

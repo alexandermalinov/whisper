@@ -3,7 +3,7 @@ package com.example.whisper.data.repository.user
 import com.example.whisper.data.local.entity.User
 import com.example.whisper.data.local.entity.toUserModel
 import com.example.whisper.data.local.model.UserModel
-import com.example.whisper.utils.common.EMPTY
+import com.example.whisper.data.local.model.toUser
 import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
 import com.example.whisper.utils.responsehandler.ResponseResultOk
@@ -21,7 +21,7 @@ class UserRepository @Inject constructor(
 
     init {
         CoroutineScope(SupervisorJob()).launch {
-            val loggedUser = getLoggedUser()
+            val loggedUser = local.getLoggedUser()
             if (loggedUser != null) cachedUser = loggedUser.toUserModel()
         }
     }
@@ -31,33 +31,18 @@ class UserRepository @Inject constructor(
      ---------------------------------------------------------------------------------------------*/
     interface RemoteSource {
 
-        suspend fun registerUserFirebase(
-            email: String,
-            password: String,
-            block: (Either<HttpError, String>) -> Unit
-        )
+        suspend fun registerUserFirebase(email: String, password: String): Either<HttpError, String>
 
-        suspend fun registerUserSendbird(
-            userModel: UserModel,
-            block: (Either<HttpError, ResponseResultOk>) -> Unit
-        )
+        suspend fun registerUserSendbird(userModel: UserModel): Either<HttpError, ResponseResultOk>
 
-        suspend fun loginUserFirebase(
-            email: String,
-            password: String,
-            block: (Either<HttpError, UserModel>) -> Unit
-        )
+        suspend fun loginUserFirebase(email: String, password: String): Either<HttpError, UserModel>
 
-        suspend fun connectUserSendbird(
-            userId: String,
-            block: (Either<HttpError, ResponseResultOk>) -> Unit
-        )
+        suspend fun connectUserSendbird(userId: String): Either<HttpError, com.sendbird.android.User>
 
         suspend fun updateUserSendbird(
             username: String,
-            profilePictureFile: File,
-            block: (Either<HttpError, ResponseResultOk>) -> Unit
-        )
+            profilePictureFile: File
+        ): Either<HttpError, ResponseResultOk>
 
         suspend fun getCurrentUserId(): String
 
@@ -85,62 +70,43 @@ class UserRepository @Inject constructor(
 
     suspend fun registerUserFirebase(
         email: String,
-        password: String,
-        block: (Either<HttpError, String>) -> Unit
-    ) {
-        remote.registerUserFirebase(email, password, block)
-    }
+        password: String
+    ): Either<HttpError, String> = remote.registerUserFirebase(email, password)
 
     suspend fun loginUserFirebase(
         email: String,
-        password: String,
-        block: (Either<HttpError, UserModel>) -> Unit
-    ) {
-        remote.loginUserFirebase(email, password, block)
+        password: String
+    ): Either<HttpError, UserModel> = remote.loginUserFirebase(email, password)
+
+    suspend fun registerUserLocalDB(userModel: UserModel) {
+        local.registerUser(userModel.toUser())
+        loginUserLocalDB(userModel)
     }
 
-    suspend fun registerUserLocalDB(user: User) {
-        local.registerUser(user)
-        cachedUser = user.toUserModel()
-        loginUserLocalDB(user.email)
+    suspend fun updateUserLocalDB(userModel: UserModel) {
+        local.updateUser(userModel)
+        cachedUser = userModel
     }
 
-    suspend fun updateUserLocalDB(userModel: UserModel?) {
-        userModel?.let {
-            //local.registerUser(userModel.toUser())
-            cachedUser = userModel
-        }
-    }
-
-    suspend fun loginUserLocalDB(email: String, id: String = EMPTY) {
+    suspend fun loginUserLocalDB(userModel: UserModel) {
         local.setIsUserLoggedIn(true)
-        local.setLoggedInUserEmail(email)
-        if (local.getUser(id) == null) {
-            local.registerUser(User(userId = id, email = email))
+        local.setLoggedInUserEmail(userModel.email)
+        cachedUser = userModel
+        if (local.getUser(userModel.userId) == null) {
+            local.registerUser(user = userModel.toUser())
         }
     }
 
-    suspend fun registerUserSendbird(
-        userModel: UserModel,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
-    ) {
-        remote.registerUserSendbird(userModel, block)
-    }
+    suspend fun registerUserSendbird(userModel: UserModel): Either<HttpError, ResponseResultOk> =
+        remote.registerUserSendbird(userModel)
 
-    suspend fun connectUserSendbird(
-        userId: String,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
-    ) {
-        remote.connectUserSendbird(userId, block)
-    }
+    suspend fun connectUserSendbird(userId: String): Either<HttpError, com.sendbird.android.User> =
+        remote.connectUserSendbird(userId)
 
     suspend fun updateUserSendbird(
         username: String,
-        profilePictureFile: File,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
-    ) {
-        remote.updateUserSendbird(username, profilePictureFile, block)
-    }
+        profilePictureFile: File
+    ): Either<HttpError, ResponseResultOk> = remote.updateUserSendbird(username, profilePictureFile)
 
     suspend fun isUserLoggedIn() = local.isUserLoggedIn()
 

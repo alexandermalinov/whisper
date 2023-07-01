@@ -1,32 +1,31 @@
 package com.example.whisper.ui.signup
 
-import android.app.Application
+import android.Manifest
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
 import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
-import com.example.whisper.domain.contact.PopulateContactsState
-import com.example.whisper.domain.contact.PopulateContactsUseCase
+import com.example.whisper.domain.signup.SignUpState
+import com.example.whisper.domain.signup.SignUpUseCase
 import com.example.whisper.domain.signup.ValidateEmailUseCase
 import com.example.whisper.domain.signup.ValidationStates
+import com.example.whisper.domain.user.UpdateUserState
+import com.example.whisper.domain.user.UpdateUserUseChase
 import com.example.whisper.navigation.GalleryNavigation
 import com.example.whisper.navigation.NavGraph
 import com.example.whisper.navigation.PopBackStack
 import com.example.whisper.ui.base.BaseInputChangeViewModel
+import com.example.whisper.utils.FileUtils
+import com.example.whisper.utils.NetworkHandler
 import com.example.whisper.utils.common.INVALID_RES
-import com.example.whisper.utils.createFile
-import com.example.whisper.utils.isNetworkAvailable
+import com.example.whisper.utils.permissions.*
 import com.example.whisper.vo.dialogs.TitleMessageDialog
 import com.example.whisper.vo.signup.SignUpUiModel
-import com.example.whisper.vo.signup.toUser
-import com.example.whisper.vo.signup.toUserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,13 +35,19 @@ class SignUpViewModel @Inject constructor(
     private val contactsRepository: ContactsRepository,
     private val recentChatsRepository: RecentChatsRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
-    private val application: Application
-) : BaseInputChangeViewModel(), SignUpPresenter {
+    private val networkHandler: NetworkHandler,
+    private val permissionChecker: PermissionChecker,
+    private val fileUtils: FileUtils
+) : BaseInputChangeViewModel(), SignUpPresenter, PermissionStateHandler {
 
     val uiState
         get() = _uiState.asStateFlow()
 
+    val permissionState
+        get() = _permissionState.asSharedFlow()
+
     private val _uiState = MutableStateFlow(SignUpUiModel())
+    private val _permissionState = MutableSharedFlow<Permission>()
 
     /* --------------------------------------------------------------------------------------------
      * Exposed
@@ -51,7 +56,7 @@ class SignUpViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.emit(
                 _uiState.value.copy(
-                    pictureFile = application.createFile(uri),
+                    pictureFile = fileUtils.createFile(uri),
                     profilePicture = uri
                 )
             )
@@ -62,19 +67,23 @@ class SignUpViewModel @Inject constructor(
      * Override
     ---------------------------------------------------------------------------------------------*/
     override fun onContinueClick() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _uiState.emit(_uiState.value.copy(isLoading = true))
-            userRepository.registerUserFirebase(_uiState.value.email, _uiState.value.password) {
-                viewModelScope.launch(Dispatchers.IO) {
-                    it.foldSuspend(
-                        { onFailure ->
-                            if (application.isNetworkAvailable())
-                                showValidationErrorDialog()
-                            else
-                                showNoNetworkErrorDialog()
-                        },
-                        { userId -> registerInSendbird(userId) }
-                    )
+
+            val signUpResult = SignUpUseCase(
+                userRepository,
+                contactsRepository,
+                recentChatsRepository,
+                networkHandler
+            ).invoke(_uiState.value.email, _uiState.value.password)
+
+            when (signUpResult) {
+                is SignUpState.CredentialsErrorState -> showValidationErrorDialog()
+                is SignUpState.ErrorState -> showErrorDialog()
+                is SignUpState.NetworkErrorState -> showNoNetworkErrorDialog()
+                is SignUpState.SuccessState -> {
+                    _uiState.emit(_uiState.value.copy(isLoading = false))
+                    navigateToStepTwo()
                 }
             }
         }
@@ -83,18 +92,15 @@ class SignUpViewModel @Inject constructor(
     override fun onFinish() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
-            userRepository.updateUserSendbird(_uiState.value.username, _uiState.value.pictureFile) {
-                viewModelScope.launch {
-                    it.foldSuspend(
-                        { onFailure ->
-                            if (application.isNetworkAvailable())
-                                showValidationErrorDialog()
-                            else
-                                showNoNetworkErrorDialog()
-                        },
-                        { onSuccess -> navigateToRecentChats() }
-                    )
-                }
+            val state = UpdateUserUseChase(userRepository, networkHandler).invoke(
+                _uiState.value.username,
+                _uiState.value.pictureFile
+            )
+
+            when (state) {
+                UpdateUserState.ErrorState -> showErrorDialog()
+                UpdateUserState.NetworkErrorState -> showNoNetworkErrorDialog()
+                UpdateUserState.SuccessState -> navigateToRecentChats()
             }
         }
     }
@@ -170,7 +176,46 @@ class SignUpViewModel @Inject constructor(
 
     override fun onProfileImageClick() {
         viewModelScope.launch {
-            _navigationFlow.emit(GalleryNavigation)
+            if (permissionChecker.isPermissionGranted()) {
+                _navigationFlow.emit(GalleryNavigation)
+            } else {
+                _permissionState.emit(
+                    PermissionRequest(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
+                )
+            }
+        }
+    }
+
+    override fun onPermissionState(state: PermissionState) {
+        viewModelScope.launch {
+            when (state) {
+                is GrantedState -> {
+                    _navigationFlow.emit(GalleryNavigation)
+                }
+                is DeniedState -> {
+                    val dialog = TitleMessageDialog(
+                        title = R.string.dialog_external_storage_denied_title,
+                        message = R.string.dialog_external_storage_denied_body
+                    )
+
+                    _dialogFlow.emit(dialog)
+                }
+                else -> {
+                    // Rationale State
+                    val dialog = TitleMessageDialog(
+                        title = R.string.dialog_external_storage_grant_permission_title,
+                        message = R.string.dialog_external_storage_grant_permission_body,
+                        positiveButtonClickListener = {
+                            viewModelScope.launch {
+                                _permissionState.emit(
+                                    PermissionRequest(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
+                                )
+                            }
+                        }
+                    )
+                    _dialogFlow.emit(dialog)
+                }
+            }
         }
     }
 
@@ -273,28 +318,6 @@ class SignUpViewModel @Inject constructor(
                 R.string.error_something_went_wrong_try_again
             )
         )
-    }
-
-    private suspend fun registerInSendbird(id: String) {
-        userRepository.registerUserSendbird(_uiState.value.toUserModel(id)) { either ->
-            viewModelScope.launch(Dispatchers.IO) {
-                either.foldSuspend({ onFailure ->
-                    if (application.isNetworkAvailable().not())
-                        showNoNetworkErrorDialog()
-                }, { onSuccess ->
-                    userRepository.registerUserLocalDB(_uiState.value.toUser(id))
-                    PopulateContactsUseCase(contactsRepository, recentChatsRepository)
-                        .invoke(userRepository.cachedUser.userId, viewModelScope) { state ->
-                            if (state == PopulateContactsState.SuccessState) {
-                                _uiState.emit(_uiState.value.copy(isLoading = false))
-                                navigateToStepTwo()
-                            } else {
-                                showErrorDialog()
-                            }
-                        }
-                })
-            }
-        }
     }
 
     private suspend fun navigateToRecentChats() {

@@ -34,10 +34,10 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>() {
    ---------------------------------------------------------------------------------------------*/
     private fun initUi() {
         dataBinding.presenter = viewModel
-        observeLiveData()
+        collectUiState()
     }
 
-    private fun observeLiveData() {
+    private fun collectUiState() {
         collectLatestFlow(viewModel.uiState) { uiModel ->
             dataBinding.model = uiModel
         }

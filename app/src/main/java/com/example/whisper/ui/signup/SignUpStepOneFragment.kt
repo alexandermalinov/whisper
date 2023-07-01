@@ -23,7 +23,7 @@ class SignUpStepOneFragment : BaseFragment<FragmentSignUpStepOneBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUi()
-        observeLiveData()
+        collectState()
         collectNavigation(viewModel.navigationFlow)
         collectDialogFlow(viewModel.dialogFlow)
     }
@@ -37,7 +37,7 @@ class SignUpStepOneFragment : BaseFragment<FragmentSignUpStepOneBinding>() {
         dataBinding.presenter = viewModel
     }
 
-    private fun observeLiveData() {
+    private fun collectState() {
         collectLatestFlow(viewModel.uiState) { uiModel ->
             dataBinding.model = uiModel
         }

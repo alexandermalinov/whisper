@@ -29,7 +29,6 @@ class PeerToPeerChatFragment : BasePermissionFragment<FragmentPeerToPeerChatBind
         collectUiStates()
         initVoiceButtonListener()
         collectNavigation(viewModel.navigationFlow)
-        observePermissionData(viewModel.permissionLiveData)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_peer_to_peer_chat

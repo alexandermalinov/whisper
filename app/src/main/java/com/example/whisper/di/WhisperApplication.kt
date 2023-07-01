@@ -3,7 +3,8 @@ package com.example.whisper.di
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.example.whisper.data.remote.ContactsUpdateLister
+import com.example.whisper.data.handlers.ConnectionHandler
+import com.example.whisper.data.listeners.ContactsUpdateLister
 import com.example.whisper.utils.common.SENDBIRD_APP_ID
 import com.sendbird.android.SendBird
 import com.sendbird.android.SendBirdException
@@ -26,6 +27,9 @@ class WhisperApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var contactsUpdateLister: ContactsUpdateLister
 
+    @Inject
+    lateinit var connectionHandler: ConnectionHandler
+
     private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun onCreate() {
@@ -43,11 +47,12 @@ class WhisperApplication : Application(), Configuration.Provider {
                 }
 
                 override fun onInitSucceed() {
+                    connectionHandler.initConnectionHandler()
+                    contactsUpdateLister.initContactUpdateListener()
+
                     Timber.tag("Application").i("Called when initialization is completed.")
                 }
             })
-
-            contactsUpdateLister.initContactUpdateListener()
         }
     }
 

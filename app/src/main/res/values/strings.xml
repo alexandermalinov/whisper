@@ -88,10 +88,17 @@
     <string name="error_dialog_message_body_no_network">No internet connection found. Check your connection or try again.</string>
     <string name="error_dialog_message_body_invalid_credentials">Email or password are invalid. Please try again with valid credentials.</string>
     <string name="error_dialog_body_message_setting_personal_info">There was an error setting your personal information</string>
-
     <!-- General Error Messages -->
     <string name="error">Error</string>
     <string name="error_network_message">Network Error</string>
     <string name="error_something_went_wrong_try_again">Something went wrong. Please try again.</string>
     <string name="try_again">Try Again</string>
+
+    <!-- Dialog Tittles -->
+    <string name="dialog_external_storage_denied_title">Permission Denied</string>
+    <string name="dialog_external_storage_grant_permission_title">Grant permission</string>
+
+    <!-- Dialog Bodies-->
+    <string name="dialog_external_storage_denied_body">In order to set your profile picture, we need access to your photos.</string>
+    <string name="dialog_external_storage_grant_permission_body">In order to set your profile picture, we need access to your photos.</string>
 </resources>
