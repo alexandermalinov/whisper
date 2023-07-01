@@ -7,11 +7,13 @@ import com.example.whisper.utils.responsehandler.Either
 import com.example.whisper.utils.responsehandler.HttpError
 import com.example.whisper.utils.responsehandler.ResponseResultOk
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.sendbird.android.SendBird
+import com.sendbird.android.User
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class UserRemoteSource @Inject constructor(
     private val auth: FirebaseAuth
@@ -20,33 +22,30 @@ class UserRemoteSource @Inject constructor(
     override suspend fun registerUserFirebase(
         email: String,
         password: String,
-        block: (Either<HttpError, String>) -> Unit
-    ) {
-        // register user in firebase authentication
+    ): Either<HttpError, String> = suspendCoroutine { continuation ->
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val id = task.result?.user?.uid ?: return@addOnCompleteListener
-                    block.invoke(Either.right(id))
+                    continuation.resume(Either.right(id))
                 } else {
-                    block.invoke(Either.left(HttpError(serverMessage = task.exception?.message)))
+                    continuation.resume(Either.left(HttpError(serverMessage = task.exception?.message)))
                 }
             }
     }
 
     override suspend fun registerUserSendbird(
-        userModel: UserModel,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
-    ) {
+        userModel: UserModel
+    ): Either<HttpError, ResponseResultOk> = suspendCoroutine { continuation ->
         SendBird.connect(userModel.userId) { connectedUser, error ->
             if (error != null || connectedUser == null) {
-                block.invoke(Either.left(HttpError(serverMessage = error.message)))
+                continuation.resume(Either.left(HttpError(serverMessage = error.message)))
             } else {
                 SendBird.getCurrentUser().createMetaData(userModel.toMap()) { user, error ->
                     if (error == null) {
-                        block.invoke(Either.right(ResponseResultOk))
+                        continuation.resume(Either.right(ResponseResultOk))
                     } else {
-                        block.invoke(Either.left(HttpError(serverMessage = error.message)))
+                        continuation.resume(Either.left(HttpError(serverMessage = error.message)))
                     }
                 }
             }
@@ -55,40 +54,36 @@ class UserRemoteSource @Inject constructor(
 
     override suspend fun loginUserFirebase(
         email: String,
-        password: String,
-        block: (Either<HttpError, UserModel>) -> Unit
-    ) {
+        password: String
+    ): Either<HttpError, UserModel> = suspendCoroutine { continuation ->
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    block.invoke(
-                        Either.right(
-                            UserModel(
-                                userId = task.result.user?.uid ?: EMPTY,
-                                email = task.result.user?.email ?: EMPTY,
-                                password = EMPTY,
-                                username = EMPTY,
-                                profilePicture = EMPTY
-                            )
-                        )
+                    val userModel = UserModel(
+                        userId = task.result.user?.uid ?: EMPTY,
+                        email = task.result.user?.email ?: EMPTY,
+                        password = EMPTY,
+                        username = EMPTY,
+                        profilePicture = EMPTY
                     )
+                    continuation.resume(Either.right(userModel))
                     Timber.tag("Firebase Authentication").d("Successfully logged")
                 } else {
-                    block.invoke(Either.left(HttpError(serverMessage = task.exception?.message)))
+                    val httpError = HttpError(serverMessage = task.exception?.message)
+                    continuation.resume(Either.left(httpError))
                     Timber.tag("Firebase Authentication").e("Failed to login in Firebase")
                 }
             }
     }
 
     override suspend fun connectUserSendbird(
-        userId: String,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
-    ) {
+        userId: String
+    ): Either<HttpError, User> = suspendCoroutine { continuation ->
         SendBird.connect(userId) { connectedUser, error ->
             if (error != null || connectedUser == null) {
-                block.invoke(Either.left(HttpError(serverMessage = error.message)))
+                continuation.resume(Either.left(HttpError(serverMessage = error.message)))
             } else {
-                block.invoke(Either.right(ResponseResultOk))
+                continuation.resume(Either.right(connectedUser))
             }
         }
     }
@@ -97,17 +92,16 @@ class UserRemoteSource @Inject constructor(
 
     override suspend fun updateUserSendbird(
         username: String,
-        profilePictureFile: File,
-        block: (Either<HttpError, ResponseResultOk>) -> Unit
-    ) {
+        profilePictureFile: File
+    ): Either<HttpError, ResponseResultOk> = suspendCoroutine { continuation ->
         SendBird.updateCurrentUserInfoWithProfileImage(
             username,
             profilePictureFile
         ) { exception ->
             if (exception != null) {
-                block.invoke(Either.left(HttpError(serverMessage = exception.message)))
+                continuation.resume(Either.left(HttpError(serverMessage = exception.message)))
             } else {
-                block.invoke(Either.right(ResponseResultOk))
+                continuation.resume(Either.right(ResponseResultOk))
             }
         }
     }

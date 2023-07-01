@@ -6,15 +6,17 @@ import androidx.fragment.app.activityViewModels
 import com.example.whisper.R
 import com.example.whisper.databinding.FragmentSignUpStepTwoBinding
 import com.example.whisper.navigation.External
-import com.example.whisper.ui.base.BaseFragment
+import com.example.whisper.ui.base.BasePermissionFragment
 import com.example.whisper.utils.common.collectLatestFlow
 import com.example.whisper.utils.common.grantReadUriPermission
 import com.example.whisper.utils.media.ActivityResultHandler
 import com.example.whisper.utils.media.SelectImageObserver
+import com.example.whisper.utils.permissions.PermissionStateHandler
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SignUpStepTwoFragment : BaseFragment<FragmentSignUpStepTwoBinding>(), ActivityResultHandler {
+class SignUpStepTwoFragment : BasePermissionFragment<FragmentSignUpStepTwoBinding>(),
+    ActivityResultHandler {
 
     /* --------------------------------------------------------------------------------------------
      * Properties
@@ -27,12 +29,13 @@ class SignUpStepTwoFragment : BaseFragment<FragmentSignUpStepTwoBinding>(), Acti
     ---------------------------------------------------------------------------------------------*/
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dataBinding.presenter = viewModel
         setImagePicker()
         setObservers()
-        observeLiveData()
-        collectNavigation(viewModel.navigationFlow)
-        collectDialogFlow(viewModel.dialogFlow)
+        collectState()
     }
+
+    override fun providePermissionStateHandler(): PermissionStateHandler? = viewModel
 
     override fun getLayoutId(): Int = R.layout.fragment_sign_up_step_two
 
@@ -41,11 +44,14 @@ class SignUpStepTwoFragment : BaseFragment<FragmentSignUpStepTwoBinding>(), Acti
     /* --------------------------------------------------------------------------------------------
      * Private
    ---------------------------------------------------------------------------------------------*/
-    private fun observeLiveData() {
-        dataBinding.presenter = viewModel
+    private fun collectState() {
         collectLatestFlow(viewModel.uiState) { uiModel ->
             dataBinding.model = uiModel
         }
+
+        collectNavigation(viewModel.navigationFlow)
+        collectDialogFlow(viewModel.dialogFlow)
+        collectPermission(viewModel.permissionState)
     }
 
     private fun setObservers() {

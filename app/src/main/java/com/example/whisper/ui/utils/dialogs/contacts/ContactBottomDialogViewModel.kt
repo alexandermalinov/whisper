@@ -1,6 +1,5 @@
 package com.example.whisper.ui.utils.dialogs.contacts
 
-import android.app.Application
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
@@ -10,9 +9,9 @@ import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.domain.contact.*
 import com.example.whisper.ui.base.BaseViewModel
 import com.example.whisper.ui.contacts.getContactState
+import com.example.whisper.utils.NetworkHandler
 import com.example.whisper.utils.common.CONTACT_BOTTOM_DIALOG_KEY
 import com.example.whisper.utils.common.IS_RECENT_CHAT
-import com.example.whisper.utils.isNetworkAvailable
 import com.example.whisper.vo.dialogs.contacts.ContactBottomSheetDialogUiModel
 import com.example.whisper.vo.dialogs.contacts.ContactBottomSheetState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +28,7 @@ import javax.inject.Inject
 class ContactBottomDialogViewModel @Inject constructor(
     private val contactsRepository: ContactsRepository,
     private val recentChatsRepository: RecentChatsRepository,
-    private val application: Application,
+    private val networkHandler: NetworkHandler,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel(), ContactBottomDialogPresenter {
 
@@ -207,7 +206,7 @@ class ContactBottomDialogViewModel @Inject constructor(
 
     private suspend fun showErrorState() {
         when {
-            application.isNetworkAvailable().not() -> _uiState.emit(
+            networkHandler.isNetworkAvailable().not() -> _uiState.emit(
                 _uiState.value.copy(
                     uiState = ContactBottomSheetState.ERROR,
                     errorTitle = R.string.error_network_message,

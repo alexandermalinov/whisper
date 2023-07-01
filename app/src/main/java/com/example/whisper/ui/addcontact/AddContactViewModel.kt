@@ -1,6 +1,5 @@
 package com.example.whisper.ui.addcontact
 
-import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
 import com.example.whisper.data.repository.contacts.ContactsRepository
@@ -29,11 +28,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddContactViewModel @Inject constructor(
-    application: Application,
     private val userRepository: UserRepository,
     private val contactsRepository: ContactsRepository,
-    recentChatsRepository: RecentChatsRepository
-) : BaseContactsViewModel(application, userRepository, contactsRepository, recentChatsRepository),
+) : BaseContactsViewModel(userRepository),
     AddContactPresenter {
 
     val uiState

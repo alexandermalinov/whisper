@@ -1,6 +1,5 @@
 package com.example.whisper.ui.basecontacts
 
-import android.app.Application
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
@@ -8,7 +7,6 @@ import com.example.whisper.R
 import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
-import com.example.whisper.domain.contact.PopulateContactsUseCase
 import com.example.whisper.navigation.NavGraph
 import com.example.whisper.ui.base.BaseViewModel
 import com.example.whisper.ui.base.ConnectionStatus
@@ -26,26 +24,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 open class BaseContactsViewModel @Inject constructor(
-    private val application: Application,
-    private val userRepository: UserRepository,
-    private val contactsRepository: ContactsRepository,
-    private val recentChatsRepository: RecentChatsRepository
+    private val userRepository: UserRepository
 ) : BaseViewModel(), DefaultLifecycleObserver, BaseContactsPresenter,
     BottomNavigationChangesCallback {
 
     val uiModel
         get() = _uiModel.asStateFlow()
 
-    val connectionStatus
-        get() = _connectionStatus.asSharedFlow()
-
     private val _uiModel = MutableStateFlow(BaseContactsUiModel())
-    private val _connectionStatus = MutableSharedFlow<ConnectionStatus>()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             setupBottomNavigationUserIcon()
-            connectUser(userRepository.cachedUser.userId)
         }
     }
 
@@ -140,25 +130,6 @@ open class BaseContactsViewModel @Inject constructor(
         withContext(Dispatchers.Default) {
             val profilePicture = userRepository.cachedUser.profilePicture
             _uiModel.emit(_uiModel.value.copy(profilePictureUrl = profilePicture))
-        }
-    }
-
-    private suspend fun connectUser(userId: String) {
-        _connectionStatus.emit(ConnectionStatus.CONNECTING)
-
-        userRepository.connectUserSendbird(userId) { either ->
-            viewModelScope.launch(Dispatchers.IO) {
-                either.foldSuspend({
-                    _connectionStatus.emit(ConnectionStatus.NOT_CONNECTED)
-                    connectUser(userId)
-                }, {
-                    _connectionStatus.emit(ConnectionStatus.CONNECTED)
-                    PopulateContactsUseCase(
-                        contactsRepository,
-                        recentChatsRepository
-                    ).invoke(userRepository.cachedUser.userId, viewModelScope) { }
-                })
-            }
         }
     }
 

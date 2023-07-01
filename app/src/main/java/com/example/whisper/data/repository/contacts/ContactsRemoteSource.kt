@@ -5,6 +5,8 @@ import com.example.whisper.utils.responsehandler.HttpError
 import com.example.whisper.utils.responsehandler.ResponseResultOk
 import com.sendbird.android.*
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 class ContactsRemoteSource @Inject constructor() : ContactsRepository.RemoteSource {
@@ -47,14 +49,13 @@ class ContactsRemoteSource @Inject constructor() : ContactsRepository.RemoteSour
     }
 
     override suspend fun getContacts(
-        filter: ContactConnectionStatus,
-        block: (Either<HttpError, List<GroupChannel>>) -> Unit
-    ) {
+        filter: ContactConnectionStatus
+    ): Either<HttpError, List<GroupChannel>> = suspendCoroutine { continuation ->
         listQuery(filter).next { channels, error ->
             if (channels != null) {
-                block.invoke(Either.right(channels))
+                continuation.resume(Either.right(channels))
             } else {
-                block.invoke(Either.left(HttpError(serverMessage = error.message)))
+                continuation.resume(Either.left(HttpError(serverMessage = error.message)))
             }
         }
     }
@@ -235,20 +236,20 @@ class ContactsRemoteSource @Inject constructor() : ContactsRepository.RemoteSour
         contactId: String,
         block: (Either<HttpError, ResponseResultOk>) -> Unit
     ) {
-       /* val currentUser = SendBird.getCurrentUser()
-        val pinnedContacts = currentUser.metaData[PINNED_CONTACTS]
-            ?.split(',')
-            ?.plus(contactId)
-            ?.joinToString()
-            ?: contactId
-        currentUser.metaData[PINNED_CONTACTS] = pinnedContacts
-        currentUser.updateMetaData(currentUser.metaData) { metaDataMap, e ->
-            if (e != null) {
-                block.invoke(Either.left(HttpError(serverMessage = e.message)))
-            } else {
-                block.invoke(Either.right(ResponseResultOk))
-            }
-        }*/
+        /* val currentUser = SendBird.getCurrentUser()
+         val pinnedContacts = currentUser.metaData[PINNED_CONTACTS]
+             ?.split(',')
+             ?.plus(contactId)
+             ?.joinToString()
+             ?: contactId
+         currentUser.metaData[PINNED_CONTACTS] = pinnedContacts
+         currentUser.updateMetaData(currentUser.metaData) { metaDataMap, e ->
+             if (e != null) {
+                 block.invoke(Either.left(HttpError(serverMessage = e.message)))
+             } else {
+                 block.invoke(Either.right(ResponseResultOk))
+             }
+         }*/
     }
 
     override suspend fun unpinContact(

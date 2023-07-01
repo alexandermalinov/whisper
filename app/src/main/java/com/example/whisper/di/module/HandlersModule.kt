@@ -1,6 +1,6 @@
 package com.example.whisper.di.module
 
-import com.example.whisper.data.listeners.ContactsUpdateLister
+import com.example.whisper.data.handlers.ConnectionHandler
 import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
@@ -12,15 +12,15 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class ListenersModule {
+class HandlersModule {
 
     @Singleton
     @Provides
-    fun provideContactsRepository(
+    fun provideConnectionHandler(
         contactsRepository: ContactsRepository,
         recentChatsRepository: RecentChatsRepository,
         userRepository: UserRepository
-    ): ContactsUpdateLister = ContactsUpdateLister(
+    ): ConnectionHandler = ConnectionHandler(
         contactsRepository,
         recentChatsRepository,
         userRepository

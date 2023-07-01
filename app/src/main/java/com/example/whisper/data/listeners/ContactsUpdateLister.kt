@@ -1,4 +1,4 @@
-package com.example.whisper.data.remote
+package com.example.whisper.data.listeners
 
 import com.example.whisper.data.local.model.toContactModel
 import com.example.whisper.data.repository.contacts.ContactsRepository
@@ -22,7 +22,7 @@ class ContactsUpdateLister @Inject constructor(
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    suspend fun initContactUpdateListener() {
+    fun initContactUpdateListener() {
         SendBird.addChannelHandler(
             RECENT_CHAT_HANDLER_ID,
             object : SendBird.ChannelHandler() {

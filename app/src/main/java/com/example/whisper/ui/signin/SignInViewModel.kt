@@ -1,24 +1,21 @@
 package com.example.whisper.ui.signin
 
-import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
-import com.example.whisper.data.local.model.toUserModel
 import com.example.whisper.data.repository.contacts.ContactsRepository
 import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
-import com.example.whisper.domain.contact.PopulateContactsState
-import com.example.whisper.domain.contact.PopulateContactsUseCase
+import com.example.whisper.domain.signin.SignInState
+import com.example.whisper.domain.signin.SignInUseCase
 import com.example.whisper.domain.signup.ValidateEmailUseCase
 import com.example.whisper.domain.signup.ValidationStates
 import com.example.whisper.navigation.NavGraph
 import com.example.whisper.navigation.PopBackStack
 import com.example.whisper.ui.base.BaseInputChangeViewModel
+import com.example.whisper.utils.NetworkHandler
 import com.example.whisper.utils.common.INVALID_RES
-import com.example.whisper.utils.isNetworkAvailable
 import com.example.whisper.vo.dialogs.TitleMessageDialog
 import com.example.whisper.vo.signin.SignInUiModel
-import com.sendbird.android.SendBird
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -33,7 +30,7 @@ class SignInViewModel @Inject constructor(
     private val contactsRepository: ContactsRepository,
     private val recentChatsRepository: RecentChatsRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
-    private val application: Application
+    private val networkHandler: NetworkHandler
 ) : BaseInputChangeViewModel(), SignInPresenter {
 
     val uiState
@@ -109,50 +106,20 @@ class SignInViewModel @Inject constructor(
     }
 
     override fun onContinueClick() {
-        // TODO Create Use Case and structure the business logic
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _uiState.emit(_uiState.value.copy(isLoading = true))
-            userRepository.loginUserFirebase(_uiState.value.email, _uiState.value.password) {
-                viewModelScope.launch {
-                    it.foldSuspend(
-                        { onFailure ->
-                            if (application.isNetworkAvailable())
-                                showValidationErrorDialog()
-                            else
-                                showNoNetworkErrorDialog()
-                        },
-                        { userModel ->
-                            userRepository.connectUserSendbird(userModel.userId) { either ->
-                                viewModelScope.launch(Dispatchers.IO) {
-                                    either.foldSuspend({ httpError ->
-                                        if (application.isNetworkAvailable())
-                                            showValidationErrorDialog()
-                                        else
-                                            showNoNetworkErrorDialog()
-                                    }, { responseOk ->
-                                        userRepository.loginUserLocalDB(
-                                            userModel.email,
-                                            userModel.userId
-                                        )
-                                        userRepository.updateUserLocalDB(
-                                            SendBird.getCurrentUser().toUserModel()
-                                        )
-                                        PopulateContactsUseCase(
-                                            contactsRepository,
-                                            recentChatsRepository
-                                        ).invoke(userModel.userId, viewModelScope) { state ->
-                                            if (state == PopulateContactsState.SuccessState) {
-                                                navigateToRecentChats()
-                                            } else {
-                                                showError()
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-                        }
-                    )
-                }
+            val signInResult = SignInUseCase(
+                userRepository,
+                contactsRepository,
+                recentChatsRepository,
+                networkHandler
+            ).invoke(_uiState.value.email, _uiState.value.password)
+
+            when (signInResult) {
+                is SignInState.NetworkErrorState -> showNoNetworkErrorDialog()
+                is SignInState.CredentialsErrorState -> showValidationErrorDialog()
+                is SignInState.ErrorState -> showError()
+                is SignInState.SuccessState -> navigateToRecentChats()
             }
         }
     }

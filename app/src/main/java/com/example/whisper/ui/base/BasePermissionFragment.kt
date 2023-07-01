@@ -4,11 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.LiveData
+import com.example.whisper.utils.common.collectLatestFlow
 import com.example.whisper.utils.permissions.Permission
 import com.example.whisper.utils.permissions.PermissionStateHandler
 import com.example.whisper.utils.permissions.onPermissionRequest
 import com.example.whisper.utils.permissions.requestPermission
+import kotlinx.coroutines.flow.SharedFlow
 
 abstract class BasePermissionFragment<T : ViewDataBinding> : BaseFragment<T>() {
 
@@ -33,11 +34,9 @@ abstract class BasePermissionFragment<T : ViewDataBinding> : BaseFragment<T>() {
     /* --------------------------------------------------------------------------------------------
      * Protected
     ---------------------------------------------------------------------------------------------*/
-    protected fun observePermissionData(permissionLiveData: LiveData<Permission>) {
-        permissionLiveData.observe(viewLifecycleOwner) { permission ->
-            requestPermissionLauncher?.let {
-                onPermissionRequest(it, permission)
-            }
+    protected fun collectPermission(permissionFlow: SharedFlow<Permission>) {
+        collectLatestFlow(permissionFlow) { permission ->
+            onPermissionRequest(requestPermissionLauncher, permission)
         }
     }
 

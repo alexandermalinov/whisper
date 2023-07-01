@@ -1,6 +1,5 @@
 package com.example.whisper.ui.contacts
 
-import android.app.Application
 import androidx.core.os.bundleOf
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.viewModelScope
@@ -27,11 +26,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
-    application: Application,
     userRepository: UserRepository,
-    private val contactsRepository: ContactsRepository,
-    recentChatsRepository: RecentChatsRepository
-) : BaseContactsViewModel(application, userRepository, contactsRepository, recentChatsRepository),
+    private val contactsRepository: ContactsRepository
+) : BaseContactsViewModel(userRepository),
     ContactPresenter, DefaultLifecycleObserver {
 
     val uiState

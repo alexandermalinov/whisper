@@ -1,6 +1,5 @@
 package com.example.whisper.ui.recentchats
 
-import android.app.Application
 import androidx.core.os.bundleOf
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -29,11 +28,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecentChatsViewModel @Inject constructor(
-    application: Application,
     userRepository: UserRepository,
-    contactsRepository: ContactsRepository,
     private val recentChatsRepository: RecentChatsRepository
-) : BaseContactsViewModel(application, userRepository, contactsRepository, recentChatsRepository),
+) : BaseContactsViewModel(userRepository),
     RecentChatsPresenter,
     RecentChatPresenter, DefaultLifecycleObserver {
 
