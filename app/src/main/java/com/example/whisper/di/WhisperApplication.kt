@@ -1,7 +1,7 @@
 package com.example.whisper.di
 
 import android.app.Application
-import androidx.hilt.work.HiltWorkerFactory
+//import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.example.whisper.data.handlers.ConnectionHandler
 import com.example.whisper.data.listeners.ContactsUpdateLister
@@ -19,10 +19,10 @@ import javax.inject.Inject
 
 
 @HiltAndroidApp
-class WhisperApplication : Application(), Configuration.Provider {
+class WhisperApplication : Application() { //, Configuration.Provider {
 
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
+    /*@Inject
+    lateinit var workerFactory: HiltWorkerFactory*/
 
     @Inject
     lateinit var contactsUpdateLister: ContactsUpdateLister
@@ -56,8 +56,8 @@ class WhisperApplication : Application(), Configuration.Provider {
         }
     }
 
-    override fun getWorkManagerConfiguration() = Configuration
+    /*override fun getWorkManagerConfiguration() = Configuration
         .Builder()
         .setWorkerFactory(workerFactory)
-        .build()
+        .build()*/
 }

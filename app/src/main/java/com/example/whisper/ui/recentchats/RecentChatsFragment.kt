@@ -79,6 +79,9 @@ class RecentChatsFragment : BaseFragment<FragmentRecentChatsBinding>() {
                 ChatsRecyclerViewState.SCROLL_TO_TOP -> {
                     dataBinding.recyclerRecentChats.scrollToPosition(0)
                 }
+                else -> {
+                    // do nothing
+                }
             }
         }
     }

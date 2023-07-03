@@ -23,6 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
+        android:onClick="@{() -> presenter.onRecentChatClicked(model.chatUrl)}"
         app:longClickZoomSmall="@{() -> presenter.onRecentChatLongClicked(model)}"
         android:paddingHorizontal="@dimen/padding_medium"
         android:paddingTop="@dimen/padding_medium">

@@ -75,7 +75,11 @@
         android:id="@+id/recentChatsFragment"
         android:name="com.example.whisper.ui.recentchats.RecentChatsFragment"
         android:label="fragment_recent_chats"
-        tools:layout="@layout/fragment_recent_chats" />
+        tools:layout="@layout/fragment_recent_chats" >
+        <action
+            android:id="@+id/action_recentChatsFragment_to_peerToPeerChatFragment"
+            app:destination="@id/peerToPeerChatFragment" />
+    </fragment>
     <fragment
         android:id="@+id/welcomeFragment"
         android:name="com.example.whisper.ui.welcome.WelcomeFragment"
@@ -118,6 +122,9 @@
         <action
             android:id="@+id/action_contactsFragment_to_addContactFragment"
             app:destination="@id/addContactFragment" />
+        <action
+            android:id="@+id/action_contactsFragment_to_peerToPeerChatFragment"
+            app:destination="@id/peerToPeerChatFragment" />
     </fragment>
     <fragment
         android:id="@+id/addContactFragment"
@@ -148,5 +155,8 @@
             app:destination="@id/welcomeFragment"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_baseContactsFragment_to_peerToPeerChatFragment"
+            app:destination="@id/peerToPeerChatFragment" />
     </fragment>
 </navigation>

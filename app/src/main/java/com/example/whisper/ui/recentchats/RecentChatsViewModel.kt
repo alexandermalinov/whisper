@@ -77,7 +77,9 @@ class RecentChatsViewModel @Inject constructor(
     }
 
     override fun onRecentChatClicked(chatId: String) {
-        // TODO("Not yet implemented")
+        viewModelScope.launch {
+            _navigationFlow.emit(NavGraph(R.id.action_baseContactsFragment_to_peerToPeerChatFragment))
+        }
     }
 
     override fun onRecentChatLongClicked(contact: RecentChatUiModel): Boolean {

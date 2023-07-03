@@ -12,6 +12,8 @@
     <!-- app main background color -->
     <color name="dark_gunmetal">#100F0F</color>
     <color name="cactus_green">#1DA1F2</color>
+    <color name="cactus_green_1">#3194ff</color>
+    <color name="cactus_grey">#262629</color>
     <color name="eerie_black">#17181c</color>
     <color name="dark_grey">#8b8b8b</color>
 
