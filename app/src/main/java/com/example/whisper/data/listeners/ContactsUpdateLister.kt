@@ -1,22 +1,35 @@
 package com.example.whisper.data.listeners
 
+import com.example.whisper.data.local.model.MessageModel
+import com.example.whisper.data.local.model.MessageStatus
+import com.example.whisper.data.local.model.MessageType
 import com.example.whisper.data.local.model.toContactModel
 import com.example.whisper.data.repository.contacts.ContactsRepository
+import com.example.whisper.data.repository.messages.MessagesRepository
 import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
+import com.example.whisper.utils.FileUtils
+import com.example.whisper.utils.common.EMPTY
 import com.example.whisper.utils.common.MEMBER_STATE_CONNECTED
 import com.example.whisper.utils.common.MEMBER_STATE_INVITE_RECEIVED
 import com.example.whisper.utils.common.RECENT_CHAT_HANDLER_ID
-import com.sendbird.android.*
+import com.sendbird.android.BaseChannel
+import com.sendbird.android.BaseMessage
+import com.sendbird.android.FileMessage
+import com.sendbird.android.GroupChannel
+import com.sendbird.android.SendBird
+import com.sendbird.android.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 class ContactsUpdateLister @Inject constructor(
     private val contactsRepository: ContactsRepository,
     private val recentChatsRepository: RecentChatsRepository,
+    private val messagesRepository: MessagesRepository,
     private val usersRepository: UserRepository
 ) {
 
@@ -31,23 +44,54 @@ class ContactsUpdateLister @Inject constructor(
                     coroutineScope.launch {
                         if (channel == null || message == null) return@launch
 
+                        if (message is FileMessage) {
+                            handleIncomingFileMessage(message)
+                        } else {
+                            handleIncomingTextMessage(message)
+                        }
+
+                        messagesRepository.sendMessageDeliveredReceipt(message.sender.userId)
+
                         val contact = contactsRepository.getContactFromCacheOrDb(channel.url)
+                            ?.apply {
+                                lastMessage = message.message
+                                lastMessageTimestamp = message.createdAt
+                                contactsRepository.updateContactDbCache(this)
+                            }
                             ?: return@launch
 
-                        val recentChat =
-                            recentChatsRepository.getRecentChatFromCacheOrDb(channel.url)
+                        recentChatsRepository.getRecentChatFromCacheOrDb(channel.url)
+                            ?.apply {
+                                lastMessage = message.message
+                                lastMessageTimestamp = message.createdAt
+                                unreadMessagesCount += 1
+                                recentChatsRepository.updateRecentChatDbCache(this)
+                            }
+                            ?: recentChatsRepository.addRecentChatDbCache(contact)
 
-                        contact.lastMessage = message.message
-                        contact.lastMessageTimestamp = message.createdAt
-                        contactsRepository.updateContactDbCache(contact)
+                    }
+                }
 
-                        recentChat?.lastMessage = message.message
-                        recentChat?.lastMessageTimestamp = message.createdAt
+                override fun onDeliveryReceiptUpdated(channel: GroupChannel?) {
+                    coroutineScope.launch {
+                        channel?.let {
+                            messagesRepository.updateMessageStatus(
+                                messageStatus = MessageStatus.DELIVERED,
+                                channel = it,
+                                isMyMessage = true
+                            )
+                        }
+                    }
+                }
 
-                        if (recentChat != null) {
-                            recentChatsRepository.updateRecentChatDbCache(recentChat)
-                        } else {
-                            recentChatsRepository.addRecentChatDbCache(contact)
+                override fun onReadReceiptUpdated(channel: GroupChannel?) {
+                    coroutineScope.launch {
+                        channel?.let {
+                            messagesRepository.updateMessageStatus(
+                                messageStatus = MessageStatus.READ,
+                                channel = it,
+                                isMyMessage = true
+                            )
                         }
                     }
                 }
@@ -58,7 +102,7 @@ class ContactsUpdateLister @Inject constructor(
                 ) {
                     super.onChannelDeleted(channelUrl, channelType)
 
-                    if (channelUrl == null || channelUrl.isEmpty() || channelType == null) return
+                    if (channelUrl.isNullOrEmpty() || channelType == null) return
 
                     coroutineScope.launch {
                         contactsRepository.deleteContactDbCache(channelUrl)
@@ -162,6 +206,41 @@ class ContactsUpdateLister @Inject constructor(
                         recentChatsRepository.unMuteRecentChatDbCache(channel.url)
                     }
                 }
-            })
+            }
+        )
+    }
+
+    private suspend fun handleIncomingTextMessage(message: BaseMessage) {
+        val messageModel = MessageModel(
+            id = message.messageId.toString(),
+            senderId = message.sender.userId,
+            receiverId = usersRepository.cachedUser.userId,
+            body = message.message,
+            fileUrl = EMPTY,
+            fileName = EMPTY,
+            fileSize = EMPTY,
+            status = MessageStatus.DELIVERED,
+            createdAt = message.createdAt,
+            type = MessageType.TEXT
+        )
+
+        messagesRepository.addIncomingMessageDbCache(messageModel)
+    }
+
+    private suspend fun handleIncomingFileMessage(message: FileMessage) {
+        val messageModel = MessageModel(
+            id = message.messageId.toString(),
+            senderId = message.sender.userId,
+            receiverId = usersRepository.cachedUser.userId,
+            body = message.message,
+            fileUrl = message.url,
+            fileName = message.name,
+            fileSize = message.size.toString(),
+            status = MessageStatus.DELIVERED,
+            createdAt = message.createdAt,
+            type = messagesRepository.getExtension(message.name)
+        )
+
+        messagesRepository.addIncomingMessageDbCache(messageModel)
     }
 }

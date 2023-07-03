@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -106,20 +107,22 @@ class SignInViewModel @Inject constructor(
     }
 
     override fun onContinueClick() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _uiState.emit(_uiState.value.copy(isLoading = true))
-            val signInResult = SignInUseCase(
-                userRepository,
-                contactsRepository,
-                recentChatsRepository,
-                networkHandler
-            ).invoke(_uiState.value.email, _uiState.value.password)
+            withContext(Dispatchers.IO) {
+                val signInResult = SignInUseCase(
+                    userRepository,
+                    contactsRepository,
+                    recentChatsRepository,
+                    networkHandler
+                ).invoke(_uiState.value.email, _uiState.value.password)
 
-            when (signInResult) {
-                is SignInState.NetworkErrorState -> showNoNetworkErrorDialog()
-                is SignInState.CredentialsErrorState -> showValidationErrorDialog()
-                is SignInState.ErrorState -> showError()
-                is SignInState.SuccessState -> navigateToRecentChats()
+                when (signInResult) {
+                    is SignInState.NetworkErrorState -> showNoNetworkErrorDialog()
+                    is SignInState.CredentialsErrorState -> showValidationErrorDialog()
+                    is SignInState.ErrorState -> showError()
+                    is SignInState.SuccessState -> navigateToRecentChats()
+                }
             }
         }
     }

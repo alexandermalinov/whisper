@@ -128,6 +128,8 @@ class RecentChatsRepository @Inject constructor(
 
     fun getRecentChatsDbFlow() = local.getRecentChatsFlow()
 
+    suspend fun getRecentChatsDb() = local.getAllRecentChats()
+
     suspend fun addRecentChatDbCache(recentChat: ContactModel) {
         local.addRecentChat(recentChat)
         cachedRecentChats[recentChat.contactUrl] = recentChat

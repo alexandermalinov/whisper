@@ -8,8 +8,8 @@ import javax.inject.Inject
 
 class PermissionChecker @Inject constructor(private val application: Application) {
 
-    fun isPermissionGranted() = ContextCompat.checkSelfPermission(
+    fun isPermissionGranted(permission: String) = ContextCompat.checkSelfPermission(
         application,
-        Manifest.permission.READ_EXTERNAL_STORAGE
+        permission
     ) == PackageManager.PERMISSION_GRANTED
 }

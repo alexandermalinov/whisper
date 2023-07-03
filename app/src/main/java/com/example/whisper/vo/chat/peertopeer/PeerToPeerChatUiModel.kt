@@ -1,8 +1,18 @@
 package com.example.whisper.vo.chat.peertopeer
 
+import com.example.whisper.ui.contacts.OnlineStatus
+import com.example.whisper.utils.common.EMPTY
 import com.example.whisper.utils.common.ZERO
 
 data class PeerToPeerChatUiModel(
+    val chatUrl: String = EMPTY,
+    val contactId: String = EMPTY,
+    val username: String = EMPTY,
+    val profilePicture: String = EMPTY,
+    val onlineStatus: OnlineStatus = OnlineStatus.OFFLINE,
+
+    val messageBody: String = EMPTY,
+
     val isVoiceButtonVisible: Boolean = true,
     val isRecordTimeVisible: Boolean = false,
     val isRecordTimeSeekbarVisible: Boolean = false,

@@ -10,6 +10,7 @@ import com.example.whisper.ui.base.BasePermissionFragment
 import com.example.whisper.utils.common.collectLatestFlow
 import com.example.whisper.utils.common.grantReadUriPermission
 import com.example.whisper.utils.media.ActivityResultHandler
+import com.example.whisper.utils.media.ActivityResultObserver
 import com.example.whisper.utils.media.SelectImageObserver
 import com.example.whisper.utils.permissions.PermissionStateHandler
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,7 +40,8 @@ class SignUpStepTwoFragment : BasePermissionFragment<FragmentSignUpStepTwoBindin
 
     override fun getLayoutId(): Int = R.layout.fragment_sign_up_step_two
 
-    override fun provideObserver(destination: External) = selectImageObserver
+    override fun provideObserver(destination: External): List<ActivityResultObserver> =
+        listOf(selectImageObserver)
 
     /* --------------------------------------------------------------------------------------------
      * Private

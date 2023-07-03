@@ -1,5 +1,6 @@
 package com.example.whisper.utils.common
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.text.Editable
@@ -8,6 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -85,7 +87,16 @@ fun View.setZoomAnimationOnTouch(zoomAnimationRes: Int) {
                 clearAnimation()
             }
         }
-        performClick()
         return@setOnTouchListener false
     }
+}
+
+fun View.hideKeyboard() {
+    (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+        .hideSoftInputFromWindow(windowToken, 0)
+}
+
+fun View.showKeyboard() {
+    (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+        .showSoftInput(this, 0)
 }

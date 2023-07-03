@@ -14,6 +14,7 @@ import com.example.whisper.utils.common.CONTACT_BOTTOM_DIALOG_KEY
 import com.example.whisper.utils.common.IS_RECENT_CHAT
 import com.example.whisper.vo.dialogs.ContactBottomDialog
 import com.example.whisper.vo.recentchats.ChatsRecyclerViewState
+import com.example.whisper.vo.recentchats.RecentChatState
 import com.example.whisper.vo.recentchats.RecentChatUiModel
 import com.example.whisper.vo.recentchats.RecentChatsUiModel
 import com.example.whisper.vo.recentchats.toListOfRecentChatsUiModel
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -55,12 +57,23 @@ class RecentChatsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            //_uiState.emit(_uiState.value.copy(uiState = RecentChatState.LOADING))
+            withContext(Dispatchers.Main) {
+                _uiState.emit(_uiState.value.copy(uiState = RecentChatState.LOADING))
+            }
 
             recentChatsRepository.getRecentChatsDbFlow().collect { contacts ->
-                val (pinned, notPinned) = contacts.partition { contact -> contact.isPinned }
-                _pinnedChats.emit(pinned.toListOfRecentChatsUiModel())
-                _recentChats.emit(notPinned.toListOfRecentChatsUiModel())
+                withContext(Dispatchers.Main) {
+                    _uiState.emit(_uiState.value.copy(uiState = RecentChatState.IDLE))
+
+                    val (pinned, notPinned) = contacts.partition { contact -> contact.isPinned }
+
+                    if (notPinned.isEmpty() && pinned.isEmpty()) {
+                        _uiState.emit(_uiState.value.copy(uiState = RecentChatState.EMPTY))
+                    }
+
+                    _pinnedChats.emit(pinned.toListOfRecentChatsUiModel())
+                    _recentChats.emit(notPinned.toListOfRecentChatsUiModel())
+                }
             }
         }
     }
@@ -77,7 +90,16 @@ class RecentChatsViewModel @Inject constructor(
     }
 
     override fun onRecentChatClicked(chatId: String) {
-        // TODO("Not yet implemented")
+        viewModelScope.launch {
+            val chat = _recentChats.value.find { it.chatUrl == chatId } ?: return@launch
+
+            NavGraph(
+                actionId = R.id.action_baseContactsFragment_to_peerToPeerChatFragment,
+                args = bundleOf("HEADER_MODEL" to chat)
+            ).let { navigation ->
+                _navigationFlow.emit(navigation)
+            }
+        }
     }
 
     override fun onRecentChatLongClicked(contact: RecentChatUiModel): Boolean {

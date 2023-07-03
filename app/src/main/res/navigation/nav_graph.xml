@@ -11,11 +11,6 @@
         android:label="fragment_splash"
         tools:layout="@layout/fragment_splash">
         <action
-            android:id="@+id/action_splashFragment_to_recentChatsFragment"
-            app:destination="@id/recentChatsFragment"
-            app:popUpTo="@id/splashFragment"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_splashFragment_to_welcomeFragment"
             app:destination="@id/welcomeFragment"
             app:popUpTo="@id/splashFragment"
@@ -58,11 +53,6 @@
             app:popEnterAnim="@anim/from_left"
             app:popExitAnim="@anim/to_right" />
         <action
-            android:id="@+id/action_signInFragment_to_recentChatsFragment"
-            app:destination="@id/recentChatsFragment"
-            app:popUpTo="@id/splashFragment"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_signInFragment_to_welcomeFragment"
             app:destination="@id/welcomeFragment"
             app:popUpTo="@id/splashFragment"
@@ -71,11 +61,11 @@
             android:id="@+id/action_signInFragment_to_baseContactsFragment"
             app:destination="@id/baseContactsFragment" />
     </fragment>
-    <fragment
+   <!-- <fragment
         android:id="@+id/recentChatsFragment"
         android:name="com.example.whisper.ui.recentchats.RecentChatsFragment"
         android:label="fragment_recent_chats"
-        tools:layout="@layout/fragment_recent_chats" />
+        tools:layout="@layout/fragment_recent_chats" />-->
     <fragment
         android:id="@+id/welcomeFragment"
         android:name="com.example.whisper.ui.welcome.WelcomeFragment"
@@ -101,41 +91,31 @@
             app:popEnterAnim="@anim/slide_up"
             app:popExitAnim="@anim/slide_down" />
         <action
-            android:id="@+id/action_signUpStepTwoFragment_to_recentChatsFragment"
-            app:destination="@id/recentChatsFragment"
-            app:enterAnim="@anim/slide_up" />
-        <action
             android:id="@+id/action_signUpStepTwoFragment_to_baseContactsFragment"
             app:destination="@id/baseContactsFragment" />
         <action
             android:id="@+id/action_signUpStepTwoFragment_to_baseContactsFragment2"
             app:destination="@id/baseContactsFragment" />
     </fragment>
-    <fragment
+    <!--<fragment
         android:id="@+id/contactsFragment"
         android:name="com.example.whisper.ui.contacts.ContactsFragment"
         android:label="ContactsFragment">
-        <action
-            android:id="@+id/action_contactsFragment_to_addContactFragment"
-            app:destination="@id/addContactFragment" />
-    </fragment>
+    </fragment>-->
     <fragment
         android:id="@+id/addContactFragment"
         android:name="com.example.whisper.ui.addcontact.AddContactFragment"
         android:label="AddContactFragment">
-        <action
-            android:id="@+id/action_addContactFragment_to_peerToPeerChatFragment"
-            app:destination="@id/peerToPeerChatFragment" />
     </fragment>
     <fragment
         android:id="@+id/peerToPeerChatFragment"
         android:name="com.example.whisper.ui.chat.peertopeer.PeerToPeerChatFragment"
         android:label="PeerToPeerChatFragment" />
-    <fragment
+   <!-- <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.whisper.ui.profile.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" />-->
     <fragment
         android:id="@+id/baseContactsFragment"
         android:name="com.example.whisper.ui.basecontacts.BaseContactsFragment"
@@ -148,5 +128,12 @@
             app:destination="@id/welcomeFragment"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_baseContactsFragment_to_peerToPeerChatFragment"
+            app:destination="@id/peerToPeerChatFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/from_left"
+            app:popExitAnim="@anim/to_right" />
     </fragment>
 </navigation>

@@ -11,7 +11,7 @@ class UpdateUserUseChase(
 ) {
 
     suspend operator fun invoke(username: String, pictureFile: File): UpdateUserState {
-        if (username.isEmpty() || pictureFile.path.isEmpty()) return UpdateUserState.ErrorState
+        if (username.isEmpty()) return UpdateUserState.ErrorState
 
         val result = userRepository.updateUserSendbird(username, pictureFile)
         return result.foldSuspend(

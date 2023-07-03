@@ -10,6 +10,9 @@
     <string name="error_something_went_wrong">Something went wrong</string>
     <string name="error_network">Please check your network connection</string>
 
+    <!-- Local Errors -->
+    <string name="error_reading_from_storage">Could not read internal storage</string>
+
     <!-- Welcome Screen -->
     <string name="get_started">Get Started</string>
     <string name="get_started_description">Free and instantaneous communication anywhere in the world. Send and receive high-fidelity messages. Start sharing the moments that matter with the people who matter to you.</string>
@@ -93,6 +96,7 @@
     <string name="error_network_message">Network Error</string>
     <string name="error_something_went_wrong_try_again">Something went wrong. Please try again.</string>
     <string name="try_again">Try Again</string>
+    <string name="error_no_app_found_to_open_file">No application found to open this file.</string>
 
     <!-- Dialog Tittles -->
     <string name="dialog_external_storage_denied_title">Permission Denied</string>
@@ -101,4 +105,22 @@
     <!-- Dialog Bodies-->
     <string name="dialog_external_storage_denied_body">In order to set your profile picture, we need access to your photos.</string>
     <string name="dialog_external_storage_grant_permission_body">In order to set your profile picture, we need access to your photos.</string>
+
+    <!-- Attachments -->
+    <string name="attachment_photos">Photos</string>
+    <string name="attachment_gif">GIF</string>
+    <string name="attachment_file">File</string>
+    <string name="attachment_location">Location</string>
+
+    <!-- Documents Types -->
+    <string name="document_type_pdf">PDF Document</string>
+    <string name="document_type_doc">DOC Document</string>
+    <string name="document_type_xls">XLS Document</string>
+    <string name="document_type_pptx">PPTX Document</string>
+    <string name="document_type_file">File Document</string>
+
+    <!-- Chat Messages -->
+    <string name="chat_status_sending">Sending</string>
+    <string name="chat_status_delivered">Delivered</string>
+    <string name="chat_status_read">Read</string>
 </resources>

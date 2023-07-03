@@ -153,6 +153,12 @@ class ContactsViewModel @Inject constructor(
         }
     }
 
+    override fun onClick() {
+        viewModelScope.launch {
+            //_navigationFlow.emit(NavGraph(R.id.action_baseContactsFragment_to_peerToPeerChatFragment))
+        }
+    }
+
     /* --------------------------------------------------------------------------------------------
      * Private
     ---------------------------------------------------------------------------------------------*/

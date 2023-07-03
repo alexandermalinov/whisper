@@ -15,6 +15,16 @@ sealed class ErrorModel
  */
 sealed class ApiError : ErrorModel()
 
+sealed class LocalError: ErrorModel()
+
+/**
+ * Reading from storage error
+ */
+data class ReadingFromStorageError(
+    @StringRes
+    val errorMessage: Int = R.string.error_reading_from_storage
+): LocalError()
+
 /**
  * Generic all-purpose http error model for all API errors
  */

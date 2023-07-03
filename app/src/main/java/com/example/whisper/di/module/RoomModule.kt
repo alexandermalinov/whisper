@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.example.whisper.data.local.RoomDatabase
 import com.example.whisper.data.local.dao.ContactDao
+import com.example.whisper.data.local.dao.MessageDao
 import com.example.whisper.data.local.dao.RecentChatDao
 import com.example.whisper.data.local.dao.UserDao
 import com.example.whisper.utils.common.DATABASE_NAME
@@ -37,4 +38,8 @@ object RoomModule {
     @Singleton
     @Provides
     fun provideRecentChatDao(database: RoomDatabase): RecentChatDao = database.getRecentChatDao()
+
+    @Singleton
+    @Provides
+    fun provideMessageDao(database: RoomDatabase): MessageDao = database.getMessageDao()
 }

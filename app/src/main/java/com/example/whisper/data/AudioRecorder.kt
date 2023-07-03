@@ -8,7 +8,7 @@ import java.io.File
 import java.io.IOException
 
 
-class AudioRecorder(private val context: Context) {
+class AudioRecorder(context: Context) {
 
     var mediaRecorder: MediaRecorder? = null
     private var audioFile: File = File("${context.filesDir}/audioTest.3gp")

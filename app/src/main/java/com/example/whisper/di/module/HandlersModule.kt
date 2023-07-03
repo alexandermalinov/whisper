@@ -2,6 +2,7 @@ package com.example.whisper.di.module
 
 import com.example.whisper.data.handlers.ConnectionHandler
 import com.example.whisper.data.repository.contacts.ContactsRepository
+import com.example.whisper.data.repository.messages.MessagesRepository
 import com.example.whisper.data.repository.recentchats.RecentChatsRepository
 import com.example.whisper.data.repository.user.UserRepository
 import dagger.Module
@@ -19,10 +20,12 @@ class HandlersModule {
     fun provideConnectionHandler(
         contactsRepository: ContactsRepository,
         recentChatsRepository: RecentChatsRepository,
-        userRepository: UserRepository
+        userRepository: UserRepository,
+        messagesRepository: MessagesRepository
     ): ConnectionHandler = ConnectionHandler(
         contactsRepository,
         recentChatsRepository,
-        userRepository
+        userRepository,
+        messagesRepository
     )
 }

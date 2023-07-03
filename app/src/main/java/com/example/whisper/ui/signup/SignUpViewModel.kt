@@ -2,6 +2,7 @@ package com.example.whisper.ui.signup
 
 import android.Manifest
 import android.net.Uri
+import android.os.Build
 import androidx.lifecycle.viewModelScope
 import com.example.whisper.R
 import com.example.whisper.data.repository.contacts.ContactsRepository
@@ -20,6 +21,7 @@ import com.example.whisper.ui.base.BaseInputChangeViewModel
 import com.example.whisper.utils.FileUtils
 import com.example.whisper.utils.NetworkHandler
 import com.example.whisper.utils.common.INVALID_RES
+import com.example.whisper.utils.common.SELECT_IMAGE_KEY
 import com.example.whisper.utils.permissions.*
 import com.example.whisper.vo.dialogs.TitleMessageDialog
 import com.example.whisper.vo.signup.SignUpUiModel
@@ -27,6 +29,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -67,23 +70,25 @@ class SignUpViewModel @Inject constructor(
      * Override
     ---------------------------------------------------------------------------------------------*/
     override fun onContinueClick() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _uiState.emit(_uiState.value.copy(isLoading = true))
 
-            val signUpResult = SignUpUseCase(
-                userRepository,
-                contactsRepository,
-                recentChatsRepository,
-                networkHandler
-            ).invoke(_uiState.value.email, _uiState.value.password)
+            withContext(Dispatchers.IO) {
+                val signUpResult = SignUpUseCase(
+                    userRepository,
+                    contactsRepository,
+                    recentChatsRepository,
+                    networkHandler
+                ).invoke(_uiState.value.email, _uiState.value.password)
 
-            when (signUpResult) {
-                is SignUpState.CredentialsErrorState -> showValidationErrorDialog()
-                is SignUpState.ErrorState -> showErrorDialog()
-                is SignUpState.NetworkErrorState -> showNoNetworkErrorDialog()
-                is SignUpState.SuccessState -> {
-                    _uiState.emit(_uiState.value.copy(isLoading = false))
-                    navigateToStepTwo()
+                when (signUpResult) {
+                    is SignUpState.CredentialsErrorState -> showValidationErrorDialog()
+                    is SignUpState.ErrorState -> showErrorDialog()
+                    is SignUpState.NetworkErrorState -> showNoNetworkErrorDialog()
+                    is SignUpState.SuccessState -> {
+                        _uiState.emit(_uiState.value.copy(isLoading = false))
+                        navigateToStepTwo()
+                    }
                 }
             }
         }
@@ -176,12 +181,22 @@ class SignUpViewModel @Inject constructor(
 
     override fun onProfileImageClick() {
         viewModelScope.launch {
-            if (permissionChecker.isPermissionGranted()) {
-                _navigationFlow.emit(GalleryNavigation)
+            val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                Manifest.permission.READ_MEDIA_IMAGES
             } else {
-                _permissionState.emit(
-                    PermissionRequest(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
-                )
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            }
+
+            val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+            } else {
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
+
+            if (permissionChecker.isPermissionGranted(permission)) {
+                _navigationFlow.emit(GalleryNavigation(SELECT_IMAGE_KEY))
+            } else {
+                _permissionState.emit(PermissionRequest(permissions))
             }
         }
     }
@@ -190,7 +205,7 @@ class SignUpViewModel @Inject constructor(
         viewModelScope.launch {
             when (state) {
                 is GrantedState -> {
-                    _navigationFlow.emit(GalleryNavigation)
+                    _navigationFlow.emit(GalleryNavigation(SELECT_IMAGE_KEY))
                 }
                 is DeniedState -> {
                     val dialog = TitleMessageDialog(

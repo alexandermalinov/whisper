@@ -1,6 +1,5 @@
 package com.example.whisper.data
 
-import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -8,17 +7,18 @@ import com.example.whisper.utils.common.ZERO
 import timber.log.Timber
 import java.io.IOException
 
-class AudioPlayer(private val context: Context) {
+class VideoPlayer {
 
     private var mediaPlayer: MediaPlayer? = null
     private var isPaused: Boolean = false
+    private var filePath: String? = null
 
     fun play() {
         Timber.d("PLAY")
         if (isPaused) {
             resume()
         } else {
-            start()
+            start(filePath)
         }
     }
 
@@ -44,10 +44,14 @@ class AudioPlayer(private val context: Context) {
 
     fun getPlayedTime() = mediaPlayer?.currentPosition ?: ZERO
 
-    private fun start() {
+    private fun start(path: String?) {
+        path ?: return
+
         Timber.d("START")
+
         mediaPlayer = MediaPlayer().apply {
             try {
+                filePath = path
                 setAudioAttributes(
                     AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
@@ -57,10 +61,11 @@ class AudioPlayer(private val context: Context) {
                 )
                 setOnCompletionListener { onStop() }
                 setOnPreparedListener { onPrepare() }
-                setDataSource("${context.filesDir}/audioTest.3gp")
+                setDataSource(path)
                 prepare()
                 start()
             } catch (e: IOException) {
+                filePath = null
                 Timber.tag("MediaRecorder").e("IOException. Could not prepare MediaPlayer $e")
             }
         }

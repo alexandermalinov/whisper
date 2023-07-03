@@ -12,15 +12,22 @@
     <!-- app main background color -->
     <color name="dark_gunmetal">#100F0F</color>
     <color name="cactus_green">#1DA1F2</color>
+    <color name="cactus_green_1">#126DD1</color>
+    <color name="cactus_green2">#146799</color>
+    <color name="cactus_grey">#262629</color>
     <color name="eerie_black">#17181c</color>
     <color name="dark_grey">#8b8b8b</color>
+    <color name="old_silver">#7f868a</color>
 
     <!-- Grey shades -->
     <color name="milky_white">#E0E0E0</color>
     <color name="auro_metal_saurus">#687684</color>
     <color name="arsenic_grey">#8e8e92</color>
+    <color name="outgoing_message">#94b8b9</color>
+    <color name="incoming_message">#8e8e92</color>
     <color name="raisin_black">#1c1c1e</color>
     <color name="divider_grey">#39393c</color>
+    <color name="divider_grey_8">#F21F1E1F</color>
 
     <!-- Red shades -->
     <color name="error_red">#FF1744</color>
@@ -46,4 +53,14 @@
 
     <!-- Placeholders -->
     <color name="placeholder_main">#dddddd</color>
+
+    <color name="fade_black_start">#E6000000</color>
+    <color name="fade_black_center">#E6000000</color>
+    <color name="fade_black_end">#F2000000</color>
+
+
+<!--    <color name="chat_top_bottom_color">#1e1e1e</color>-->
+    <color name="chat_top_bottom_color">#1e1e1e</color>
+    <color name="chat_background_color">#1b1d21</color>
+    <color name="chat_second_color">#313539</color>
 </resources>

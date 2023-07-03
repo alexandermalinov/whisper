@@ -276,13 +276,6 @@ class ContactsRemoteSource @Inject constructor() : ContactsRepository.RemoteSour
     /* --------------------------------------------------------------------------------------------
      * Private
     ----------------------------------------------------------------------------------------------*/
-    private fun createMessagesQuery(unreadMessageCount: Int) = MessageListParams().apply {
-        previousResultSize = 100
-        nextResultSize = unreadMessageCount
-        isInclusive = true
-        setIncludeReactions(true)
-        setReverse(true)
-    }
 
     private fun createChannelParams(users: List<String>) = GroupChannelParams().apply {
         setPublic(false)

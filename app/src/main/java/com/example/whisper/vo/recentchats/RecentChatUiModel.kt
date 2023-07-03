@@ -10,7 +10,9 @@ import com.example.whisper.utils.common.ZERO
 import com.sendbird.android.GroupChannel
 import com.sendbird.android.User
 import com.sendbird.android.User.ConnectionStatus
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class RecentChatUiModel(
     val chatUrl: String = EMPTY,
     val contactId: String = EMPTY,
@@ -24,7 +26,7 @@ data class RecentChatUiModel(
     val createdAt: Long = ZERO.toLong(),
     val isMuted: Boolean = false,
     val isPinned: Boolean = false
-)
+) : java.io.Serializable
 
 fun ContactModel.toRecentChatsUiModel() = RecentChatUiModel(
     chatUrl = contactUrl,

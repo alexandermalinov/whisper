@@ -23,7 +23,7 @@ data class NavGraph(
 data class ActivityGraph(
     val activityClass: Class<*>,
     val bundle: Bundle? = null
-): Internal()
+) : Internal()
 
 object PopBackStack : Internal()
 
@@ -36,6 +36,10 @@ class NestedFragmentGraph(
 /* --------------------------------------------------------------------------------------------
  * External
 ---------------------------------------------------------------------------------------------*/
-object GalleryNavigation : External()
+class GalleryNavigation(val actionKey: String) : External()
+
+class DocumentNavigation(val actionKey: String) : External()
+
+class OpenFile(val filePath: String, val fileName: String) : External()
 
 object SettingsNavigation : External()

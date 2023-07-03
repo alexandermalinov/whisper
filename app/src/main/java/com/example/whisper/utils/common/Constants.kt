@@ -23,6 +23,7 @@ const val COMMA = ", "
 
 // External Storage Keys
 const val SELECT_IMAGE_KEY = "image_picker_key"
+const val SELECT_DOCUMENT_KEY = "document_picker_key"
 const val IMAGE_TYPE = "image/*"
 
 // Delays
@@ -66,3 +67,12 @@ const val MEMBER_STATE_CONNECTED = "CONNECTED"
 const val MEMBER_STATE_NOT_CONNECTED = "NOT_CONNECTED"
 const val MEMBER_STATE_INVITE_RECEIVED = "INVITE_RECEIVED"
 const val MEMBER_STATE_INVITE_SENT = "INVITE_SENT"
+
+const val MIME_TYPE_PHOTO = "Photo"
+const val MIME_TYPE_VIDEO = "Video"
+const val MIME_TYPE_AUDIO = "Audio"
+const val MIME_TYPE_PDF = "Pdf"
+const val MIME_TYPE_DOC = "Doc"
+const val MIME_TYPE_XLS = "Xls"
+const val MIME_TYPE_PPTX = "Pptx"
+const val MIME_TYPE_FILE = "File"
